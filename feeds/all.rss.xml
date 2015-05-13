@@ -1,20 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>.Rome was not built in a day</title><link>http://ysywh.github.im/</link><description></description><atom:link href="http://ysywh.github.im/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 13 May 2015 17:30:00 +0800</lastBuildDate><item><title>搭建博客</title><link>http://ysywh.github.im/create-blog.html</link><description>&lt;h2&gt;Welcome to MarkdownPad 2&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;MarkdownPad&lt;/strong&gt; is a full-featured Markdown editor for Windows.&lt;/p&gt;
-&lt;h3&gt;Built exclusively for Markdown&lt;/h3&gt;
-&lt;p&gt;Enjoy first-class Markdown support with easy access to  Markdown syntax and convenient keyboard shortcuts.&lt;/p&gt;
-&lt;p&gt;Give them a try:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Bold&lt;/strong&gt; (&lt;code&gt;Ctrl+B&lt;/code&gt;) and &lt;em&gt;Italic&lt;/em&gt; (&lt;code&gt;Ctrl+I&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Quotes (&lt;code&gt;Ctrl+Q&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Code blocks (&lt;code&gt;Ctrl+K&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Headings 1, 2, 3 (&lt;code&gt;Ctrl+1&lt;/code&gt;, &lt;code&gt;Ctrl+2&lt;/code&gt;, &lt;code&gt;Ctrl+3&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Lists (&lt;code&gt;Ctrl+U&lt;/code&gt; and &lt;code&gt;Ctrl+Shift+O&lt;/code&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;See your changes instantly with LivePreview&lt;/h3&gt;
-&lt;p&gt;Don't guess if your &lt;a href="http://markdownpad.com"&gt;hyperlink syntax&lt;/a&gt; is correct; LivePreview will show you exactly what your document looks like every time you press a key.&lt;/p&gt;
-&lt;h3&gt;Make it your own&lt;/h3&gt;
-&lt;p&gt;Fonts, color schemes, layouts and stylesheets are all 100% customizable so you can turn MarkdownPad into your perfect editor.&lt;/p&gt;
-&lt;h3&gt;A robust editor for advanced Markdown users&lt;/h3&gt;
-&lt;p&gt;MarkdownPad supports multiple Markdown processing engines, including standard Markdown, Markdown Extra (with Table support) and GitHub Flavored Markdown.&lt;/p&gt;
-&lt;p&gt;With a tabbed document interface, PDF export, a built-in image uploader, session management, spell check, auto-save, syntax highlighting and a built-in CSS management interface, there's no limit to what you can do with MarkdownPad.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Wed, 13 May 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.im,2015-05-13:create-blog.html</guid><category>github pages</category><category>pelican</category></item></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ysy记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 13 May 2015 23:04:47 -0000</lastBuildDate></channel></rss>
