@@ -70,6 +70,11 @@
                 <li ><a href="http://ysywh.github.io/pages/About.html">About Me</a></li>
                 <li class="divider-vertical"></li>
                 <li >
+                  <a href="http://ysywh.github.io/category/hadoop.html">
+						        <i class="icon-folder-open icon-large"></i>Hadoop
+					         </a>
+                </li>
+                <li >
                   <a href="http://ysywh.github.io/category/sdn.html">
 						        <i class="icon-folder-open icon-large"></i>SDN
 					         </a>
@@ -100,6 +105,8 @@
 <br/>
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/github-pages.html" class="label"><i class="icon-tag"></i>&nbsp;github pages</a>
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
+<span class="label">Lang</span>
+	<a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html"><i class="icon-edit"></i>zh</a>
 </footer><!-- /.post-info --></div>
     </div>
     <div class="span6">
@@ -116,6 +123,77 @@
 <li>Code blocks (<code>Ctrl+K</code>)</li>
 <li>Headings 1 ...</li></ul>
                 <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/05/13/create-blog.html">more ...</a>
+            </div>
+        </div>
+    </div>
+    <div class="span8">
+        <hr />
+    </div>
+    <div class="span2">
+        <div class="well small"><footer class="post-info">
+<abbr class="published" title="2015-03-01T12:12:00+08:00">
+    <i class="icon-calendar"></i>&nbsp;2015-03-01
+</abbr>
+<br/><a href="http://ysywh.github.io/author/ysy.html"><i class="icon-user"></i>&nbsp;ysy</a>
+
+
+<br/>
+	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/github-pages.html" class="label"><i class="icon-tag"></i>&nbsp;github pages</a>
+	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
+<span class="label">Lang</span>
+	<a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html"><i class="icon-edit"></i>zh</a>
+</footer><!-- /.post-info --></div>
+    </div>
+    <div class="span6">
+        <div class="article well">
+            <h1><a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html">docker搭建Hadoop的</a></h1>
+            <div class="summary"><h3>利用Docker搭建Hadoop集群环境和Wordcount实验</h3>
+<blockquote>
+<p>前言：初次接触docker和Hadoop，特此记录实验过程和学习心得</p>
+</blockquote>
+<h4>一：实验目标</h4>
+<ul>
+<li>
+<p>学习docker基本命令</p>
+</li>
+<li>
+<p>搭建只有一个master和两个slave的Hadoop集群环境</p>
+</li>
+<li>
+<p>进行wordcount实验,理解mapreduce和hdfs等工作机制</p>
+</li>
+<li>
+<p>实验心得</p>
+</li>
+</ul>
+<h4>二：docker基本命令</h4>
+<ul>
+<li>
+<p>启动容器：<code>docker run 镜像名</code></p>
+</li>
+<li>
+<p>暂停容器：<code>docker stop 容器名</code></p>
+</li>
+<li>
+<p>重启开启容器：<code>docker start 容器名</code></p>
+</li>
+<li>
+<p>进入容器：<code>docker attach 容器名</code></p>
+</li>
+</ul>
+<h4>三：Hadoop集群环境搭建</h4>
+<h5>1. Hadoop集群分为一个master和两个slave，因此依次用docker开启相应容器,其中需要做端口映射：</h5>
+<blockquote>
+<p><img alt="1" src="http://10.106.128.234/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
+<p><img alt="2" src="http://10.106.128.234/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
+<p><img alt="3" src="http://10.106.128.234/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
+</blockquote>
+<h5>2. 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd start '</h5>
+<blockquote>
+<p><img alt="4" src="http://10.106.128.234/uploads/course/course_hadoop/d29157c596/4.png" /></p>
+</blockquote>
+<h5>3. 分别登陆master和slave，利用命令chkconfig命令查看服务 ...</h5>
+                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/03/01/create-blog.html">more ...</a>
             </div>
         </div>
     </div>
@@ -141,20 +219,25 @@
 
 <li class="nav-header"><h4><i class="icon-folder-close icon-large"></i>Categories</h4></li>
 <li>
+<a href="http://ysywh.github.io/category/hadoop.html">
+    <i class="icon-folder-open icon-large"></i>Hadoop
+</a>
+</li>
+<li>
 <a href="http://ysywh.github.io/category/sdn.html">
     <i class="icon-folder-open icon-large"></i>SDN
 </a>
 </li>
 
 <li class="nav-header"><a href="http://ysywh.github.io/tags.html"><h4><i class="icon-tags icon-large"></i>Tags</h4></a></li>
-    <li class="tag-4">
-        <a href="http://ysywh.github.io/tag/github-pages.html">
-            <i class="icon-tag icon-large"></i>github pages
-        </a>
-    </li>
-    <li class="tag-4">
+    <li class="tag-1">
         <a href="http://ysywh.github.io/tag/pelican.html">
             <i class="icon-tag icon-large"></i>pelican
+        </a>
+    </li>
+    <li class="tag-1">
+        <a href="http://ysywh.github.io/tag/github-pages.html">
+            <i class="icon-tag icon-large"></i>github pages
         </a>
     </li>
 

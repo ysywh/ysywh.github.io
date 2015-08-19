@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Blog about Me and my Linux | ysy记录点滴</title>
+    <title>docker搭建Hadoop的 | ysy记录点滴</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="" />
     <meta name="author" content="yansy" />
@@ -69,7 +69,7 @@
                   <li><a href="URL">ITEM2</a></li>
                 <li ><a href="http://ysywh.github.io/pages/About.html">About Me</a></li>
                 <li class="divider-vertical"></li>
-                <li >
+                <li class="active">
                   <a href="http://ysywh.github.io/category/hadoop.html">
 						        <i class="icon-folder-open icon-large"></i>Hadoop
 					         </a>
@@ -95,42 +95,8 @@
         <div class="span8" id="content">
 <div class="row">
     <div class="span2">
-        <div class="well small"><footer class="post-info">
-<abbr class="published" title="2015-05-13T12:11:00+08:00">
-    <i class="icon-calendar"></i>&nbsp;2015-05-13
-</abbr>
-<br/><a href="http://ysywh.github.io/author/ysy.html"><i class="icon-user"></i>&nbsp;ysy</a>
-
-
-<br/>
-	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/github-pages.html" class="label"><i class="icon-tag"></i>&nbsp;github pages</a>
-	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
-<span class="label">Lang</span>
-	<a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html"><i class="icon-edit"></i>zh</a>
-</footer><!-- /.post-info --></div>
-    </div>
-    <div class="span6">
-        <div class="article well">
-            <h1><a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html">搭建博客</a></h1>
-            <div class="summary"><h2>Welcome to MarkdownPad 2</h2>
-<p><strong>MarkdownPad</strong> is a full-featured Markdown editor for Windows.</p>
-<h3>Built exclusively for Markdown</h3>
-<p>Enjoy first-class Markdown support with easy access to  Markdown syntax and convenient keyboard shortcuts.</p>
-<p>Give them a try:</p>
-<ul>
-<li><strong>Bold</strong> (<code>Ctrl+B</code>) and <em>Italic</em> (<code>Ctrl+I</code>)</li>
-<li>Quotes (<code>Ctrl+Q</code>)</li>
-<li>Code blocks (<code>Ctrl+K</code>)</li>
-<li>Headings 1 ...</li></ul>
-                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/05/13/create-blog.html">more ...</a>
-            </div>
-        </div>
-    </div>
-    <div class="span8">
-        <hr />
-    </div>
-    <div class="span2">
-        <div class="well small"><footer class="post-info">
+        <div class="well">
+<footer class="post-info">
 <abbr class="published" title="2015-03-01T12:12:00+08:00">
     <i class="icon-calendar"></i>&nbsp;2015-03-01
 </abbr>
@@ -142,12 +108,23 @@
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
 <span class="label">Lang</span>
 	<a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html"><i class="icon-edit"></i>zh</a>
-</footer><!-- /.post-info --></div>
+</footer><!-- /.post-info -->        </div>
     </div>
     <div class="span6">
-        <div class="article well">
-            <h1><a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html">docker搭建Hadoop的</a></h1>
-            <div class="summary"><h3>利用Docker搭建Hadoop集群环境和Wordcount实验</h3>
+<section id="content" class="well">
+    <article>
+        <header>
+            <h1>
+                <a href=""
+                        rel="bookmark"
+                        title="Permalink to docker搭建Hadoop的">
+                        docker搭建Hadoop的
+                </a>
+            </h1>
+        </header>
+        <div class="entry-content">
+
+        <h3>利用Docker搭建Hadoop集群环境和Wordcount实验</h3>
 <blockquote>
 <p>前言：初次接触docker和Hadoop，特此记录实验过程和学习心得</p>
 </blockquote>
@@ -192,16 +169,75 @@
 <blockquote>
 <p><img alt="4" src="http://10.106.128.234/uploads/course/course_hadoop/d29157c596/4.png" /></p>
 </blockquote>
-<h5>3. 分别登陆master和slave，利用命令chkconfig命令查看服务 ...</h5>
-                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/03/01/create-blog.html">more ...</a>
-            </div>
+<h5>3. 分别登陆master和slave，利用命令chkconfig命令查看服务</h5>
+<blockquote>
+<p><img alt="5" src="http://10.106.128.234/uploads/course/course_hadoop/83312aa0f6/5.png" /></p>
+</blockquote>
+<h5>4. master上开启相应服务：</h5>
+<p>开启Hadoop服务：service hadoop-hdfs-namenode start</p>
+<p>开启mapreduce服务：service hadoop-yarn-resourcemanager start</p>
+<p>开启任务记录的服务：service hadoop-mapreduce-historyserver start</p>
+<blockquote>
+<p><img alt="6" src="http://10.106.128.234/uploads/course/course_hadoop/6e2e318e55/6.png" /></p>
+</blockquote>
+<h5>5. 在两个slave上分别开启Hadoop服务和mapreduce服务：</h5>
+<p>service hadoop-hdfs-datanode start</p>
+<p>service hadoop-yarn-nodemanager start</p>
+<blockquote>
+<p><img alt="7" src="http://10.106.128.234/uploads/course/course_hadoop/3a2cf8df6a/70.png" /></p>
+</blockquote>
+<h5>6. 三项服务分别可以在web端验证服务是否正确打开。至此，hadoop集群环境搭建完毕</h5>
+<p>192.168.59.103:50070</p>
+<p>192.168.59.103:8088</p>
+<p>192.168.59.103:19888</p>
+<blockquote>
+<p><img alt="8" src="http://10.106.128.234/uploads/course/course_hadoop/2ff2b313c1/8.png" /></p>
+</blockquote>
+<h4>三：Wordcount实验</h4>
+<h5>1. 建立一个text文件，写入内容，并put入hdfs文件系统后命名为wordcount.input文件，并查看其内容：</h5>
+<blockquote>
+<p><img alt="9" src="http://10.106.128.234/uploads/course/course_hadoop/47c3b12887/7.png" /></p>
+</blockquote>
+<h5>2. 利用Wordcount脚本进行单词计数的简单实验,经过map和reduce等操作把经过输出到Wordcount.output中:</h5>
+<blockquote>
+<p><img alt="10" src="http://10.106.128.234/uploads/course/course_hadoop/f93f01d942/9.png" /></p>
+</blockquote>
+<h5>3. 登陆web可以观察任务状态，在输出文件中查看Wordcount结果，和预想结果相同，试验成功：</h5>
+<blockquote>
+<p><img alt="11" src="http://10.106.128.234/uploads/course/course_hadoop/7bd9c88362/8.png" /></p>
+<p><img alt="12" src="http://10.106.128.234/uploads/course/course_hadoop/bccbdf2a9e/10.png" /></p>
+<p><img alt="13" src="http://10.106.128.234/uploads/course/course_hadoop/9b7e274748/11.png" /></p>
+</blockquote>
+<h4>四：实验心得</h4>
+<h5>1. 对hdfs文件系统有了基本了解，利用简单的Wordcount实验对map和reduce有了直观认识，深觉此技术的有用性</h5>
+<h5>2. 虽然完成本次试验，但是简单的实验还不能对Hadoop有更深刻的学习，希望今后学习其架构及其源码，多做实验达到学习的目的</h5>
+<h5>3. 最后简单记录一下遇到的问题：</h5>
+<ul>
+<li>
+<p>每次开启容器后，ip可能会发生变化，要记得修改hosts文件，否则会出现 <code>Hadoop fs shell</code> 无法操作的问题</p>
+</li>
+<li>
+<p>其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 </p>
+</li>
+</ul>
+<p>-------2015.3.24</p>
+        </div><!-- /.entry-content -->
+        <div class="comments">
+        <h2>Comments !</h2>
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+               var disqus_identifier = "pages/2015/03/01/create-blog.html";
+               (function() {
+                    var dsq = document.createElement('script');
+                    dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = 'http://ysywhgithubio.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] ||
+                     document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+            </script>
         </div>
-    </div>
-    <div class="span8">
-        <hr />
-    </div>
-
-<div class="span6">
+    </article>
+</section>
 </div>
 </div>
         </div><!--/span-->
