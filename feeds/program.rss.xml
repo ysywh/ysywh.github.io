@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ysy记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/program.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 30 Aug 2015 17:30:00 +0800</lastBuildDate><item><title>数据结构</title><link>http://ysywh.github.io/pages/2015/06/01/create-blog.html</link><description>&lt;p&gt;程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;数据结构&lt;/strong&gt;：一组有特定数据关系的数据元素集合。根据数据关系，因此衍生出以下四种基本类型的数据结构：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;集合结构 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;线性结构&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;树形结构&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;图结构&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;集合结构就像数学中的集合，很好理解；线性结构就是数据中一对一关系；树形结构就是数据是一对多关系；图结构就是多对多关系。虽然这样描述不准确，但好理解就OK。&lt;/p&gt;
+&lt;p&gt;说到数据结构，让我想起 &lt;strong&gt;数据类型&lt;/strong&gt;，简单的认为，数据类型是带有操作的值的总称，是操作的对象。数据类型有基本数据类型和非基本数据类型，如在C语言中，基本数据类型如int类型，其操作可以有加减乘除等操作，非基本数据类型，可以是数据结构和定义的操作，如顺序表（线性结构）和一些插入删除的操作，其实在C++中，类也算是一种高级的数据类型，因为含有数据成员和成员函数。&lt;/p&gt;
+&lt;p&gt;说完数据类型，再来看数据结构，每种数据结构都可以有一些相应的操作，比如插入、删除或查找数据等，好吧，数据结构加上操作就是可以使用的数据类型了。而插入对于不同的数据类型，甚至同一种数据结构，相同操作的机理也是不同的。比如对于链式存储的线性表（链表）和顺序存储的线性表（顺序表）对于查找操作的机理也是不一样的，即用不同方法查找（二分查找、Fbonacci查找）的效率不同，这就牵扯到&lt;strong&gt;算法&lt;/strong&gt;了。当然，除了数据结构操作的方法，包括一些其他问题解决办法，比如排序方法（冒泡排序、插入排序），都是有具体的算法的。算法的优劣，需要根据具体情况采用具体的解决办法，这才是最优的。&lt;/p&gt;
+&lt;p&gt;刚才数据结构中提到的数据关系，其实是一种逻辑关系，真正在计算机中存储不同数据结构，都会有两种物理关系，顺序存储和链式存储。必定这种物理关系需要反应在语言上，顺序存储则对应数据类型中的一维数组，链式存储则是一系列指针类型。因此，实现不同数据结构都可以使用顺序存储和链式存储，则数据结构和采用实现的存储结构无直接关系。比如，对于线性结构的线性表，可以是顺序存储实现，称为顺序表，也可以是链式存储实现，称为链式表。&lt;/p&gt;
+&lt;p&gt;当然，用不同存储方法实现数据结构后，对数据结构进行操作是有差异的。顺序存储最大的特点就是利于查找，即通过数组下标就可以快速完成，但是插入或是删除数据需要移动其他元素，复杂度O(n)；但是对于链式存储，插入和删除非常便利，因为是指针直接操作目标元素，不需要操作其他元素，但是对于查找等操作，却需要逐一遍历到目标元素才可以，不如顺序存储。虽然各有优劣，还是老话，需要根据实际情况选择合适的实现方式。&lt;/p&gt;
+&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/create-blog.html</guid><category>github pages</category><category>pelican</category></item></channel></rss>
