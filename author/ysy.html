@@ -112,6 +112,7 @@
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
 <span class="label">Lang</span>
 	<a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html"><i class="icon-edit"></i>zh</a>
+	<a href="http://ysywh.github.io/pages/2015/03/05/create-blog.html"><i class="icon-edit"></i>zh</a>
 	<a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html"><i class="icon-edit"></i>zh</a>
 </footer><!-- /.post-info --></div>
     </div>
@@ -157,6 +158,7 @@
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/github-pages.html" class="label"><i class="icon-tag"></i>&nbsp;github pages</a>
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
 <span class="label">Lang</span>
+	<a href="http://ysywh.github.io/pages/2015/03/05/create-blog.html"><i class="icon-edit"></i>zh</a>
 	<a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html"><i class="icon-edit"></i>zh</a>
 	<a href="http://ysywh.github.io/pages/2015/06/01/create-blog.html"><i class="icon-edit"></i>zh</a>
 </footer><!-- /.post-info --></div>
@@ -183,6 +185,65 @@
     </div>
     <div class="span2">
         <div class="well small"><footer class="post-info">
+<abbr class="published" title="2015-03-05T18:10:00+08:00">
+    <i class="icon-calendar"></i>&nbsp;2015-03-05
+</abbr>
+<br/><a href="http://ysywh.github.io/author/ysy.html"><i class="icon-user"></i>&nbsp;ysy</a>
+
+
+<br/>
+	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/github-pages.html" class="label"><i class="icon-tag"></i>&nbsp;github pages</a>
+	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
+<span class="label">Lang</span>
+	<a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html"><i class="icon-edit"></i>zh</a>
+	<a href="http://ysywh.github.io/pages/2015/03/01/create-blog.html"><i class="icon-edit"></i>zh</a>
+	<a href="http://ysywh.github.io/pages/2015/06/01/create-blog.html"><i class="icon-edit"></i>zh</a>
+</footer><!-- /.post-info --></div>
+    </div>
+    <div class="span6">
+        <div class="article well">
+            <h1><a href="http://ysywh.github.io/pages/2015/03/05/create-blog.html">MapReduce 之 letter count</a></h1>
+            <div class="summary"><h3>MapReduce编程环境的搭建</h3>
+<blockquote>
+<p>本节尝试 MapReduce编程环境，安装Eclipse，并且运行lettercount代码进行验证。</p>
+</blockquote>
+<h4>一：环境搭建和lettercount实验</h4>
+<h4>1. 根据file中提供的压缩包，在win8上解压安装了eclipse，并且加载Hadoop库和环境变量。</h4>
+<h4>2. 创建新的工程lettercount,并且加载需要的Hadoop库：</h4>
+<blockquote>
+<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
+<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
+<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
+</blockquote>
+<h4>3. 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码：</h4>
+<blockquote>
+<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
+</blockquote>
+<h4>4. 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</h4>
+<blockquote>
+<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
+<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
+</blockquote>
+<h4>5. 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</h4>
+<blockquote>
+<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
+</blockquote>
+<h4>6. 可以通过对比输入文件内容，比较计算的输出的结果,输出文件为两个：</h4>
+<blockquote>
+<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p>
+</blockquote>
+<h4>二：后记</h4>
+<p>好久没有Java编程，今天通过简单的修改lettercount又重新熟悉了Java，但还是不娴熟，需要进一步提高学习。</p>
+<p>其次，编程环境搭建在win8上，很不方便，有机会直接搭建在带有hadoop的Linux系统中。</p>
+                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/03/05/create-blog.html">more ...</a>
+            </div>
+        </div>
+    </div>
+    <div class="span8">
+        <hr />
+    </div>
+    <div class="span2">
+        <div class="well small"><footer class="post-info">
 <abbr class="published" title="2015-03-01T12:12:00+08:00">
     <i class="icon-calendar"></i>&nbsp;2015-03-01
 </abbr>
@@ -194,6 +255,7 @@
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/pelican.html" class="label"><i class="icon-tag"></i>&nbsp;pelican</a>
 <span class="label">Lang</span>
 	<a href="http://ysywh.github.io/pages/2015/05/13/create-blog.html"><i class="icon-edit"></i>zh</a>
+	<a href="http://ysywh.github.io/pages/2015/03/05/create-blog.html"><i class="icon-edit"></i>zh</a>
 	<a href="http://ysywh.github.io/pages/2015/06/01/create-blog.html"><i class="icon-edit"></i>zh</a>
 </footer><!-- /.post-info --></div>
     </div>
@@ -289,13 +351,13 @@
 
 <li class="nav-header"><a href="http://ysywh.github.io/tags.html"><h4><i class="icon-tags icon-large"></i>Tags</h4></a></li>
     <li class="tag-1">
-        <a href="http://ysywh.github.io/tag/pelican.html">
-            <i class="icon-tag icon-large"></i>pelican
+        <a href="http://ysywh.github.io/tag/github-pages.html">
+            <i class="icon-tag icon-large"></i>github pages
         </a>
     </li>
     <li class="tag-1">
-        <a href="http://ysywh.github.io/tag/github-pages.html">
-            <i class="icon-tag icon-large"></i>github pages
+        <a href="http://ysywh.github.io/tag/pelican.html">
+            <i class="icon-tag icon-large"></i>pelican
         </a>
     </li>
 
