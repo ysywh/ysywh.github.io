@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>About Me | ysy记录点滴</title>
+    <title>letter_count | ysy记录点滴</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="" />
     <meta name="author" content="yansy" />
@@ -67,11 +67,10 @@
             <ul class="nav">
                   <li><a href="http://github.com">ITEM1</a></li>
                   <li><a href="URL">ITEM2</a></li>
-                <li class="active"><a href="http://ysywh.github.io/pages/About.html">About Me</a></li>
-                <li ><a href="http://ysywh.github.io/pages/create-blog.html">搭建博客</a></li>
-                <li ><a href="http://ysywh.github.io/pages/create-blog.html">letter_count</a></li>
-                <li ><a href="http://ysywh.github.io/pages/create-blog.html">docker搭建Hadoop的</a></li>
-                <li ><a href="http://ysywh.github.io/pages/create-blog.html">数据结构</a></li>
+                <li ><a href="http://ysywh.github.io/pages/About me.html">About Me</a></li>
+                <li class="active"><a href="http://ysywh.github.io/pages/MapReduce 之 letter count.html">letter_count</a></li>
+                <li ><a href="http://ysywh.github.io/pages/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></li>
+                <li ><a href="http://ysywh.github.io/pages/数据结构.html">数据结构</a></li>
                 <li class="divider-vertical"></li>
               <ul class="nav pull-right">
                     <li><a href="http://ysywh.github.io/archives.html"><i class="icon-th-list"></i>Archives</a></li>
@@ -88,10 +87,24 @@
       <div class="row">
         <div class="span8" id="content">
 <section id="content" class="body well">
-    <h1 class="entry-title">About Me</h1>
-    <p>--</p>
-<h4>这是我的博客，会记录一些点点滴滴，比如小程序，小实验，小感悟，小事情等等。总之，在这里，可以发现我的成长足迹...</h4>
-<h4>OK，就这么多，让我们开启旅程 ^/ ^</h4>
+    <h1 class="entry-title">letter_count</h1>
+    <h3>MapReduce之Letter count</h3>
+<p>2015-3-2 by ysy  </p>
+<p><br></p>
+<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
+<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
+<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
+<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
+<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
+<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
+<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
+<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
+<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
+<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
+<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
+<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
+<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
+<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p>
 </section>
         </div><!--/span-->
         <div class="span3 well sidebar-nav" id="sidebar">

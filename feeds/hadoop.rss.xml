@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ysy记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/hadoop.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 01 Oct 2015 17:30:00 +0800</lastBuildDate><item><title>MapReduce 之 letter count</title><link>http://ysywh.github.io/pages/2015/03/05/create-blog.html</link><description>&lt;h3&gt;MapReduce编程环境的搭建&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ysy记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/hadoop.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 01 Oct 2015 17:30:00 +0800</lastBuildDate><item><title>letter_count</title><link>http://ysywh.github.io/pages/2015/03/05/create-blog.html</link><description>&lt;h3&gt;MapReduce编程环境的搭建&lt;/h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;本节尝试 MapReduce编程环境，安装Eclipse，并且运行lettercount代码进行验证。&lt;/p&gt;
 &lt;/blockquote&gt;
