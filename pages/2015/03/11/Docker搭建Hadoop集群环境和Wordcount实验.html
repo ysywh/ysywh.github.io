@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>YsY记录点滴 - Hadoop | YsY记录点滴</title>
+    <title>Docker搭建Hadoop集群环境和Wordcount实验 | YsY记录点滴</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="" />
     <meta name="author" content="yansy" />
@@ -99,7 +99,8 @@
         <div class="span8" id="content">
 <div class="row">
     <div class="span2">
-        <div class="well small"><footer class="post-info">
+        <div class="well">
+<footer class="post-info">
 <abbr class="published" title="2015-03-11T12:12:00+08:00">
     <i class="icon-calendar"></i>&nbsp;2015-03-11
 </abbr>
@@ -109,12 +110,23 @@
 <br/>
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/mapreduce.html" class="label"><i class="icon-tag"></i>&nbsp;mapreduce</a>
 	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/word-count.html" class="label"><i class="icon-tag"></i>&nbsp;word count</a>
-</footer><!-- /.post-info --></div>
+</footer><!-- /.post-info -->        </div>
     </div>
     <div class="span6">
-        <div class="article well">
-            <h1><a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></h1>
-            <div class="summary"><h3>Docker搭建Hadoop集群环境和Wordcount实验</h3>
+<section id="content" class="well">
+    <article>
+        <header>
+            <h1>
+                <a href=""
+                        rel="bookmark"
+                        title="Permalink to Docker搭建Hadoop集群环境和Wordcount实验">
+                        Docker搭建Hadoop集群环境和Wordcount实验
+                </a>
+            </h1>
+        </header>
+        <div class="entry-content">
+
+        <h3>Docker搭建Hadoop集群环境和Wordcount实验</h3>
 <p>2015-3-8 by ysy   </p>
 <p><br></p>
 <p>利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  </p>
@@ -152,56 +164,63 @@
 <p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
 <p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
 <p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
-<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 ...</p>
-                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">more ...</a>
-            </div>
+<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd start '</p>
+<p><img alt="4" src="http://gitlab.local/uploads/course/course_hadoop/d29157c596/4.png" /></p>
+<p>3 分别登陆master和slave，利用命令chkconfig命令查看服务</p>
+<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/83312aa0f6/5.png" /></p>
+<p>4 master上开启相应服务：</p>
+<p>开启Hadoop服务：service hadoop-hdfs-namenode start</p>
+<p>开启mapreduce服务：service hadoop-yarn-resourcemanager start</p>
+<p>开启任务记录的服务：service hadoop-mapreduce-historyserver start</p>
+<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/6e2e318e55/6.png" /></p>
+<p>5 在两个slave上分别开启Hadoop服务和mapreduce服务：</p>
+<p>service hadoop-hdfs-datanode start</p>
+<p>service hadoop-yarn-nodemanager start</p>
+<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/3a2cf8df6a/70.png" /></p>
+<p>6 三项服务分别可以在web端验证服务是否正确打开。至此，hadoop集群环境搭建完毕</p>
+<p>192.168.59.103:50070</p>
+<p>192.168.59.103:8088</p>
+<p>192.168.59.103:19888</p>
+<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/2ff2b313c1/8.png" /></p>
+<h4>三：Word count实验</h4>
+<p>word count 实验就是利用Mapreduce框架，对文本中的单词进行数量统计。</p>
+<p>1 建立一个text文件，写入内容，并put入hdfs文件系统后命名为wordcount.input文件，并查看其内容：</p>
+<p><img alt="9" src="http://gitlab.local/uploads/course/course_hadoop/47c3b12887/7.png" /></p>
+<p>2 利用Wordcount脚本进行单词计数的简单实验,经过map和reduce等操作把经过输出到Wordcount.output中:</p>
+<p><img alt="10" src="http://gitlab.local/uploads/course/course_hadoop/f93f01d942/9.png" /></p>
+<p>3 登陆web可以观察任务状态，在输出文件中查看Wordcount结果，和预想结果相同，试验成功：</p>
+<p><img alt="11" src="http://gitlab.local/uploads/course/course_hadoop/7bd9c88362/8.png" /></p>
+<p><img alt="12" src="http://gitlab.local/uploads/course/course_hadoop/bccbdf2a9e/10.png" /></p>
+<p><img alt="13" src="http://gitlab.local/uploads/course/course_hadoop/9b7e274748/11.png" /></p>
+<h4>四：心得</h4>
+<p>1 对hdfs文件系统有了基本了解，利用简单的Wordcount实验对map和reduce有了直观认识，深觉此技术的有用性</p>
+<p>2 虽然完成本次试验，但是简单的实验还不能对Hadoop有更深刻的学习，希望今后学习其架构及其源码，多做实验达到学习的目的</p>
+<p>3 最后简单记录一下遇到的问题：</p>
+<ul>
+<li>
+<p>每次开启容器后，ip可能会发生变化，要记得修改hosts文件，否则会出现 <code>Hadoop fs shell</code> 无法操作的问题</p>
+</li>
+<li>
+<p>其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 </p>
+</li>
+</ul>
+        </div><!-- /.entry-content -->
+        <div class="comments">
+        <h2>Comments !</h2>
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+               var disqus_identifier = "pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html";
+               (function() {
+                    var dsq = document.createElement('script');
+                    dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = 'http://ysywhgithubio.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] ||
+                     document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+            </script>
         </div>
-    </div>
-    <div class="span8">
-        <hr />
-    </div>
-    <div class="span2">
-        <div class="well small"><footer class="post-info">
-<abbr class="published" title="2015-03-02T18:10:00+08:00">
-    <i class="icon-calendar"></i>&nbsp;2015-03-02
-</abbr>
-<br/><a href="http://ysywh.github.io/author/ysy.html"><i class="icon-user"></i>&nbsp;ysy</a>
-
-
-<br/>
-	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/mapreduce.html" class="label"><i class="icon-tag"></i>&nbsp;mapreduce</a>
-	&nbsp;&nbsp;<a href="http://ysywh.github.io/tag/letter-count.html" class="label"><i class="icon-tag"></i>&nbsp;letter count</a>
-</footer><!-- /.post-info --></div>
-    </div>
-    <div class="span6">
-        <div class="article well">
-            <h1><a href="http://ysywh.github.io/pages/2015/03/02/MapReduce 之 letter count.html">letter_count</a></h1>
-            <div class="summary"><h3>MapReduce之Letter count</h3>
-<p>2015-3-2 by ysy  </p>
-<p><br></p>
-<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
-<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
-<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
-<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
-<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
-<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
-<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
-<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
-<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
-<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
-<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p>
-                <a class="btn btn-small" href="http://ysywh.github.io/pages/2015/03/02/MapReduce 之 letter count.html">more ...</a>
-            </div>
-        </div>
-    </div>
-    <div class="span8">
-        <hr />
-    </div>
-
-<div class="span6">
+    </article>
+</section>
 </div>
 </div>
         </div><!--/span-->
