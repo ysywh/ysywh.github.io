@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/hadoop.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link href="http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html" rel="alternate"></link><updated>2015-08-19T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-11:pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html</id><summary type="html">&lt;h3&gt;Docker搭建Hadoop集群环境和Wordcount实验&lt;/h3&gt;
-&lt;p&gt;2015-3-8 by ysy   &lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/hadoop.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link href="http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html" rel="alternate"></link><updated>2015-08-19T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-11:pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html</id><summary type="html">&lt;p&gt;2015-3-8 by ysy   &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  &lt;/p&gt;
+&lt;hr /&gt;
 &lt;h4&gt;一：实验目标&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -76,10 +76,10 @@
 &lt;li&gt;
 &lt;p&gt;其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 &lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</summary><category term="mapreduce"></category><category term="word count"></category></entry><entry><title>letter_count</title><link href="http://ysywh.github.io/pages/2015/03/02/MapReduce%20%E4%B9%8B%20letter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce 之 letter count.html</id><summary type="html">&lt;h3&gt;MapReduce之Letter count&lt;/h3&gt;
-&lt;p&gt;2015-3-2 by ysy  &lt;/p&gt;
+&lt;/ul&gt;</summary><category term="mapreduce"></category><category term="word count"></category></entry><entry><title>letter_count</title><link href="http://ysywh.github.io/pages/2015/03/02/MapReduce%E4%B9%8Bletter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce之letter count.html</id><summary type="html">&lt;p&gt;2015-3-2 by ysy  &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。&lt;/p&gt;
+&lt;hr /&gt;
 &lt;p&gt;1 创建新的工程lettercount,并且加载需要的Hadoop库：&lt;/p&gt;
 &lt;p&gt;&lt;img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /&gt;&lt;/p&gt;

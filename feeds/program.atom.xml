@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/program.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-08-30T17:30:00+08:00</updated><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;h3&gt;数据结构&lt;/h3&gt;
-&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/program.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-08-30T17:30:00+08:00</updated><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。&lt;/p&gt;
 &lt;hr /&gt;
