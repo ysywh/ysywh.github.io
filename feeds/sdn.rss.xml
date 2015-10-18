@@ -1,5 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 30 Aug 2015 17:30:00 +0800</lastBuildDate><item><title>OVS源码分析----用户层处理Upcall消息</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 30 Aug 2015 17:30:00 +0800</lastBuildDate><item><title>OVS源码分析----datapath消息处理</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h3&gt;前言&lt;/h3&gt;
+&lt;p&gt;当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。&lt;/p&gt;
+&lt;p&gt;generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。&lt;/p&gt;
+&lt;p&gt;通信前，作为服务端的内核态要定义family（指定信道类型）和operation（处理函数），并且进行注册，则客户端可以通过注册的信息与之交互。直接以ovs内核态为例分析：&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;一 内核态对flow的接收与处理&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;1 定义注册genl数据结构（datapath\datapth.c）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_family dp_flow_genl_family = {
+    .id = GENL_ID_GENERATE,
+    .hdrsize = sizeof(struct ovs_header),
+    .name = OVS_FLOW_FAMILY,
+    .version = OVS_FLOW_VERSION,
+    .maxattr = OVS_FLOW_ATTR_MAX,
+     SET_NETNSOK
+};
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个是genl family结构体定义，名字dp_flow_genl_family，用来处理flow的family。参数都是genl family结构体的部分属性，对其进行初始化。id和name即为family id和name。hdrsize定义ovs协议头长度，genl使用netlink标准的attr来传输数据。注意，客户端通过name就可以发送数据，让指定的family接收。如一种8的dpif_linux_flow_to_ofpbuf函数中，就会调用函数nl_msg_put_genlmsghdr，传入参数ovs_flow_family，从而制定了内核接收到的通道family。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_ops dp_flow_genl_ops[] = {
+    { .cmd = OVS_FLOW_CMD_NEW,
+      .flags = GENL_ADMIN_PERM, /* Requires CAP_NET_ADMIN privilege. */
+      .policy = flow_policy,
+      .doit = ovs_flow_cmd_new_or_set
+    },…..
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个是genl operation的定义，名为dp_flow_genl_ops，主要用来定义对于flow的处理函数的定义。由于定义了数组，值罗列第一个genl ops。cmd是命令名字，可以看出处理函数的功能（这里主要是加入、更新或删除流表项flow），flag是属性设置，policy是接收到数据后，但没有触发事件处理函数之前所执行的过滤准则，比如对帧中数据attr的校验。doit是回调函数，generic netlink接收到数据触发，运行在进程上下文中，是对来自用户态数据进行执行操作的重点。doit函数接收skb和genl_info两个数据，skb即为触发此回调函数的socket buffer，genl_info结构体包含发送序号、发送客户端pid，头部指针和attrs(即经过genl_ops-&amp;gt;policy过滤后的结果，包含传递的数据。)。当然有的还有回调函数dumpit, dumpit与doit的区别是:dumpit的第一个参数skb不会携带从客户端发来的数据.
+定义实例化完family和ops后，需要通过genl_register_family和genl_register_ops进行注册。这样则可以进行通信。&lt;/p&gt;
+&lt;p&gt;2 调用处理函数进行流表项处理操作。
+定义注册完famliy和ops，即可与用户态进行交互（用户态通过指定famliy指定通信通道，从而内核态接收数据会触发相应的ops回调函数进行处理）。下来分析来自用户态下发flow的流表项处理。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static int ovs_flow_cmd_new_or_set(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这个是内核态对于flow的增加或是更新（action更新）的处理函数。判断不存在相同流表项，则扩展table、分配流表项空间然后把流表项flow放入bucket中。存在的话则更新action即可。&lt;/p&gt;
+&lt;p&gt;具体分析一下，首先需要把用户态传递过来的数据提取出来**a = info-&amp;gt;attrs，前面分析可知，传入参数info这个结构体数据成员attrs，attrs既是policy过滤后的数据。之后，调用函数ovs_flow_from_nlattrs，从a中提取key，调用validate_and_copy_actions把a中action放入变量acts（此处判断若为OVS_FLOW_CMD_NEW类型，即对于增加新流表项却没有action报错）。此后利用get_dp函数得到插入流表项的datapath（info-&amp;gt;userhdr-&amp;gt;dp_ifindex-&amp;gt;net_device -&amp;gt; vport -&amp;gt; datapath），继而找到相应流表table。&lt;/p&gt;
+&lt;p&gt;为了确认是否已存在相同流表项，先查找流表项flow = ovs_flow_tbl_lookup(table, &amp;amp;key, key_len);主要通过在table中匹配key查找。先分析不存在flow为false，则进入加入新流表项if语句中，先排除不是更新流表项操作（OVS_FLOW_CMD_SET），然后调用函数ovs_flow_tbl_expand扩展流表table空间，方便之后添加新流表项，然后分配流表项空间ovs_flow_alloc。下来即重要函数ovs_flow_tbl_insert，其向bucket中插入流表项flow，调用ovs_flow_cmd_build_info构造回复用户层的通知消息。对于存在流表项即只更新action部分，不再赘述。&lt;/p&gt;
+&lt;p&gt;对于ops中其他回调函数，如ovs_flow_cmd_del（删除流表项）原理一样，主要通过判断flow是否存在，存在则调用ovs_flow_tbl_remove (table, flow)函数删除流表项。&lt;/p&gt;
+&lt;p&gt;3 插入流表项&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;void ovs_flow_tbl_insert(struct flow_table *table, struct sw_flow *flow,
+             struct sw_flow_key *key, int key_len)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;关系：在ovs_flow_cmd_new_or_set中调用&lt;/p&gt;
+&lt;p&gt;功能：插入流表项。&lt;/p&gt;
+&lt;p&gt;数据结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;sw_flow：流表项flow的数据结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主要数据成员&lt;ul&gt;
+&lt;li&gt;sw_flow_key类型的key:key可以称为查找key，就是匹配流表项的匹配域字段组合（port、优先级、l2-l4），&lt;/li&gt;
+&lt;li&gt;sw_flow_actions类型的sf_acts:sf_acts用来存贮action的类型。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;flow_table：流表结构体&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主要成员&lt;ul&gt;
+&lt;li&gt;flex_array类型的bucket&lt;/li&gt;
+&lt;li&gt;锁rcu_head的rcu。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;之前2中分析了内核态接收到消息，提取出key和action等，找出相应datapath和table，则向table中插入流表项，现在主要分析如何向table插入流表项flow。&lt;/p&gt;
+&lt;p&gt;在ovs_flow_tbl_insert函数前，先调用函数rcu_assign_pointer(flow-&amp;gt;sf_acts, acts)把action插入到空白流表项flow的sf_acts（flow的action）字段中。则调用流表项插入函数ovs_flow_tbl_insert，传入table、流表项flow（目前只有action字段初始化了）、匹配域key等参数。函数中，调用函数ovs_flow_hash把key 进行hash后放入flow-&amp;gt;hash再通过memcpy函数把key复制到flow的key字段，即此时flow流表项就构成了，有了匹配域key和action两个重要部分。此时调用__flow_tbl_insert函数把flow插入table相应位置即可。函数中，先通过find_bucket函数，利用flow-&amp;gt;hash在table中找到应插入的哈希桶位置头部head，然后通过函数hlist_add_head_rcu把头部位置head写入flow-&amp;gt;hash_node参数即完成flow插入。可以看到flow中key的hash可以定位插入table的哈希桶位置。&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;二 内核态接收处理packet&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;内核态接受处理packet和接受处理flow原理类似，也是先定义注册generic netlink的family（name为OVS_PACKET_FAMILY）和ops，见用户层8）中调用函数dpif_linux_encode_execute发送packet包时，会指明OVS_PACKET_FAMILY通道，则会触发此通道的ops回调函数进行packet接收处理。下来详细对此回调函数ovs_packet_cmd_execute进行分析。&lt;/p&gt;
+&lt;p&gt;1 内核态调用回调函数接收处理packet &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;位置：datapath/datapath.c&lt;/p&gt;
+&lt;p&gt;调用memcpy函数把netlink接收到数据a的packet部分(应该是传统包内容)提取到packet参数中，a中还有action等字段。接下来会构造一个sw_flow结构体的flow来发送packet：&lt;/p&gt;
+&lt;p&gt;调用ovs_flow_extract函数，从packet的以太网帧头中提取key部分构造流表项flow的匹配域key，此
+外，还会调用函数ovs_flow_metadata_from_nlattrs直接从a的key字段解析补充flow的key，这些是a的packet中提取不到的一些字段（如tunnel id）。调用validate_and_copy_actions函数把actions提取到变量acts中，从而进一步利用函数rcu_assign_pointer把动作acts放入flow的action字段sf_acts中。此时匹配此packet的flow流表项构成。调用OVS_CB(packet)-&amp;gt;flow = flow;把flow放入packet的OVS_CB中（不理解？在后面处理packet时候可以直接关联找到此packet的action）。获取dp后调用函数ovs_execute_actions执行packet的动作。&lt;/p&gt;
+&lt;p&gt;2 执行packet关联的所有action&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int ovs_execute_actions(struct datapath *dp, struct sk_buff *skb)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;位置：datapath\actions.c&lt;/p&gt;
+&lt;p&gt;最开始就直接通过acts = rcu_dereference(OVS_CB(skb)-&amp;gt;flow-&amp;gt;sf_acts)提取出packet（即skb）的所有actio n。然后函数do_execute_actions（datapath\actions）传入dp、skb和action对packet执行一系列actions。在函数do_execute_actions中，通过逐一循环判断action类型，从而执行相应的操作。&lt;/p&gt;
+&lt;p&gt;这里主要讨论包处理类型为从端口输出，则会从packet中提取output端口号到参数pre_port，从而每次循环结束后调用do_output函数发送packet包，发送时候会对包进行克隆。&lt;/p&gt;
+&lt;p&gt;在do_output函数中，通过调用函数ovs_vport_rcu，利用参数dp和out_port得到发送端口实体vport（datapath端口结构体），从而调用ovs_vport_send(vport, skb)把packet发送到指定vport。&lt;/p&gt;
+&lt;p&gt;当然除了输出端口操作，还有push_vlan、pop_vlan、output_userspace（发送包到用户空间）等操作。对于发送用户空间会调用output_userspace函数，函数中调用ovs_dp_upcal（datapath\datapath.c）发送upcall消息，不再赘述。&lt;/p&gt;
+&lt;p&gt;3 调用底层设备进行packet发送&lt;/p&gt;
+&lt;p&gt;结构体：vport（datapath\vport.h）端口号、所属dp外有一个重要成员vport_ops，定义了端口所能执行的所有操作行为。&lt;/p&gt;
+&lt;p&gt;vport_ops：定义datapath的端口vport的所有行为函数。如send，用来从设备发送packet。
+首先初始化结构体vport_ops为ovs_netdev_vport_ops（datapath\vport-netdev.c）。定义了vport的所有操作函数，比如.send=netdev_send。
+static int netdev_send(struct vport &lt;em&gt;vport, struct sk_buff &lt;/em&gt;skb)&lt;/p&gt;
+&lt;p&gt;关系：在函数ovs_vport_send中，通过vport-&amp;gt;ops-&amp;gt;send(vport, skb)动态调用。&lt;/p&gt;
+&lt;p&gt;函数中，通过skb-&amp;gt;dev = netdev_vport-&amp;gt;dev;得到设备，然后调用dev_queue_xmit(skb)函数把packet放入队列中发送。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----datapath消息处理.html</guid><category>OVS souce code</category></item><item><title>OVS源码分析----用户层处理Upcall消息</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;
 &lt;p&gt;下俩将按照用户层接收upcall消息与处理的流程进行分析：&lt;/p&gt;
@@ -21,7 +110,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;/ul&gt;
 &lt;p&gt;3 对MISS_UPCALL消息调用handle_miss_upcalls进行着重处理。并紧后进行buf缓存清除。&lt;/p&gt;
 &lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;h4&gt;2）消息接收函数dpif_recv（lib\dpif.c）&lt;/h4&gt;
+&lt;h4&gt;&lt;strong&gt;2）消息接收函数dpif_recv（lib\dpif.c）&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;int dpif_recv(struct dpif *dpif, struct dpif_upcall *upcall, struct ofpbuf *buf)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：handle_upcalls中调用此函数。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：与内核层通信获交互upcall消息。&lt;/p&gt;
@@ -43,7 +132,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;hr /&gt;
 &lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;接下来要具体对miss进行处理:&lt;/p&gt;
-&lt;h4&gt;4）static void handle_flow_miss(struct ofproto_dpif &lt;em&gt;ofproto, struct flow_miss &lt;/em&gt;miss,struct flow_miss_op &lt;em&gt;ops, size_t &lt;/em&gt;n_ops)&lt;/h4&gt;
+&lt;h4&gt;4）&lt;strong&gt;&lt;code&gt;static void handle_flow_miss(struct ofproto_dpif *ofproto, struct flow_miss *miss,struct flow_miss_op *ops, size_t *n_ops)&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在handle_miss_upcalls中被调用&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&amp;gt;rule和flow_miss-&amp;gt;flow创建facet。存在facet后进而对flow_miss进行处理。&lt;/p&gt;
 &lt;p&gt;数据结构&lt;/p&gt;
@@ -81,13 +170,13 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;p&gt;rule_dpif_miss_rule函数中，通过判断选择返回rule_dpif的类型miss_rule或no_packet_in_rule。miss_rule类型代表发往控制器，no_packet_in_rule代表丢弃。&lt;/p&gt;
 &lt;p&gt;这里可以分析一下port-&amp;gt;up.pp.config，化为结构体为ofproto_dpif-&amp;gt;ofport-&amp;gt;ofputil_phy_port-&amp;gt;ofputil_port_config。结构体ofport是openflow交换机的一个端口实体，调用物理端口抽象fputil_phy_port，有配置、状态、最大速率等参数成员，配置参数结构体ofputil_port_config有成员不允许转发、不允许flood等成员参数。&lt;/p&gt;
 &lt;p&gt;3 通过2得到了rule，这里结合miss-&amp;gt;flow创建facet。&lt;/p&gt;
-&lt;p&gt;facet = facet_create(rule, &amp;amp;miss-&amp;gt;flow, hash)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;facet = facet_create(rule, &amp;amp;miss-&amp;gt;flow, hash)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;在这之前，有函数flow_miss_should_make_facet，判断是否在用户空间追踪安装datapath flow（不太理解，往往是不进入if内部）。接下来，则函数facet_create通过rule和flow创建facet，但却还没有subfacet，且相应action在rule中。&lt;/p&gt;
 &lt;p&gt;4 至此寻找或是创建了facet，则有了和flow_miss匹配的facet，则对flow_miss具体处理，且其中增加datapath操作给ops，且更新计数n_ops。&lt;/p&gt;
 &lt;p&gt;其中，&lt;code&gt;handle_flow_miss_with_facet(miss, facet, now, ops, n_ops)&lt;/code&gt;
 具体分析此函数。目前有了和flow_miss匹配的facet，则具体对flow_miss进行处理&lt;/p&gt;
 &lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;h4&gt;5 ）static void handle_flow_miss_with_facet(struct flow_miss &lt;em&gt;miss, struct facet &lt;/em&gt;facet,long long int now,struct flow_miss_op &lt;em&gt;ops, size_t &lt;/em&gt;n_ops)&lt;/h4&gt;
+&lt;h4&gt;&lt;strong&gt;5 ）&lt;code&gt;static void handle_flow_miss_with_facet(struct flow_miss *miss, struct facet *facet,long long int now,struct flow_miss_op *ops, size_t *n_ops)&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在handle_flow_miss中最后被调用&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：给facet创建subfacet，并且填充action动作，继而按照动作处理flow_miss。&lt;/p&gt;
 &lt;p&gt;结构体：subfacet ：包含facet的action的dpif flow（A dpif flow and actions associated with a facet.）&lt;/p&gt;
@@ -107,11 +196,11 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;li&gt;这里需要着重分析xlate_actions函数，因为其得到action并具体执行了flow_miss的action
 （比如发往控制器）。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4&gt;6）&lt;code&gt;static void xlate_actions(struct action_xlate_ctx *ctx, const struct ofpact *ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)&lt;/code&gt;&lt;/h4&gt;
+&lt;h4&gt;6）&lt;strong&gt;&lt;code&gt;static void xlate_actions(struct action_xlate_ctx *ctx, const struct ofpact *ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在subfacet_make_actions中被最后调用。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：利用上下文ctx把datapath action翻译到 odp_actions缓存里，action长度为rule中的ofpacts（action头部）标注的长度。然后执行动作。&lt;/p&gt;
 &lt;p&gt;1 首先一个if switch语句进行packet分片处理。。。（？）&lt;/p&gt;
-&lt;p&gt;2 special = process_special(ctx-&amp;gt;ofproto, &amp;amp;ctx-&amp;gt;flow, ctx-&amp;gt;packet);
+&lt;p&gt;2 &lt;code&gt;special = process_special(ctx-&amp;gt;ofproto, &amp;amp;ctx-&amp;gt;flow, ctx-&amp;gt;packet)&lt;/code&gt;
  判断packet类型是否为SLOW_CFM（连通性故障管理协议）、SLOW_LACP（链路聚合协议）、SLOW_STP，如果是则直接在判断语语句中进行相应处理(slow path)，然后返回相应类型，否则返回0(fast path)，等待后续处理。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;解释slow path:这里需要注意，用户层对于上交包的处理，分为slow通道和非slow通道（ctx的slow参数，0则为fast path，非0则为slow path）。&lt;/li&gt;
@@ -121,7 +210,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;hr /&gt;
 &lt;p&gt;以上对于upcal上来的类型为flow_miss的packet，寻找匹配的facet或是因为第一个packet无法匹配而构造facet（利用rule、flow构造facet、subfacet，利用rule中action构造subfacet的action字段），接下来则重点根据rule-&amp;gt;up.ofpacts类型来执行动作处理上交的包。&lt;/p&gt;
 &lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;h4&gt;7）&lt;code&gt;static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct action_xlate_ctx *ctx)&lt;/code&gt;&lt;/h4&gt;
+&lt;h4&gt;7）&lt;strong&gt;&lt;code&gt;static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct action_xlate_ctx *ctx)&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在xlate_actions中被调用&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：对于上交到用户层的包，根据rule-&amp;gt;up.ofpacts的action类型来执行相应的动作。&lt;/p&gt;
 &lt;p&gt;结构体：ofpact：action的头部，属于rule的一个数据成员。（lib\ofp-actions.h）&lt;/p&gt;
@@ -135,7 +224,7 @@ output类型、Header changes等action类型）。&lt;/p&gt;
 &lt;h2&gt;&lt;/br&gt;&lt;/h2&gt;
 &lt;p&gt;以上对于flow_miss，完成了创建rule、facet、subfacet、action即动作的执行，但最终需要用socket完成数据传输，完成真正的执行动作。因此，需要回顾3），handle_flow_miss函数处理完后，需要根据datapath执行类型进行执行，调用函数dpif_operate。在此做简单分析。
 &lt;/br&gt;&lt;/p&gt;
-&lt;h4&gt;*8）&lt;code&gt;void dpif_operate(struct dpif *dpif, struct dpif_op **ops, size_t n_ops)&lt;/code&gt;&lt;/h4&gt;
+&lt;h4&gt;&lt;strong&gt;8）&lt;code&gt;void dpif_operate(struct dpif *dpif, struct dpif_op **ops, size_t n_ops)&lt;/code&gt;&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在函数handle_miss_upcalls最后被调用&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：根据之前得到的datapath操作类型批量处理，通过nla发到内核，从而让内核可以真正执行操作，发送完并接收回应来更新统计信息。&lt;/p&gt;
 &lt;p&gt;数据结构：dpif_op：datapath操作类型。数据成员有三种操作类型的数据结构成员：dpif_flow_put、dpif_flow_del、dpif_execute。&lt;/p&gt;

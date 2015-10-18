@@ -14,13 +14,13 @@
 
         <meta name="author" content="ysy" />
         <meta name="keywords" content="OVS souce code" />
-        <meta name="description" content="当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的： 下俩将按照用户层接收upcall消息与处理的流程进行分析： 用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。 upcall处理流程如图: 1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c) static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch) 功能：接收upcall消息并对miss_upcall类型消息调用处理。 函数中处理流程如下 1 调用upcall消息接收函数： error = dpif_recv(ofproto-&gt;dpif, upcall ..." />
+        <meta name="description" content="前言 当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的： 下俩将按照用户层接收upcall消息与处理的流程进行分析： 用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。 upcall处理流程如图: 1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c) static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch) 功能：接收upcall消息并对miss_upcall类型消息调用处理。 函数中处理流程如下 1 调用upcall消息接收函数： error = dpif_recv(ofproto-&gt;dpif ..." />
 
         <meta property="og:site_name" content="YsY记录点滴" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="OVS源码分析----用户层处理Upcall消息"/>
         <meta property="og:url" content="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html"/>
-        <meta property="og:description" content="当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的： 下俩将按照用户层接收upcall消息与处理的流程进行分析： 用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。 upcall处理流程如图: 1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c) static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch) 功能：接收upcall消息并对miss_upcall类型消息调用处理。 函数中处理流程如下 1 调用upcall消息接收函数： error = dpif_recv(ofproto-&gt;dpif, upcall ..."/>
+        <meta property="og:description" content="前言 当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的： 下俩将按照用户层接收upcall消息与处理的流程进行分析： 用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。 upcall处理流程如图: 1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c) static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch) 功能：接收upcall消息并对miss_upcall类型消息调用处理。 函数中处理流程如下 1 调用upcall消息接收函数： error = dpif_recv(ofproto-&gt;dpif ..."/>
         <meta property="article:published_time" content="2015-05-10" />
             <meta property="article:section" content="SDN" />
             <meta property="article:tag" content="OVS souce code" />
@@ -110,6 +110,7 @@ YsY记录点滴            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <p></br></p>
+<h3>前言</h3>
 <p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
 <p>下俩将按照用户层接收upcall消息与处理的流程进行分析：</p>
@@ -131,7 +132,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 </ul>
 <p>3 对MISS_UPCALL消息调用handle_miss_upcalls进行着重处理。并紧后进行buf缓存清除。</p>
 <p></br></p>
-<h4>2）消息接收函数dpif_recv（lib\dpif.c）</h4>
+<h4><strong>2）消息接收函数dpif_recv（lib\dpif.c）</strong></h4>
 <p><code>int dpif_recv(struct dpif *dpif, struct dpif_upcall *upcall, struct ofpbuf *buf)</code></p>
 <p><strong>关系</strong>：handle_upcalls中调用此函数。</p>
 <p><strong>功能</strong>：与内核层通信获交互upcall消息。</p>
@@ -153,7 +154,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <hr />
 <p></br></p>
 <p>接下来要具体对miss进行处理:</p>
-<h4>4）static void handle_flow_miss(struct ofproto_dpif <em>ofproto, struct flow_miss </em>miss,struct flow_miss_op <em>ops, size_t </em>n_ops)</h4>
+<h4>4）<strong><code>static void handle_flow_miss(struct ofproto_dpif *ofproto, struct flow_miss *miss,struct flow_miss_op *ops, size_t *n_ops)</code></strong></h4>
 <p><strong>关系</strong>：在handle_miss_upcalls中被调用</p>
 <p><strong>功能</strong>：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&gt;rule和flow_miss-&gt;flow创建facet。存在facet后进而对flow_miss进行处理。</p>
 <p>数据结构</p>
@@ -191,13 +192,13 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <p>rule_dpif_miss_rule函数中，通过判断选择返回rule_dpif的类型miss_rule或no_packet_in_rule。miss_rule类型代表发往控制器，no_packet_in_rule代表丢弃。</p>
 <p>这里可以分析一下port-&gt;up.pp.config，化为结构体为ofproto_dpif-&gt;ofport-&gt;ofputil_phy_port-&gt;ofputil_port_config。结构体ofport是openflow交换机的一个端口实体，调用物理端口抽象fputil_phy_port，有配置、状态、最大速率等参数成员，配置参数结构体ofputil_port_config有成员不允许转发、不允许flood等成员参数。</p>
 <p>3 通过2得到了rule，这里结合miss-&gt;flow创建facet。</p>
-<p>facet = facet_create(rule, &amp;miss-&gt;flow, hash)</p>
+<p><code>facet = facet_create(rule, &amp;miss-&gt;flow, hash)</code></p>
 <p>在这之前，有函数flow_miss_should_make_facet，判断是否在用户空间追踪安装datapath flow（不太理解，往往是不进入if内部）。接下来，则函数facet_create通过rule和flow创建facet，但却还没有subfacet，且相应action在rule中。</p>
 <p>4 至此寻找或是创建了facet，则有了和flow_miss匹配的facet，则对flow_miss具体处理，且其中增加datapath操作给ops，且更新计数n_ops。</p>
 <p>其中，<code>handle_flow_miss_with_facet(miss, facet, now, ops, n_ops)</code>
 具体分析此函数。目前有了和flow_miss匹配的facet，则具体对flow_miss进行处理</p>
 <p></br></p>
-<h4>5 ）static void handle_flow_miss_with_facet(struct flow_miss <em>miss, struct facet </em>facet,long long int now,struct flow_miss_op <em>ops, size_t </em>n_ops)</h4>
+<h4><strong>5 ）<code>static void handle_flow_miss_with_facet(struct flow_miss *miss, struct facet *facet,long long int now,struct flow_miss_op *ops, size_t *n_ops)</code></strong></h4>
 <p><strong>关系</strong>：在handle_flow_miss中最后被调用</p>
 <p><strong>功能</strong>：给facet创建subfacet，并且填充action动作，继而按照动作处理flow_miss。</p>
 <p>结构体：subfacet ：包含facet的action的dpif flow（A dpif flow and actions associated with a facet.）</p>
@@ -217,11 +218,11 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <li>这里需要着重分析xlate_actions函数，因为其得到action并具体执行了flow_miss的action
 （比如发往控制器）。</li>
 </ul>
-<h4>6）<code>static void xlate_actions(struct action_xlate_ctx *ctx, const struct ofpact *ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)</code></h4>
+<h4>6）<strong><code>static void xlate_actions(struct action_xlate_ctx *ctx, const struct ofpact *ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)</code></strong></h4>
 <p><strong>关系</strong>：在subfacet_make_actions中被最后调用。</p>
 <p><strong>功能</strong>：利用上下文ctx把datapath action翻译到 odp_actions缓存里，action长度为rule中的ofpacts（action头部）标注的长度。然后执行动作。</p>
 <p>1 首先一个if switch语句进行packet分片处理。。。（？）</p>
-<p>2 special = process_special(ctx-&gt;ofproto, &amp;ctx-&gt;flow, ctx-&gt;packet);
+<p>2 <code>special = process_special(ctx-&gt;ofproto, &amp;ctx-&gt;flow, ctx-&gt;packet)</code>
  判断packet类型是否为SLOW_CFM（连通性故障管理协议）、SLOW_LACP（链路聚合协议）、SLOW_STP，如果是则直接在判断语语句中进行相应处理(slow path)，然后返回相应类型，否则返回0(fast path)，等待后续处理。</p>
 <ul>
 <li>解释slow path:这里需要注意，用户层对于上交包的处理，分为slow通道和非slow通道（ctx的slow参数，0则为fast path，非0则为slow path）。</li>
@@ -231,7 +232,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <hr />
 <p>以上对于upcal上来的类型为flow_miss的packet，寻找匹配的facet或是因为第一个packet无法匹配而构造facet（利用rule、flow构造facet、subfacet，利用rule中action构造subfacet的action字段），接下来则重点根据rule-&gt;up.ofpacts类型来执行动作处理上交的包。</p>
 <p></br></p>
-<h4>7）<code>static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct action_xlate_ctx *ctx)</code></h4>
+<h4>7）<strong><code>static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct action_xlate_ctx *ctx)</code></strong></h4>
 <p><strong>关系</strong>：在xlate_actions中被调用</p>
 <p><strong>功能</strong>：对于上交到用户层的包，根据rule-&gt;up.ofpacts的action类型来执行相应的动作。</p>
 <p>结构体：ofpact：action的头部，属于rule的一个数据成员。（lib\ofp-actions.h）</p>
@@ -245,7 +246,7 @@ output类型、Header changes等action类型）。</p>
 <h2></br></h2>
 <p>以上对于flow_miss，完成了创建rule、facet、subfacet、action即动作的执行，但最终需要用socket完成数据传输，完成真正的执行动作。因此，需要回顾3），handle_flow_miss函数处理完后，需要根据datapath执行类型进行执行，调用函数dpif_operate。在此做简单分析。
 </br></p>
-<h4>*8）<code>void dpif_operate(struct dpif *dpif, struct dpif_op **ops, size_t n_ops)</code></h4>
+<h4><strong>8）<code>void dpif_operate(struct dpif *dpif, struct dpif_op **ops, size_t n_ops)</code></strong></h4>
 <p><strong>关系</strong>：在函数handle_miss_upcalls最后被调用</p>
 <p><strong>功能</strong>：根据之前得到的datapath操作类型批量处理，通过nla发到内核，从而让内核可以真正执行操作，发送完并接收回应来更新统计信息。</p>
 <p>数据结构：dpif_op：datapath操作类型。数据成员有三种操作类型的数据结构成员：dpif_flow_put、dpif_flow_del、dpif_execute。</p>
@@ -327,23 +328,13 @@ output类型、Header changes等action类型）。</p>
             <li class="list-group-item"><a href="http://ysywh.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                 <ul class="list-group " id="tags">
                     <li class="list-group-item tag-1">
-                        <a href="http://ysywh.github.io/tag/mapreduce.html">
-                            mapreduce
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-1">
                         <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
                             OVS souce code
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                    <li class="list-group-item tag-2">
+                        <a href="http://ysywh.github.io/tag/mapreduce.html">
+                            mapreduce
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -352,8 +343,18 @@ output类型、Header changes等action类型）。</p>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
                             Cbench OpenDaylight
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
                         </a>
                     </li>
                 </ul>
