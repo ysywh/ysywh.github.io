@@ -104,19 +104,21 @@ YsY记录点滴            </a>
             </article>
             <hr/>
             <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户曾处理Upcall消息.html">OVS源码分析----用户曾处理Upcall消息</a></h2>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html">OVS源码分析----用户层处理Upcall消息</a></h2>
                 <div class="summary"><p></br></p>
 <p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
 <p>下俩将按照用户层接收upcall消息与处理的流程进行分析：</p>
 <p>用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。</p>
 <p>upcall处理流程如图:</p>
+<p></br></p>
 <h4>1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)</h4>
-<p>static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)</p>
-<p>功能：接收upcall消息并对miss_upcall类型消息调用处理。</p>
+<p><code>static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)</code></p>
+<p><strong>功能</strong>：接收upcall消息并对miss_upcall类型消息调用处理。</p>
+<p>函数中处理流程如下</p>
 <p>1 调用upcall消息接收函数：
-    error = dpif_recv(ofproto-&gt;dpif, upcall, buf ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户曾处理Upcall消息.html">more ...</a>
+    error = dpif_recv(ofproto-&gt;dpif, upcall ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -278,8 +280,8 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -288,8 +290,8 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
+                            数据结构，算法
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

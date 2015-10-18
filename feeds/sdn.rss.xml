@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 30 Aug 2015 17:30:00 +0800</lastBuildDate><item><title>OVS源码分析----用户曾处理Upcall消息</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E6%9B%BE%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 30 Aug 2015 17:30:00 +0800</lastBuildDate><item><title>OVS源码分析----用户层处理Upcall消息</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;
 &lt;p&gt;下俩将按照用户层接收upcall消息与处理的流程进行分析：&lt;/p&gt;
 &lt;p&gt;用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&amp;gt;dpif与内核交互数据。&lt;/p&gt;
 &lt;p&gt;upcall处理流程如图:&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h4&gt;1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)&lt;/h4&gt;
-&lt;p&gt;static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)&lt;/p&gt;
-&lt;p&gt;功能：接收upcall消息并对miss_upcall类型消息调用处理。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：接收upcall消息并对miss_upcall类型消息调用处理。&lt;/p&gt;
+&lt;p&gt;函数中处理流程如下&lt;/p&gt;
 &lt;p&gt;1 调用upcall消息接收函数：
     error = dpif_recv(ofproto-&amp;gt;dpif, upcall, buf);
  调用ofproto实体对应的成员组件实体dpif进行接收，把消息存入缓存buf中，并且把具体消息放入upcall中。具体分析见后。&lt;/p&gt;
@@ -18,29 +20,32 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;li&gt;对于MISS_UPCALL消息（重点），计数后，跳出switch用handle_miss_upcalls进行处理。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;3 对MISS_UPCALL消息调用handle_miss_upcalls进行着重处理。并紧后进行buf缓存清除。&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h4&gt;2）消息接收函数dpif_recv（lib\dpif.c）&lt;/h4&gt;
-&lt;p&gt;int dpif_recv(struct dpif &lt;em&gt;dpif, struct dpif_upcall &lt;/em&gt;upcall, struct ofpbuf *buf)&lt;/p&gt;
-&lt;p&gt;关系：handle_upcalls中调用此函数。&lt;/p&gt;
-&lt;p&gt;功能：与内核层通信获交互upcall消息。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int dpif_recv(struct dpif *dpif, struct dpif_upcall *upcall, struct ofpbuf *buf)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：handle_upcalls中调用此函数。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：与内核层通信获交互upcall消息。&lt;/p&gt;
 &lt;p&gt;1 调用recv(dpif, upcall, buf)函数进行upcall消息接收，放入upcall中，至此得到upcall消息。其中通过指针dpif具体调用了底层的接收函数dpif_linux_recv（位于Lib\dpif-linux中），此函数中调用socket函数从内核汇总接收netlink的msg，存到ofpbuf中，即error = nl_sock_recv(ch-
 &gt;sock, buf, false)，随后并调用error = parse_odp_packet(buf, upcall, &amp;amp;dp_ifindex)解析出upcall消息。&lt;/p&gt;
-&lt;p&gt;2 odp_flow_key_format(upcall-&amp;gt;key, upcall-&amp;gt;key_len, &amp;amp;flow);利用得到的upcall消息解析得到flow消息进行日志输出。&lt;/p&gt;
+&lt;p&gt;2 &lt;code&gt;odp_flow_key_format(upcall-&amp;gt;key, upcall-&amp;gt;key_len, &amp;amp;flow)&lt;/code&gt;利用这个函数得到的upcall消息解析得到flow消息进行日志输出。&lt;/p&gt;
 &lt;p&gt;3 miss_upcall消息处理函数&lt;/p&gt;
-&lt;p&gt;static void handle_miss_upcalls(struct ofproto_dpif &lt;em&gt;ofproto, struct dpif_upcall &lt;/em&gt;upcalls,size_t n_upcalls)&lt;/p&gt;
-&lt;p&gt;关系：handle_upcalls中被调用&lt;/p&gt;
-&lt;p&gt;功能：对miss_upcall消息具体进程处理。&lt;/p&gt;
-&lt;p&gt;1 先利用for循环对upcall消息进行处理，为了从每个upcall的packet中提取出flow，然后比较flow，把具有相同flow的每个upcall的packet放入结构体flow_miss中，定义这个结构体变量为miss，然后对他们方便统一处理。
-循环中具体为：利用函数ofproto_dpif_extract_flow_key从upcall消息中提取出flow（lib\flow.h中定义了这个数据结构），并利用函数flow_extract对flow的优先级、mark、in_port进行字段填充（实际中是对数据包协议各层进行逐层解析）。此后flow_hash(&amp;amp;miss-&amp;gt;flow, 0)对miss结构中的flow进行哈希处理，利用existing_miss = flow_miss_find(&amp;amp;todo, &amp;amp;miss-&amp;gt;flow, hash)把flow放入todo list的列表结构中。&lt;/p&gt;
-&lt;p&gt;2 调用handle_flow_miss函数进行flow处理。
-handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;amp;n_ops);
-  传入ofproto和miss，对flow进行处理，得到处理结果类型flow_miss_ops，n_ops是得到的类型个数。得到处理类型用于后面根据这个类型进行处理。具体见函数。
-数据结构：flow_miss_op：此类型数据结构具有数据成员dpif_op这个数据结构（lib\dpif.c），定义了三种flow处理类型（dpif_flow_put\delete\execute）。&lt;/p&gt;
-&lt;p&gt;3 调用dpif_operate(ofproto-&amp;gt;dpif, dpif_ops, n_ops)函数，根据dpif_op中的处理类型进行分别三种处理（dpif_flow_put\delete\execute）。&lt;/p&gt;
-&lt;hr /&gt;
+&lt;p&gt;&lt;code&gt;static void handle_miss_upcalls(struct ofproto_dpif *ofproto, struct dpif_upcall *upcalls,size_t n_upcalls)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：handle_upcalls中被调用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：对miss_upcall消息具体进程处理。&lt;/p&gt;
+&lt;p&gt;1 先利用for循环对upcall消息进行处理，为了从每个upcall的packet中提取出flow，然后比较flow，把具有相同flow的每个upcall的packet放入结构体flow_miss中，定义这个结构体变量为miss，然后对他们方便统一处理。&lt;/p&gt;
+&lt;p&gt;循环中：利用函数ofproto_dpif_extract_flow_key从upcall消息中提取出flow（lib\flow.h中定义了这个数据结构），并利用函数flow_extract对flow的优先级、mark、in_port进行字段填充（实际中是对数据包协议各层进行逐层解析）。此后flow_hash(&amp;amp;miss-&amp;gt;flow, 0)对miss结构中的flow进行哈希处理，利用existing_miss = flow_miss_find(&amp;amp;todo, &amp;amp;miss-&amp;gt;flow, hash)把flow放入todo list的列表结构中。&lt;/p&gt;
+&lt;p&gt;2 调用handle_flow_miss函数进行flow处理。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;amp;n_ops)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;传入ofproto和miss，对flow进行处理，得到处理结果类型flow_miss_ops，n_ops是得到的类型个数。得到处理类型用于后面根据这个类型进行处理。具体见函数。&lt;/p&gt;
+&lt;p&gt;数据结构：flow_miss_op：此类型数据结构具有数据成员dpif_op这个数据结构（lib\dpif.c），定义了三种flow处理类型（dpif_flow_put\delete\execute）。&lt;/p&gt;
+&lt;p&gt;3 调用&lt;code&gt;dpif_operate(ofproto-&amp;gt;dpif, dpif_ops, n_ops)&lt;/code&gt;函数，根据dpif_op中的处理类型进行分别三种处理（dpif_flow_put\delete\execute）。&lt;/p&gt;
 &lt;p&gt;以上完成了从用户层获取upcall消息，并对MISS_UPCALL类型消息进行处理存入miss（结构体miss_flow）。至此，接下来要具体对miss进行处理（构造facet和对miss执行action）。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;接下来要具体对miss进行处理:&lt;/p&gt;
 &lt;h4&gt;4）static void handle_flow_miss(struct ofproto_dpif &lt;em&gt;ofproto, struct flow_miss &lt;/em&gt;miss,struct flow_miss_op &lt;em&gt;ops, size_t &lt;/em&gt;n_ops)&lt;/h4&gt;
-&lt;p&gt;关系：在handle_miss_upcalls中被调用&lt;/p&gt;
-&lt;p&gt;功能：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&amp;gt;rule和flow_miss-&amp;gt;flow创建facet。存在facet后进而对flow_miss进行处理。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在handle_miss_upcalls中被调用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&amp;gt;rule和flow_miss-&amp;gt;flow创建facet。存在facet后进而对flow_miss进行处理。&lt;/p&gt;
 &lt;p&gt;数据结构&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -56,16 +61,16 @@ handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;amp;n_ops);
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;1 从ofproto（结构体ofproto_dpif）的成员facet表中找到与flow完全匹配的项。&lt;/p&gt;
-&lt;p&gt;其中，facet = facet_lookup_valid(ofproto, &amp;amp;miss-&amp;gt;flow, hash);&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;facet = facet_lookup_valid(ofproto, &amp;amp;miss-&amp;gt;flow, hash)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;实现是通过函数中调用facet = facet_find(ofproto, flow, hash)，facet_find通过存在的ofproto-&amp;gt; facets-&amp;gt;flow与flow相比，看是否完全相等，相等则返回在各方存在的facet。不存在否则返回空指针赋给facet。&lt;/p&gt;
 &lt;p&gt;2 if判断facet存在性，如果存在直接调用handle_flow_miss_with_facet进行后续处理，否则（比如第一个upcall到达时候，这个才是常见情况）需要得到rules，进而创建一个facet，再调用handle_flow_miss_with_facet进行后续处理。&lt;/p&gt;
 &lt;p&gt;创建facet,需要先得到rule:&lt;/p&gt;
-&lt;p&gt;struct rule_dpif *rule = rule_dpif_lookup(ofproto, &amp;amp;miss-&amp;gt;flow)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;struct rule_dpif *rule = rule_dpif_lookup(ofproto, &amp;amp;miss-&amp;gt;flow)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;函数中，先通过rule_dpif_lookup__函数查找返回结构体为rule_dpif的规则rule。如果流表（？）中没有查找到，则通过rule_dpif_miss_rule函数创建rule，rule取值类型为结构体ofproto_dpif中的miss_rule或no_packet_in_rule类型。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;进入函数，这里有必要分析一下rule_dpif_miss_rule函数：&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;static struct rule_dpif * rule_dpif_miss_rule(struct ofproto_dpif &lt;em&gt;ofproto, const struct flow &lt;/em&gt;flow)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static struct rule_dpif * rule_dpif_miss_rule(struct ofproto_dpif *ofproto, const struct flow *flow)&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;数据结构:rule_dpif，具有重要成员rule。&lt;ul&gt;
 &lt;li&gt;rule：是一个包含结构体ofproto（可看做一个openflow交换机）的openflow flow(openflow流，可看做比如flowmod这种openflow流？)。最重要是具有ofpact（action头部）这个结构体。&lt;/li&gt;
@@ -78,34 +83,33 @@ handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;amp;n_ops);
 &lt;p&gt;3 通过2得到了rule，这里结合miss-&amp;gt;flow创建facet。&lt;/p&gt;
 &lt;p&gt;facet = facet_create(rule, &amp;amp;miss-&amp;gt;flow, hash)&lt;/p&gt;
 &lt;p&gt;在这之前，有函数flow_miss_should_make_facet，判断是否在用户空间追踪安装datapath flow（不太理解，往往是不进入if内部）。接下来，则函数facet_create通过rule和flow创建facet，但却还没有subfacet，且相应action在rule中。&lt;/p&gt;
-&lt;p&gt;4 至此寻找或是创建了facet，则有了和flow_miss匹配的facet，则对flow_miss具体处理，且其中增加datapath操作给ops，且更新计数n_ops。
- handle_flow_miss_with_facet(miss, facet, now, ops, n_ops);
-具体分析见函数。&lt;/p&gt;
-&lt;p&gt;目前有了和flow_miss匹配的facet，则具体对flow_miss进行处理&lt;/p&gt;
+&lt;p&gt;4 至此寻找或是创建了facet，则有了和flow_miss匹配的facet，则对flow_miss具体处理，且其中增加datapath操作给ops，且更新计数n_ops。&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;handle_flow_miss_with_facet(miss, facet, now, ops, n_ops)&lt;/code&gt;
+具体分析此函数。目前有了和flow_miss匹配的facet，则具体对flow_miss进行处理&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h4&gt;5 ）static void handle_flow_miss_with_facet(struct flow_miss &lt;em&gt;miss, struct facet &lt;/em&gt;facet,long long int now,struct flow_miss_op &lt;em&gt;ops, size_t &lt;/em&gt;n_ops)&lt;/h4&gt;
-&lt;p&gt;关系：在handle_flow_miss中最后被调用&lt;/p&gt;
-&lt;p&gt;功能：给facet创建subfacet，并且填充action动作，继而按照动作处理flow_miss。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在handle_flow_miss中最后被调用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：给facet创建subfacet，并且填充action动作，继而按照动作处理flow_miss。&lt;/p&gt;
 &lt;p&gt;结构体：subfacet ：包含facet的action的dpif flow（A dpif flow and actions associated with a facet.）&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;主要成员
     -struct nlattr *actions; （Datapath actions）&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;1 创建facet的subfacet&lt;/p&gt;
-&lt;p&gt;subfacet = subfacet_create(facet,miss-&amp;gt;key_fitness, miss-&amp;gt;key, miss-&amp;gt;key_len,
-                               miss-&amp;gt;initial_tci, now);&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;subfacet = subfacet_create(facet,miss-&amp;gt;key_fitness, miss-&amp;gt;key, miss-&amp;gt;key_len,
+                               miss-&amp;gt;initial_tci, now)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;函数中先判断facet的成员subfacet是否为空，不为空则直接返回subfacet，否则创建subfacet，并向subfacet中各个成员字段赋空值。则对于新建subfacet的action等成员都为空。之后，要依赖subfacet_make_actions函数创建action。&lt;/p&gt;
 &lt;p&gt;2 填充subfacet的action字段，作为datapath action。&lt;/p&gt;
-&lt;p&gt;subfacet_make_actions(subfacet, packet, &amp;amp;odp_actions)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;subfacet_make_actions(subfacet, packet, &amp;amp;odp_actions)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;通过rule的action来构造subfacet的datapath action，并把action存入结构体为ofbuf缓存变量odp_actions中。&lt;/p&gt;
 &lt;p&gt;函数中，具体先通过函数action_xlate_ctx_init，结合ofproto、flow、rule等初始化出action translate context这个上下文变量ctx。然后调用函数xlate_actions，结合参数ctx、rule等翻译出datapath action并放入odp_actions中，最后利用上下文ctx填充facet一些字段，利用存有action的odp_actions填充subfacet的actions字段。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;这里需要着重分析xlate_actions函数，因为其得到action并具体执行了flow_miss的action
 （比如发往控制器）。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;6）static void xlate_actions(struct action_xlate_ctx &lt;em&gt;ctx, const struct ofpact 
-&lt;/em&gt;ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)&lt;/p&gt;
-&lt;p&gt;关系：在subfacet_make_actions中被最后调用。&lt;/p&gt;
-&lt;p&gt;功能：利用上下文ctx把datapath action翻译到 odp_actions缓存里，action长度为rule中的ofpacts（action头部）标注的长度。然后执行动作。&lt;/p&gt;
+&lt;h4&gt;6）&lt;code&gt;static void xlate_actions(struct action_xlate_ctx *ctx, const struct ofpact *ofpacts, size_t ofpacts_len,struct ofpbuf *odp_actions)&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在subfacet_make_actions中被最后调用。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：利用上下文ctx把datapath action翻译到 odp_actions缓存里，action长度为rule中的ofpacts（action头部）标注的长度。然后执行动作。&lt;/p&gt;
 &lt;p&gt;1 首先一个if switch语句进行packet分片处理。。。（？）&lt;/p&gt;
 &lt;p&gt;2 special = process_special(ctx-&amp;gt;ofproto, &amp;amp;ctx-&amp;gt;flow, ctx-&amp;gt;packet);
  判断packet类型是否为SLOW_CFM（连通性故障管理协议）、SLOW_LACP（链路聚合协议）、SLOW_STP，如果是则直接在判断语语句中进行相应处理(slow path)，然后返回相应类型，否则返回0(fast path)，等待后续处理。&lt;/p&gt;
@@ -116,35 +120,36 @@ handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;amp;n_ops);
 &lt;p&gt;3 紧接根据special判断是否为CFM，LACP，STP包，若是则ctx-&amp;gt;slow与相应类似包标志位做或运算，初始化slow path原因，若不是则利用函数do_xlate_actions（根据rule-&amp;gt;up.ofpacts）执行具体的action。这个极其重要，具体分析见后。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;以上对于upcal上来的类型为flow_miss的packet，寻找匹配的facet或是因为第一个packet无法匹配而构造facet（利用rule、flow构造facet、subfacet，利用rule中action构造subfacet的action字段），接下来则重点根据rule-&amp;gt;up.ofpacts类型来执行动作处理上交的包。&lt;/p&gt;
-&lt;p&gt;7）static void do_xlate_actions(const struct ofpact &lt;em&gt;ofpacts, size_t ofpacts_len,
-                    struct action_xlate_ctx &lt;/em&gt;ctx)&lt;/p&gt;
-&lt;p&gt;关系：在xlate_actions中被调用&lt;/p&gt;
-&lt;p&gt;功能：对于上交到用户层的包，根据rule-&amp;gt;up.ofpacts的action类型来执行相应的动作。&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h4&gt;7）&lt;code&gt;static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct action_xlate_ctx *ctx)&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在xlate_actions中被调用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：对于上交到用户层的包，根据rule-&amp;gt;up.ofpacts的action类型来执行相应的动作。&lt;/p&gt;
 &lt;p&gt;结构体：ofpact：action的头部，属于rule的一个数据成员。（lib\ofp-actions.h）&lt;/p&gt;
 &lt;p&gt;数据成员：action类型type、ofputil_action_code和len。其中type是ovs的action类型（如
 output类型、Header changes等action类型）。&lt;/p&gt;
 &lt;p&gt;1 首先利用函数get_ofp_port得到端口的实现实例port（ofport_dpif类型，ofport_dpif中有ofport类型成员，是一个openflow端口）。紧接着if判断，如果forwarding和learning都是disable，则对包执行drop动作。否则继续执行后面。&lt;/p&gt;
 &lt;p&gt;2 进入循环，用switch (a-&amp;gt;type)判断动作类型并执行相应动作。这里特别分析action type为output时的动作执行（如对于第一个包交往控制器则要执行这个动作）。&lt;/p&gt;
-&lt;p&gt;xlate_output_action(ctx, ofpact_get_OUTPUT(a)-&amp;gt;port,ofpact_get_OUTPUT(a)-&amp;gt;max_len, true);&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;xlate_output_action(ctx, ofpact_get_OUTPUT(a)-&amp;gt;port,ofpact_get_OUTPUT(a)-&amp;gt;max_len, true)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;先用ofpact_get_OUTPUT(a)-&amp;gt;port得到具体端口类型（如controller），然后调用xlate_output_action函数执行动作。&lt;/p&gt;
 &lt;p&gt;进入xlate_output_action函数可以看到switch语句，output类型端口有in_port、table/normal、controller、flood等。对于发往controller，执行execute_controller_action函数，跟踪内部，会发现调用packin类似函数发往controller。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;以上对于flow_miss，完成了创建rule、facet、subfacet、action即动作的执行，但最终需要用socket完成数据传输，完成真正的执行动作。因此，需要回顾3），handle_flow_miss函数处理完后，需要根据datapath执行类型进行执行，调用函数dpif_operate。在此做简单分析。&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;8）void dpif_operate(struct dpif &lt;/em&gt;dpif, struct dpif_op **ops, size_t n_ops)&lt;/p&gt;
-&lt;p&gt;关系：在函数handle_miss_upcalls最后被调用&lt;/p&gt;
-&lt;p&gt;功能：根据之前得到的datapath操作类型批量处理，通过nla发到内核，从而让内核可以真正执行操作，发送完并接收回应来更新统计信息。&lt;/p&gt;
+&lt;h2&gt;&lt;/br&gt;&lt;/h2&gt;
+&lt;p&gt;以上对于flow_miss，完成了创建rule、facet、subfacet、action即动作的执行，但最终需要用socket完成数据传输，完成真正的执行动作。因此，需要回顾3），handle_flow_miss函数处理完后，需要根据datapath执行类型进行执行，调用函数dpif_operate。在此做简单分析。
+&lt;/br&gt;&lt;/p&gt;
+&lt;h4&gt;*8）&lt;code&gt;void dpif_operate(struct dpif *dpif, struct dpif_op **ops, size_t n_ops)&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：在函数handle_miss_upcalls最后被调用&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：根据之前得到的datapath操作类型批量处理，通过nla发到内核，从而让内核可以真正执行操作，发送完并接收回应来更新统计信息。&lt;/p&gt;
 &lt;p&gt;数据结构：dpif_op：datapath操作类型。数据成员有三种操作类型的数据结构成员：dpif_flow_put、dpif_flow_del、dpif_execute。&lt;/p&gt;
 &lt;p&gt;这三种操作类型的数据结构中基本都有重要的成员：dpif_flow_put（成员key和actions）、dpif_flow_del（成员key），dpif_execute（成员key、actions和packet）。成员key是待要进行put或是delete的flow（流表项），packet（对于dpif_exacute）是要进行执行的packet。&lt;/p&gt;
 &lt;p&gt;dpif_operate函数调用dpif-&amp;gt;dpif_class-&amp;gt;operate(dpif, ops, n_ops)进行批量处理，没有处理的之后再以根据操作类型依次处理。dpif-&amp;gt;dpif_class-&amp;gt;operate(dpif, ops, n_ops)具体动态调用了dpif_linux_operate（lib\dpif-linux.c），而在dpif_linux_operate中调用dpif_linux_operate__循环处理，此函数中有具体处理过程。&lt;/p&gt;
-&lt;p&gt;static void dpif_linux_operate__(struct dpif &lt;em&gt;dpif_, struct dpif_op &lt;/em&gt;*ops, size_t n_ops)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static void dpif_linux_operate__(struct dpif *dpif_, struct dpif_op **ops, size_t n_ops)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;根据处理三种处理类型，循环遍历所有操作ops（带有即将处理key和action）,将key与action放入缓存request中。之后执行socket与内核通信。&lt;/p&gt;
 &lt;p&gt;1 先定义变量 *txnsp[MAX_OPS]，其为nl_transaction结构体（具有类型为ofpbuf的request和reply缓存变量），request为发送缓存，reply为接收缓存。Txnsp用来表征内核层与用户层之间的一次通信。真正socket连接通信时候会调用。&lt;/p&gt;
 &lt;p&gt;2 根据操作类型分别处理，主要是想把action和key(excute类型还有packet)放入aux的request缓存中，方便以后传到txnps中再进行发送。根据是处理flow（增加或删除流表项）还是packet（packet关联原始经过交换机的传统包内容）操作分为三种：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;第一种：put流表项flow。
-dpif_linux_init_flow_put(dpif_, put, &amp;amp;flow)
-这里主要是把变量put内容（主要是action和key，key内容即为流表项flow）传到flow变量中（其中通过前面put = &amp;amp;op-&amp;gt;u.flow_put把ops中key和action传到put中）。&lt;/p&gt;
+&lt;p&gt;第一种：put流表项flow。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;dpif_linux_init_flow_put(dpif_, put, &amp;amp;flow)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这里主要是把变量put内容（主要是action和key，key内容即为流表项flow）传到flow变量中（其中通过前面put = &amp;amp;op-&amp;gt;u.flow_put把ops中key和action传到put中）。&lt;/p&gt;
 &lt;p&gt;dpif_linux_flow_to_ofpbuf(&amp;amp;flow, &amp;amp;aux-&amp;gt;request)&lt;/p&gt;
 &lt;p&gt;函数中又进一步把ovsheader和flow中的key与action填充到发送缓存request中（通过调用ofpbuf_put_uninit和nl_msg_put_unspec），从而得到与内核层交互发送信息。&lt;/p&gt;
 &lt;p&gt;函数中，还制定了内核中数据接收通道famliy名字，从而指定此类消息被内核什么处理函数接收处理。利用函数nl_msg_put_genlmsghdr(buf, 0, ovs_flow_family…即内核接收family为ovs_flow_family（内核中数据交互前已经注册好，用户态直接连接交互即可）。
@@ -152,13 +157,13 @@ dpif_linux_init_flow_put(dpif_, put, &amp;amp;flow)
 - 第三种：packet的处理&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;dpif_linux_encode_execute(dpif-&amp;gt;dp_ifindex, execute,&amp;amp;aux-&amp;gt;request)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;dpif_linux_encode_execute(dpif-&amp;gt;dp_ifindex, execute,&amp;amp;aux-&amp;gt;request)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;这个函数和前两种类似，不过直接通过execute = &amp;amp;op-&amp;gt;u.execute;把内容传到excute变量，再通过函数传到aux-&amp;gt;request缓存（主要传入有key、packet和action，特别packet）。&lt;/p&gt;
-&lt;p&gt;3 nl_sock_transact_multiple(genl_sock, txnsp, n_ops)&lt;/p&gt;
+&lt;p&gt;3 &lt;code&gt;nl_sock_transact_multiple(genl_sock, txnsp, n_ops)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;与内核层建立socket的netlink连接，发送txnsp的request中信息（通过2中的aux传到txnsp中）并且接收来自内核的消息到reply中。参数genl_sock是netlink的socket, txnsp即表征内核层与用户层的一次连接，txnsp含有成员request和reply。&lt;/p&gt;
 &lt;p&gt;函数中，具体调用了nl_sock_transact_multiple__函数，此函数中有发送函数sendmsg(sock-&amp;gt;fd, &amp;amp;msg, 0)和接收函数nl_sock_recv__(sock, buf_txn-&amp;gt;reply, false)，分别发送了缓存request
 的信息并接收到reply缓存中，此后更新统计。&lt;/p&gt;
-&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----用户曾处理Upcall消息.html</guid><category>OVS souce code</category></item><item><title>OVS源码分析----OpenFlow消息处理</title><link>http://ysywh.github.io/pages/2015/05/02/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E2%80%94%E2%80%94OpenFlow%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html</guid><category>OVS souce code</category></item><item><title>OVS源码分析----OpenFlow消息处理</title><link>http://ysywh.github.io/pages/2015/05/02/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E2%80%94%E2%80%94OpenFlow%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;OVS作为交换机，可以通过安全通道与控制器进行消息交互。控制器向OVS下发Openflow消息，可以完成对数据层面策略下发，流控制等功能。OVS接收到控制器下发的Openflow消息，需要对其进行接收，解析与处理，如安装流表项等操作。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;下文按照OVS接收处理openflow消息的处理流程进行分析：&lt;/p&gt;
