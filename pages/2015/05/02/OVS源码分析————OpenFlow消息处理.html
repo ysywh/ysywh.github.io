@@ -110,7 +110,6 @@ YsY记录点滴            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <p></br></p>
-<p></br></p>
 <p>OVS作为交换机，可以通过安全通道与控制器进行消息交互。控制器向OVS下发Openflow消息，可以完成对数据层面策略下发，流控制等功能。OVS接收到控制器下发的Openflow消息，需要对其进行接收，解析与处理，如安装流表项等操作。</p>
 <hr />
 <p>下文按照OVS接收处理openflow消息的处理流程进行分析：</p>
@@ -169,7 +168,7 @@ YsY记录点滴            </a>
 </li>
 </ul>
 <p>通过函数ofpbuf_use_stub给ofpacts分配一块缓存opfbuf，然后通过调用函数ofputil_decode_flow_mod得到数据结构ofputil_flow_mod实体fm和实体ofpacts，则此时fm即包含flowmod消息格式的各个字段内容，而ofpacts缓存中含有action，并其中fm中的成员ofpacts指向这个缓存ofpacts。最后调用函数handle_flow_mod__，函数中，根据flowmod消息fm的command类型不同（五种），选择command相应流表项处理函数，在用户空间插入、修改或是删除流表项。</p>
-<h4>4 static enum ofperr add_flow(struct ofproto <em>ofproto, struct ofconn </em>ofconn,const struct ofputil_flow_mod <em>fm, const struct ofp_header </em>request)</h4>
+<h4>4 static enum ofperr add_flow(struct ofproto *ofproto, struct ofconn *ofconn,const struct ofputil_flow_mod *fm, const struct ofp_header *request)</h4>
 <p>选择flowmod指定id的表，根据flowmod消息创建分类流规则rule，并且插入rule，等再有相同流过来进行匹配，从而创建流表项。具体如下：</p>
 <p>先通过fm-&gt;table_id获得flowmod指定id的流表，如果id号大于指定的最大流表数则会返回相应error类型。找到table id后，根据函数rule_alloc()分配一个分类器rule，随后调用函数cls_rule_init(&amp;rule-&gt;cr, &amp;fm-&gt;match, fm-&gt;priority)填充rule-&gt;cr，则rule的匹配域和优先级字段基本填充完成。之后进行冲突检测（check for overlap），防止重复添加相同rule。之后对rule各个字段进行填充，调用函数oftable_replace_rule插入这个初始化好的rule。</p>
 <p>这样addflow任务基本完成，等待以后相同流在核心层匹配失败后，upcall到用户层，则会根据匹配这个rule进行流表项的建立工作，如果不存在匹配的rule，则会丢弃或是上交controller，具体见用户态处理upcall消息分析。至于modify和delete类型flowmod消息，基本分析相同，如对command为modify的flowmod消息，则修改指定rule的action。</p>
@@ -231,13 +230,13 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
-                            OVS souce code
+                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
+                            数据结构，算法
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -251,8 +250,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
+                            OVS souce code
                         </a>
                     </li>
                 </ul>

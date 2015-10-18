@@ -24,7 +24,6 @@
 &lt;p&gt;刚才数据结构中提到的数据关系，其实是一种逻辑关系，真正在计算机中存储不同数据结构，都会有两种物理关系，顺序存储和链式存储。必定这种物理关系需要反应在语言上，顺序存储则对应数据类型中的一维数组，链式存储则是一系列指针类型。因此，实现不同数据结构都可以使用顺序存储和链式存储，则数据结构和采用实现的存储结构无直接关系。比如，对于线性结构的线性表，可以是顺序存储实现，称为顺序表，也可以是链式存储实现，称为链式表。&lt;/p&gt;
 &lt;p&gt;当然，用不同存储方法实现数据结构后，对数据结构进行操作是有差异的。顺序存储最大的特点就是利于查找，即通过数组下标就可以快速完成，但是插入或是删除数据需要移动其他元素，复杂度O(n)；但是对于链式存储，插入和删除非常便利，因为是指针直接操作目标元素，不需要操作其他元素，但是对于查找等操作，却需要逐一遍历到目标元素才可以，不如顺序存储。虽然各有优劣，还是老话，需要根据实际情况选择合适的实现方式。&lt;/p&gt;
 &lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</guid><category>数据结构，算法</category></item><item><title>OVS源码分析----OpenFlow消息处理</title><link>http://ysywh.github.io/pages/2015/05/02/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E2%80%94%E2%80%94OpenFlow%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;OVS作为交换机，可以通过安全通道与控制器进行消息交互。控制器向OVS下发Openflow消息，可以完成对数据层面策略下发，流控制等功能。OVS接收到控制器下发的Openflow消息，需要对其进行接收，解析与处理，如安装流表项等操作。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;下文按照OVS接收处理openflow消息的处理流程进行分析：&lt;/p&gt;
@@ -83,7 +82,7 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;通过函数ofpbuf_use_stub给ofpacts分配一块缓存opfbuf，然后通过调用函数ofputil_decode_flow_mod得到数据结构ofputil_flow_mod实体fm和实体ofpacts，则此时fm即包含flowmod消息格式的各个字段内容，而ofpacts缓存中含有action，并其中fm中的成员ofpacts指向这个缓存ofpacts。最后调用函数handle_flow_mod__，函数中，根据flowmod消息fm的command类型不同（五种），选择command相应流表项处理函数，在用户空间插入、修改或是删除流表项。&lt;/p&gt;
-&lt;h4&gt;4 static enum ofperr add_flow(struct ofproto &lt;em&gt;ofproto, struct ofconn &lt;/em&gt;ofconn,const struct ofputil_flow_mod &lt;em&gt;fm, const struct ofp_header &lt;/em&gt;request)&lt;/h4&gt;
+&lt;h4&gt;4 static enum ofperr add_flow(struct ofproto *ofproto, struct ofconn *ofconn,const struct ofputil_flow_mod *fm, const struct ofp_header *request)&lt;/h4&gt;
 &lt;p&gt;选择flowmod指定id的表，根据flowmod消息创建分类流规则rule，并且插入rule，等再有相同流过来进行匹配，从而创建流表项。具体如下：&lt;/p&gt;
 &lt;p&gt;先通过fm-&amp;gt;table_id获得flowmod指定id的流表，如果id号大于指定的最大流表数则会返回相应error类型。找到table id后，根据函数rule_alloc()分配一个分类器rule，随后调用函数cls_rule_init(&amp;amp;rule-&amp;gt;cr, &amp;amp;fm-&amp;gt;match, fm-&amp;gt;priority)填充rule-&amp;gt;cr，则rule的匹配域和优先级字段基本填充完成。之后进行冲突检测（check for overlap），防止重复添加相同rule。之后对rule各个字段进行填充，调用函数oftable_replace_rule插入这个初始化好的rule。&lt;/p&gt;
 &lt;p&gt;这样addflow任务基本完成，等待以后相同流在核心层匹配失败后，upcall到用户层，则会根据匹配这个rule进行流表项的建立工作，如果不存在匹配的rule，则会丢弃或是上交controller，具体见用户态处理upcall消息分析。至于modify和delete类型flowmod消息，基本分析相同，如对command为modify的flowmod消息，则修改指定rule的action。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-02:pages/2015/05/02/OVS源码分析————OpenFlow消息处理.html</guid><category>OVS souce code</category></item><item><title>Cbench测试Opendaylight性能</title><link>http://ysywh.github.io/pages/2015/04/03/Cbench%E6%B5%8B%E8%AF%95Opendaylight%E6%80%A7%E8%83%BD.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
