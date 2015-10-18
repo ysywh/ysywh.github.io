@@ -78,6 +78,27 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">OVS源码分析----用户层处理Upcall消息(2)</a></h2>
+                <div class="summary"><p></br></p>
+<h3>前言</h3>
+<p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
+key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
+<p>上一篇博客分析了用户层从用户层获取upcall消息，对MISS_UPCALL类型消息进行处理并且存入miss（结构体miss_flow）。这篇文章，继续分析对upcall消息的处理、给内核层下发流表项。</p>
+<hr />
+<p></br>
+接下来要具体对miss进行处理（构造facet和对miss执行action）。</p>
+<h4>4）<strong><code>static void handle_flow_miss(struct ofproto_dpif *ofproto, struct flow_miss *miss,struct flow_miss_op *ops, size_t *n_ops)</code></strong></h4>
+<p><strong>关系</strong>：在handle_miss_upcalls中被调用</p>
+<p><strong>功能</strong>：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&gt;rule和flow_miss-&gt;flow创建facet。存在facet后进而对flow_miss进行处理。</p>
+<p>数据结构</p>
+<ul>
+<li>
+<p>facet（ofproto ...</p></li></ul>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----datapath消息处理.html">OVS源码分析----datapath消息处理</a></h2>
                 <div class="summary"><p></br></p>
 <h3>前言</h3>
@@ -94,7 +115,7 @@ YsY记录点滴            </a>
             </article>
             <hr/>
             <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html">OVS源码分析----用户层处理Upcall消息</a></h2>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">OVS源码分析----用户层处理Upcall消息(1)</a></h2>
                 <div class="summary"><p></br></p>
 <h3>前言</h3>
 <p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
@@ -109,7 +130,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <p>函数中处理流程如下</p>
 <p>1 调用upcall消息接收函数：
     error = dpif_recv(ofproto-&gt;dpif ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息.html">more ...</a>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -217,16 +238,6 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/letter-count.html">
                             letter count
                         </a>
@@ -234,6 +245,16 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                     <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/word-count.html">
                             word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
+                            数据结构，算法
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                 </ul>
