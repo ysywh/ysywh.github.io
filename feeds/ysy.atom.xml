@@ -30,7 +30,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;p&gt;用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&amp;gt;dpif与内核交互数据。&lt;/p&gt;
 &lt;p&gt;upcall处理流程如图:&lt;/p&gt;
 &lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;h4&gt;1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)&lt;/h4&gt;
+&lt;h4&gt;&lt;strong&gt;1）   upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：接收upcall消息并对miss_upcall类型消息调用处理。&lt;/p&gt;
 &lt;p&gt;函数中处理流程如下&lt;/p&gt;

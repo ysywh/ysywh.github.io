@@ -116,7 +116,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <p>用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。</p>
 <p>upcall处理流程如图:</p>
 <p></br></p>
-<h4>1） upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)</h4>
+<h4><strong>1）   upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)</strong></h4>
 <p><code>static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)</code></p>
 <p><strong>功能</strong>：接收upcall消息并对miss_upcall类型消息调用处理。</p>
 <p>函数中处理流程如下</p>
@@ -327,18 +327,18 @@ output类型、Header changes等action类型）。</p>
             <li class="list-group-item"><a href="http://ysywh.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                 <ul class="list-group " id="tags">
                     <li class="list-group-item tag-1">
-                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
-                            OVS souce code
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-1">
                         <a href="http://ysywh.github.io/tag/mapreduce.html">
                             mapreduce
                         </a>
                     </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
+                            OVS souce code
+                        </a>
+                    </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -352,8 +352,8 @@ output类型、Header changes等action类型）。</p>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                 </ul>
