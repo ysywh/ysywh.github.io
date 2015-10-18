@@ -1,11 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/all-zh.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Ryu源码分析</title><link href="http://ysywh.github.io/pages/2015/07/10/Ryu%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-07-10:pages/2015/07/10/Ryu源码分析.html</id><summary type="html">&lt;h4&gt;1 Event类&lt;/h4&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/all-zh.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Ryu代码分析----openflow消息属性分析</title><link href="http://ysywh.github.io/pages/2015/07/22/Ryu%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90----openflow%E6%B6%88%E6%81%AF%E5%B1%9E%E6%80%A7%E5%88%86%E6%9E%90.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-07-22:pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html</id><summary type="html">&lt;h3&gt;前言&lt;/h3&gt;
+&lt;p&gt;当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。&lt;/p&gt;
+&lt;p&gt;packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。&lt;/p&gt;
+&lt;p&gt;Packet-in消息属性：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;buffer_id     ID assigned by datapath
+total_len     Full length of frame
+reason        Reason packet is being sent.
+
+              | OFPR_NO_MATCH
+              | OFPR_ACTION
+              | OFPR_INVALID_TTL
+table_id      ID of the table that was looked up
+cookie        Cookie of the flow entry that was looked up
+match         Instance of ``OFPMatch``
+data          Ethernet frame
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;hr /&gt;
+&lt;h4&gt;&lt;strong&gt;1 一般属性的解析&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;如msg属性buffer_id，datapath可直接访问，如msg.datapath**&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;2 对于match这个属性解析和反解析（生成）：&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;match属性解析主要用在packet-in消息中的属性match的解析，而match生成用于flowmod消息的match构造上。&lt;/p&gt;
+&lt;p&gt;用到主要类：OFPMatch(StringifyMixin)类，形成match实体。&lt;/p&gt;
+&lt;p&gt;OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;生成match：直接用键值形式作为参数调用OFPMatch() 类：如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;match = parser.OFPMatch(
+in_port=1,
+eth_type=0x86dd,
+ipv6_src=(&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;,&amp;#39;ffff:ffff:ffff:ffff::&amp;#39;),
+ipv6_dst=&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;)
+if &amp;#39;ipv6_src&amp;#39; in match:
+print match[&amp;#39;ipv6_src&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。&lt;/p&gt;
+&lt;p&gt;当然，还有OFPMatchField匹配域，掩码问题...先不分析。&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;3 actions 、 instruction&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;作用：当进入交换机封包满足match匹配则执行指令instruction，有些指令中含有动作action(每条流表项可以有多个action，组成action list，因此是数组型)。instruction是flowmod消息下发时候包含的，当然，有的instruction中含有action。而packet-out消息直接含有action属性。&lt;/p&gt;
+&lt;p&gt;对于flowmod，action是包含于instruction中的；而对于packet-out,则只有actions。因此，我们这里先对action进行分析，后再分析instruction。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;actions&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用法：调用action类实例化action。&lt;/p&gt;
+&lt;p&gt;举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 &lt;/p&gt;
+&lt;p&gt;OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。&lt;/p&gt;
+&lt;p&gt;定义：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
+    super(OFPActionOutput, self).__init__()
+    self.port = port
+    self.max_len = max_len。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Port是包出端口。可以是指定端口号（如1,2等），还可以是：&lt;/p&gt;
+&lt;p&gt;OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。&lt;/p&gt;
+&lt;p&gt;注意，actions可以有很多，因此actions是一个数组型，包含多个action实体。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;instruction(指令)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;说明：当匹配一条流表项后，则执行流表项的指令集（数组型，可包含多个指令），有的指令中又可以包含多个action，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。&lt;/p&gt;
+&lt;p&gt;用法：需要调用instruction相关类生成。主要有四种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OFPInstructionGotoTable&lt;/li&gt;
+&lt;li&gt;OFPInstructionWriteMetadata&lt;/li&gt;
+&lt;li&gt;OFPInstructionActions&lt;/li&gt;
+&lt;li&gt;OFPInstructionMeter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;他们都继承OFPInstruction类，例如OFPInstructionActions：定义如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;OFPInstructionActions&lt;/span&gt;(&lt;span class="n"&gt;OFPInstruction&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type_&lt;/span&gt;, &lt;span class="n"&gt;actions&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;, &lt;span class="n"&gt;len_&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+    ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；&lt;/li&gt;
+&lt;li&gt;OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；&lt;/li&gt;
+&lt;li&gt;OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;actions即为上面的action对象。&lt;/p&gt;
+&lt;p&gt;因此，OFPInstructionGotoTable（table转移，在只是支持单流表的交换机无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理。&lt;/p&gt;
+&lt;h3&gt;4 data属性&lt;/h3&gt;
+&lt;p&gt;data是msg中一个很重要的属性，当数据层面的交换机接收到传统包，data就是这个传统包的所有内容或是报头内容。&lt;/p&gt;
+&lt;p&gt;对data的解析出现在packet-in中，当packetout时候，有时候会用到data的封装。&lt;/p&gt;
+&lt;p&gt;主要类：class Packet(object):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;def __init__(self, data=None, protocols=None, parse_cls=ethernet.ethernet)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）&lt;/p&gt;
+&lt;p&gt;位置：\ryu\lib\packet\packet.py&lt;/p&gt;
+&lt;p&gt;类方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
+用法：&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;封包解析&lt;/p&gt;
+&lt;p&gt;对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。&lt;/p&gt;
+&lt;p&gt;pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    &lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet(msg.data)    #形成packet对象
+pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
+if not pkt_ethernet:
+return   # non Ethernet    
+eth_dst=pkt_eth.dst
+eth_src=pkt_eth.src
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。&lt;/p&gt;
+&lt;p&gt;解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;封包生成&lt;/p&gt;
+&lt;p&gt;生成空Packet对象-&amp;gt;生成协议对象（ethernet,ipv4等）-&amp;gt; add_protocol()把协议对象依次加入Packet空对象中-&amp;gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet()   #生成空的Packet ()对象
+pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
+pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
+pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
+pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
+bin_packet = pkt.data  #提取封包好data属性
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;另一种写法（用API）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;e = ethernet.ethernet (...)
+i = ipv4.ipv4 (...)
+u = udp.udp (...)
+pkt = e/i/u
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。&lt;/p&gt;</summary><category term="RYU souce code"></category></entry><entry><title>Ryu源码分析</title><link href="http://ysywh.github.io/pages/2015/07/10/Ryu%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-07-10:pages/2015/07/10/Ryu源码分析.html</id><summary type="html">&lt;p&gt;Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：&lt;/p&gt;
+&lt;h4&gt;1 Event类&lt;/h4&gt;
 &lt;p&gt;位置：ryu\lib\alert.py中Event类&lt;/p&gt;
-&lt;p&gt;有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？&lt;/p&gt;
+&lt;p&gt;有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。&lt;/p&gt;
 &lt;h3&gt;2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）&lt;/h3&gt;
 &lt;p&gt;位置：ryu\ofproto\ofproto_parser中 MsgBase()类，&lt;/p&gt;
-&lt;p&gt;构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
-息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。&lt;/p&gt;
+&lt;p&gt;属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。&lt;/p&gt;
+&lt;p&gt;比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。&lt;/p&gt;
 &lt;h3&gt;3 datapath&lt;/h3&gt;
 &lt;p&gt;类位置：ryu\controller\controller.py中&lt;/p&gt;
 &lt;p&gt;Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）&lt;/p&gt;
@@ -23,30 +188,30 @@ send_msg()&lt;/p&gt;
     dst = eth.dst
     src = eth.src&lt;/p&gt;
 &lt;p&gt;帧头属性（如dst , src查看ethernet类即可）&lt;/p&gt;
-&lt;h3&gt;6 ofproto包：&lt;/h3&gt;
+&lt;h3&gt;6 ofproto组件（文件夹）：&lt;/h3&gt;
 &lt;p&gt;位置：\ryu\ofproto   &lt;/p&gt;
-&lt;p&gt;交互的包形成过程：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;交换机发往控制器：&lt;/p&gt;
-&lt;p&gt;协议指定 -&amp;gt; 讯息产生,讯息自动解析(框架自动完成) -&amp;gt; 产生讯息实体msg（ev.msg） -&amp;gt;讯息实体msg解析(通过msg属性，如msg.match得到匹配部分)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;控制器发往交换机：
-    协议指定 -&amp;gt;讯息实体msg反解析(形成match和actions等)-&amp;gt;产生讯息实体msg(如OFPPacketOut) –&amp;gt;产生讯息(send_msg())&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;注意：本节注意讯息和讯息实体（msg）概念的区分&lt;/p&gt;
+&lt;p&gt;包含openflow协议相关定义与处理,这里对其中几个重要模块（文件）进行分析。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;6.1  ofproto_protocol.py模块（协议指定）&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;作用：协议指定&lt;/p&gt;
 &lt;p&gt;过程：通过里面的ProtocolDesc()类来初始化data path的两个属性(如初始化出ofproto_v1_3, ofproto_v1_3_parser)，以此完成OF协议版本的指定&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;6.2  ofproto_parser.py模块（产生讯息后，对讯息解析，产生msg讯息实体）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;作用：针对交换机发往控制器讯息的解析，为了之后得到讯息实体（msg），msg即控制器和交换机之间
-openflow包(除去包头)的负载部分&lt;/p&gt;
+&lt;p&gt;作用：针对交换机发往控制器openflow讯息的解析。这个是为了之后得到讯息实体msg，msg即控制器和交换机之间openflow包(除去包头)的负载部分，即openflow内容。&lt;/p&gt;
 &lt;p&gt;过程：针对交换机发往控制器讯息的解析，框架自动调用header()和msg()方法，依次解析讯息（根据OF协议版本）。&lt;/p&gt;
 &lt;p&gt;除此，里面有MsgBase()类，将被协议解析模块中的类继承，以此获得讯息实体(msg)。&lt;/p&gt;
+&lt;p&gt;这里说明openflow消息的解析与构造流程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;交换机发往控制器：&lt;/p&gt;
+&lt;p&gt;协议指定 -&amp;gt; openflow讯息产生,讯息自动解析(框架自动完成) -&amp;gt; 产生讯息实体msg（ev.msg） -&amp;gt;讯息实体msg解析(通过msg属性，如msg.match得到匹配部分)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;控制器发往交换机：
+    协议指定 -&amp;gt;讯息实体msg的构造(形成match和actions等)-&amp;gt;产生讯息openflow消息(如OFPPacketOut) –&amp;gt;发送讯息(send_msg())&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注意：本节注意讯息（openflow消息）和讯息实体（msg，继承自MsgBase）概念的区分&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;6.3  of协议解析模块（如：ofproto_v1_3_parser.py）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;类比较多，分类别讨论：&lt;/p&gt;
+&lt;p&gt;文件中定义的类比较多，分类别讨论：&lt;/p&gt;
 &lt;p&gt;这里，主要讨论继承类MsgBase()的Openflow讯息类,这些类产生交互的讯息实体msg&lt;/p&gt;
 &lt;p&gt;作用：根据控制器和交换机交换交互的包，用模块中相应类产生出讯息实体msg（of负载部分）。这种类分两种：第二种情况，msg实体在类中得到相应属性，并继承MsgBase()一些属性,而第一种情况需要主动调用类，写入属性值。&lt;/p&gt;
 &lt;ul&gt;
@@ -90,7 +255,7 @@ return &amp;#39;Event&amp;#39; + msg_name
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;第二种，控制器发往交换机消息&lt;/p&gt;
-&lt;p&gt;作用：这些类无@_register_parse的类（如OFPPacketOut），这些类用来控制器下发讯息产生讯息实体msg，方法是手动书写调用此类，参数是类应有的属性值如datapath，和情况a过程相反。产生讯息实体msg后通过msg的方法msg_send（msg）产生讯息发出去。&lt;/p&gt;
+&lt;p&gt;作用：这些类无@_register_parse的类（如OFPPacketOut），这些类用来控制器下发讯息产生讯息实体msg，方法是手动书写调用此类，参数是类应有的属性值如datapath，和第一种过程恰好相反。产生讯息实体msg后通过msg的方法msg_send（msg）产生讯息发出去。&lt;/p&gt;
 &lt;p&gt;用法（根据类定义）：如类OFPPacketOut用法：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;def send_packet_out(self, datapath, buffer_id, in_port):  #自定义
     ofp = datapath.ofproto
@@ -117,128 +282,7 @@ return &amp;#39;Event&amp;#39; + msg_name
 &lt;li&gt;OFPSetConfig(MsgBase): 控制器下发的交换机配置设置的要求消息，无需reply&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Ryu框架自动调用完成的类：OFPHello，OFPEchoReply，OFPEchoRequest，OFPSwitchFeatures（回答控制器发往交换机OFPFeaturesRequest，前面四个是交换机发往控制器的）&lt;/p&gt;
-&lt;p&gt;注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。&lt;/p&gt;
-&lt;h3&gt;6.4  讯息实体msg解析&lt;/h3&gt;
-&lt;p&gt;作用：解析讯息实体msg，获得讯息实体内容。&lt;/p&gt;
-&lt;p&gt;对于控制器解析出的msg讯息实体，一般会有一些属性datapath，match，data等，具体根据哪种msg决定&lt;/p&gt;
-&lt;p&gt;1 一般属性的解析，如msg属性buffer_id，datapath可直接访问，如msg.datapath&lt;/p&gt;
-&lt;p&gt;2 对于match这个属性解析和反解析（生成）：&lt;/p&gt;
-&lt;p&gt;主要类：OFPMatch(StringifyMixin)类，形成match实体。
-  OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;生成match：直接用键值形式作为参数调用OFPMatch() 类：如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;match = parser.OFPMatch(
-in_port=1,
-eth_type=0x86dd,
-ipv6_src=(&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;,&amp;#39;ffff:ffff:ffff:ffff::&amp;#39;),
-ipv6_dst=&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;)
-if &amp;#39;ipv6_src&amp;#39; in match:
-print match[&amp;#39;ipv6_src&amp;#39;]
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。&lt;/p&gt;
-&lt;p&gt;当然，还有OFPMatchField匹配域，掩码问题...先不分析。&lt;/p&gt;
-&lt;p&gt;3 actions&lt;/p&gt;
-&lt;p&gt;作用：当进入交换机封包满足match匹配则执行动作action(每条流表项可以有多个action，组成action list，因此是数组型)。其次，action要作为指令instruction参数 。&lt;/p&gt;
-&lt;p&gt;用法：调用action类实例化action。&lt;/p&gt;
-&lt;p&gt;举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 &lt;/p&gt;
-&lt;p&gt;OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。&lt;/p&gt;
-&lt;p&gt;定义：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
-    super(OFPActionOutput, self).__init__()
-    self.port = port
-    self.max_len = max_len。
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;参数：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为
-OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Port是包出端口。可以是指定端口号（如1,2等），还可以是：
-OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。
-注：instruction(指令)&lt;/p&gt;
-&lt;p&gt;说明：匹配后执行的指令集（数组型，可包含多个指令），指导指令中包含的action如何执行，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。指令类由action对象作为参数生成instruction对象，instruction作为真正match后执行的动作。&lt;/p&gt;
-&lt;p&gt;用法：需要调用instruction相关类生成。有四种：OFPInstructionGotoTable，OFPInstructionWriteMetadata，OFPInstructionActions，OFPInstructionMeter，他们都继承OFPInstruction类。&lt;/p&gt;
-&lt;p&gt;例如OFPInstructionActions：定义如下：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;OFPInstructionActions&lt;/span&gt;(&lt;span class="n"&gt;OFPInstruction&lt;/span&gt;):
-    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type_&lt;/span&gt;, &lt;span class="n"&gt;actions&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;, &lt;span class="n"&gt;len_&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
-    ...
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；&lt;/li&gt;
-&lt;li&gt;OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；&lt;/li&gt;
-&lt;li&gt;OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;actions即为上面的action对象。&lt;/p&gt;
-&lt;p&gt;因此，OFPInstructionGotoTable（table转移，只支持单流表无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理
-其实，目前很多交换机只支持单流表，以上有几个指令是无意义的。&lt;/p&gt;
-&lt;p&gt;4 data属性&lt;/p&gt;
-&lt;p&gt;类：class Packet(object):&lt;/p&gt;
-&lt;p&gt;def &lt;strong&gt;init&lt;/strong&gt;(self, data=None, protocols=None, parse_cls=ethernet.ethernet):&lt;/p&gt;
-&lt;p&gt;Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）&lt;/p&gt;
-&lt;p&gt;位置：\ryu\lib\packet\packet.py&lt;/p&gt;
-&lt;p&gt;类方法：add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）
-get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表
-get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
-用法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;封包解析&lt;/p&gt;
-&lt;p&gt;对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。&lt;/p&gt;
-&lt;p&gt;pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    &lt;/p&gt;
-&lt;p&gt;例如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet(msg.data)    #形成packet对象
-pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
-if not pkt_ethernet:
-return   # non Ethernet    
-eth_dst=pkt_eth.dst
-eth_src=pkt_eth.src
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。&lt;/p&gt;
-&lt;p&gt;解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;封包生成&lt;/p&gt;
-&lt;p&gt;生成空Packet对象-&amp;gt;生成协议对象（ethernet,ipv4等）-&amp;gt; add_protocol()把协议对象依次加入Packet空对象中-&amp;gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。&lt;/p&gt;
-&lt;p&gt;例如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet()   #生成空的Packet ()对象
-pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
-pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
-pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
-pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
-bin_packet = pkt.data  #提取封包好data属性
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;另一种写法（用API）：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;e = ethernet.ethernet (...)
-i = ipv4.ipv4 (...)
-u = udp.udp (...)
-pkt = e/i/u
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;/li&gt;
-&lt;/ul&gt;</summary><category term="RYU souce code"></category></entry><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
+&lt;p&gt;注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。&lt;/p&gt;</summary><category term="RYU souce code"></category></entry><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。&lt;/p&gt;
 &lt;hr /&gt;
