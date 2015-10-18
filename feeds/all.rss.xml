@@ -57,10 +57,10 @@
 &lt;/ul&gt;
 &lt;h3&gt;二：测试步骤&lt;/h3&gt;
 &lt;p&gt;准备工作：先安装好&lt;a href="https://www.opendaylight.org/downloads"&gt;OpenDaylight&lt;/a&gt;和&lt;a href="https://github.com/deepurple/cbench-src"&gt;Cbench&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;1 开启opendaylight:
-&lt;img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" /&gt;
-2 安装Opendaylight控制器测试组件：
-&lt;img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;1 开启opendaylight:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2 安装Opendaylight控制器测试组件：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench2.png" /&gt;&lt;/p&gt;
 &lt;p&gt;说明：Opendaylight不同于其他控制器，需要测试组件的支持，且测试组件具有两种测试模式：RPC和data store模式（区别见最后说明），以下分别用Cbench进行吞吐量和延时的测试.&lt;/p&gt;
 &lt;h3&gt;RPC模式性能测试&lt;/h3&gt;
 &lt;p&gt;首先，在RPC模式下进行Opendaylight性能测试：&lt;/p&gt;
