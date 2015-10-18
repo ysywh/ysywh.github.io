@@ -104,8 +104,42 @@ YsY记录点滴            </a>
             </article>
             <hr/>
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/02/OVS源码分析————OpenFlow消息处理.html">OVS源码分析----OpenFlow消息处理</a></h2>
+                <div class="summary"><p></br></p>
+<p></br></p>
+<p>OVS作为交换机，可以通过安全通道与控制器进行消息交互。控制器向OVS下发Openflow消息，可以完成对数据层面策略下发，流控制等功能。OVS接收到控制器下发的Openflow消息，需要对其进行接收，解析与处理，如安装流表项等操作。</p>
+<hr />
+<p>下文按照OVS接收处理openflow消息的处理流程进行分析：</p>
+<h4>一  Openflow消息处理函数handle_openflow(ofproto\ofproto.c)</h4>
+<p>从这里开始进行openflow消息处理。</p>
+<p>数据结构：</p>
+<ul>
+<li>
+<p>ofconn(ofproto\connmgr.c)：代表ovs和控制器之间的一次openflow连接。</p>
+<ul>
+<li>
+<p>主要的成员</p>
+</li>
+<li>
+<p>connmgr（连接管理器）</p>
+<ul>
+<li>rconn（一次可靠地openflow连接）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>1 static bool  handle_openflow(struct ofconn <em>ofconn, struct ofpbuf </em>ofp_msg)</p>
+<p>功能：接收控制器下发的openflow消息，并且调用函数handle_openflow__进行消息类别判断，做出对应的处理。若接收到错误的openflow消息则会返回error，向控制器发“error消息”进行回复。</p>
+<p>2 satic enum ofperr handle_openflow__ ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/02/OVS源码分析————OpenFlow消息处理.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">Cbench测试Opendaylight性能</a></h2>
-                <div class="summary"><p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
+                <div class="summary"><p></br></p>
+<p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
 <p>实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。</p>
 <h3>一：测试平台：</h3>
 <p>由于测试结果和测试平台的性能紧密联系，因此记录下测试平台参数。</p>
@@ -192,7 +226,7 @@ YsY记录点滴            </a>
             </article>
             <hr/>
             <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">letter_count</a></h2>
+                <h2><a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></h2>
                 <div class="summary"><p>2015-3-2 by ysy  </p>
 <p><br></p>
 <p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
@@ -238,6 +272,16 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
+                            OVS souce code
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
                             Cbench OpenDaylight
                         </a>
@@ -250,11 +294,6 @@ YsY记录点滴            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/letter-count.html">
                             letter count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
                         </a>
                     </li>
                 </ul>

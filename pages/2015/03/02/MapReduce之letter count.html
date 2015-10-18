@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>letter_count - YsY记录点滴</title>
+    <title>MapReduce之letter count - YsY记录点滴</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
 
         <meta property="og:site_name" content="YsY记录点滴" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="letter_count"/>
+        <meta property="og:title" content="MapReduce之letter count"/>
         <meta property="og:url" content="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html"/>
         <meta property="og:description" content="2015-3-2 by ysy 本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。 1 创建新的工程lettercount,并且加载需要的Hadoop库： 2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同： 3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中： 4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算： 5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个："/>
         <meta property="article:published_time" content="2015-03-02" />
@@ -89,8 +89,8 @@ YsY记录点滴            </a>
                 <h1>
                     <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html"
                        rel="bookmark"
-                       title="Permalink to letter_count">
-                        letter_count
+                       title="Permalink to MapReduce之letter count">
+                        MapReduce之letter count
                     </a>
                 </h1>
             </header>
@@ -187,6 +187,16 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
+                            OVS souce code
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
                             Cbench OpenDaylight
                         </a>
@@ -199,11 +209,6 @@ YsY记录点滴            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/letter-count.html">
                             letter count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
                         </a>
                     </li>
                 </ul>

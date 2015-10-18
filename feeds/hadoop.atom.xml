@@ -76,7 +76,7 @@
 &lt;li&gt;
 &lt;p&gt;其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 &lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</summary><category term="mapreduce"></category><category term="word count"></category></entry><entry><title>letter_count</title><link href="http://ysywh.github.io/pages/2015/03/02/MapReduce%E4%B9%8Bletter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce之letter count.html</id><summary type="html">&lt;p&gt;2015-3-2 by ysy  &lt;/p&gt;
+&lt;/ul&gt;</summary><category term="mapreduce"></category><category term="word count"></category></entry><entry><title>MapReduce之letter count</title><link href="http://ysywh.github.io/pages/2015/03/02/MapReduce%E4%B9%8Bletter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce之letter count.html</id><summary type="html">&lt;p&gt;2015-3-2 by ysy  &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。&lt;/p&gt;
 &lt;hr /&gt;
