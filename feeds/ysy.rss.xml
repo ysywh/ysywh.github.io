@@ -99,8 +99,8 @@
 &lt;p&gt;data store : programming flows by writing them into the MD-SAL config space, from where they are picked up by the FRM and programmed into the plugin)&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;2 参数命令和结果截图说明见4和5，之后的不再赘述。
-3 测试结果的文本数据，见附件result.txt&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-04-03:pages/2015/04/03/Cbench测试Opendaylight性能.html</guid><category>Cbench OpenDaylight</category></item><item><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link>http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html</link><description>&lt;p&gt;2015-3-8 by ysy   &lt;/p&gt;
+&lt;p&gt;2 参数命令和结果截图说明见4和5，之后的不再赘述。&lt;/p&gt;
+&lt;p&gt;3 测试结果的文本数据，见附件result.txt&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-04-03:pages/2015/04/03/Cbench测试Opendaylight性能.html</guid><category>Cbench OpenDaylight</category></item><item><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link>http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html</link><description>&lt;p&gt;2015-3-8 by ysy   &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  &lt;/p&gt;
 &lt;hr /&gt;
