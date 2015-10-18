@@ -78,18 +78,42 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></h2>
+                <div class="summary"><h3>前言</h3>
+<p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
+<ul>
+<li>
+<p>msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等</p>
+</li>
+<li>
+<p>每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 </p>
+</li>
+</ul>
+<p>当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。</p>
+<p>packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。</p>
+<p>Packet-in消息属性：</p>
+<div class="highlight"><pre>buffer_id     ID assigned by datapath
+total_len     Full length of frame
+reason        Reason packet is being sent.
+
+              | OFPR_NO_MATCH
+              | OFPR_ACTION ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
-                <div class="summary"><h4>1 Event类</h4>
+                <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
+<h4>1 Event类</h4>
 <p>位置：ryu\lib\alert.py中Event类</p>
-<p>有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？</p>
+<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
 <h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
 <p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
-息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。</p>
+<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
+<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
 <h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中</p>
-<p>Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）</p>
-<p>属性:id，ports ...</p>
+<p>类位置：ryu\controller\controller.py中 ...</p>
                     <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
                 </div>
             </article>
@@ -122,7 +146,7 @@ YsY记录点滴            </a>
                             mapreduce
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-2">
                         <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
                             RYU souce code
                         </a>
@@ -133,13 +157,13 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

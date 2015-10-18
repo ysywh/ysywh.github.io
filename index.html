@@ -77,18 +77,42 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></h2>
+                <div class="summary"><h3>前言</h3>
+<p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
+<ul>
+<li>
+<p>msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等</p>
+</li>
+<li>
+<p>每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 </p>
+</li>
+</ul>
+<p>当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。</p>
+<p>packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。</p>
+<p>Packet-in消息属性：</p>
+<div class="highlight"><pre>buffer_id     ID assigned by datapath
+total_len     Full length of frame
+reason        Reason packet is being sent.
+
+              | OFPR_NO_MATCH
+              | OFPR_ACTION ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
-                <div class="summary"><h4>1 Event类</h4>
+                <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
+<h4>1 Event类</h4>
 <p>位置：ryu\lib\alert.py中Event类</p>
-<p>有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？</p>
+<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
 <h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
 <p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
-息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。</p>
+<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
+<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
 <h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中</p>
-<p>Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）</p>
-<p>属性:id，ports ...</p>
+<p>类位置：ryu\controller\controller.py中 ...</p>
                     <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
                 </div>
             </article>
@@ -157,26 +181,6 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">OVS源码分析----用户层处理Upcall消息(1)</a></h2>
-                <div class="summary"><p></br></p>
-<h3>前言</h3>
-<p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
-key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
-<p>下俩将按照用户层接收upcall消息与处理的流程进行分析：</p>
-<p>用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。</p>
-<p>upcall处理流程如图:</p>
-<p></br></p>
-<h4><strong>1）   upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)</strong></h4>
-<p><code>static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)</code></p>
-<p><strong>功能</strong>：接收upcall消息并对miss_upcall类型消息调用处理。</p>
-<p>函数中处理流程如下</p>
-<p>1 调用upcall消息接收函数：
-    error = dpif_recv(ofproto-&gt;dpif ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">more ...</a>
-                </div>
-            </article>
-            <hr/>
 
         <ul class="pagination">
                 <li class="prev disabled"><a href="#">&laquo;</a></li>
@@ -214,7 +218,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                             mapreduce
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-2">
                         <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
                             RYU souce code
                         </a>
@@ -225,13 +229,13 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
