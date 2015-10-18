@@ -59,6 +59,9 @@ YsY记录点滴            </a>
                         <li >
                             <a href="http://ysywh.github.io/category/program.html">Program</a>
                         </li>
+                        <li >
+                            <a href="http://ysywh.github.io/category/sdn.html">Sdn</a>
+                        </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://ysywh.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
@@ -97,6 +100,49 @@ YsY记录点滴            </a>
 <p>集合结构就像数学中的集合，很好理解；线性结构就是数据中一对一关系；树形结构就是数据是一对多关系；图结构就是多对多关系。虽然这样描述不准确，但好理解就OK。</p>
 <p>说到数据结构，让我想起 <strong>数据类型</strong>，简单的认为，数据类型是带有操作的值的总称，是操作的对象。数据类型有基本数据类型和非基本数据类型，如在C语言中，基本数据类型如int类型，其操作可以有加减乘除等操作，非基本数据类型，可以是数据结构和定义的操作，如顺序表（线性结构）和一些插入删除的操作，其实在C++中 ...</p>
                     <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">Cbench测试Opendaylight性能</a></h2>
+                <div class="summary"><p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
+<p>实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。</p>
+<h3>一：测试平台：</h3>
+<p>由于测试结果和测试平台的性能紧密联系，因此记录下测试平台参数。</p>
+<blockquote>
+<p>硬件参数：</p>
+</blockquote>
+<ul>
+<li>
+<p>CPU: Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz</p>
+</li>
+<li>
+<p>Memory: 8GB DDR3 - 1600 Mhz</p>
+</li>
+</ul>
+<blockquote>
+<p>软件参数:</p>
+</blockquote>
+<ul>
+<li>
+<p>OS: Ubuntu 14.04</p>
+</li>
+<li>
+<p>Java: OpenJDK java version "1.7.0"</p>
+</li>
+<li>
+<p>Opendaylight版本:Helium-SR2</p>
+</li>
+<li>
+<p>Opendaylight设置为初始默认值</p>
+</li>
+</ul>
+<h3>二：测试步骤</h3>
+<p>准备工作：先安装好<a href="https://www.opendaylight.org/downloads">OpenDaylight</a>和<a href="https://github.com/deepurple/cbench-src">Cbench</a>。</p>
+<p>1 开启opendaylight:
+<img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" />
+2 ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -192,6 +238,11 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
                             数据结构，算法
                         </a>
@@ -202,8 +253,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
                         </a>
                     </li>
                 </ul>
