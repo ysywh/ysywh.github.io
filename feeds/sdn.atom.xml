@@ -117,7 +117,8 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;p&gt;1 调用recv(dpif, upcall, buf)函数进行upcall消息接收，放入upcall中，至此得到upcall消息。其中通过指针dpif具体调用了底层的接收函数dpif_linux_recv（位于Lib\dpif-linux中），此函数中调用socket函数从内核汇总接收netlink的msg，存到ofpbuf中，即error = nl_sock_recv(ch-
 &gt;sock, buf, false)，随后并调用error = parse_odp_packet(buf, upcall, &amp;amp;dp_ifindex)解析出upcall消息。&lt;/p&gt;
 &lt;p&gt;2 &lt;code&gt;odp_flow_key_format(upcall-&amp;gt;key, upcall-&amp;gt;key_len, &amp;amp;flow)&lt;/code&gt;利用这个函数得到的upcall消息解析得到flow消息进行日志输出。&lt;/p&gt;
-&lt;p&gt;3 miss_upcall消息处理函数&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;3) miss_upcall消息处理函数&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;static void handle_miss_upcalls(struct ofproto_dpif *ofproto, struct dpif_upcall *upcalls,size_t n_upcalls)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;关系&lt;/strong&gt;：handle_upcalls中被调用&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;功能&lt;/strong&gt;：对miss_upcall消息具体进程处理。&lt;/p&gt;
