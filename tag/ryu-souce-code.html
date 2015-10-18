@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>program - YsY记录点滴</title>
+    <title>RYU souce code - YsY记录点滴</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
 
 
     <meta name="author" content="yansy" />
-    <meta name="keywords" content="program" />
+    <meta name="keywords" content="RYU souce code" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="YsY记录点滴" />
@@ -57,7 +57,7 @@ YsY记录点滴            </a>
                         <li >
                             <a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a>
                         </li>
-                        <li class="active">
+                        <li >
                             <a href="http://ysywh.github.io/category/program.html">Program</a>
                         </li>
                         <li >
@@ -78,29 +78,19 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">数据结构</a></h2>
-                <div class="summary"><p>2015-6-1 by ysy   </p>
-<p><br></p>
-<p>程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。</p>
-<hr />
-<p><strong>数据结构</strong>：一组有特定数据关系的数据元素集合。根据数据关系，因此衍生出以下四种基本类型的数据结构：</p>
-<ul>
-<li>
-<p>集合结构 </p>
-</li>
-<li>
-<p>线性结构    </p>
-</li>
-<li>
-<p>树形结构</p>
-</li>
-<li>
-<p>图结构</p>
-</li>
-</ul>
-<p>集合结构就像数学中的集合，很好理解；线性结构就是数据中一对一关系；树形结构就是数据是一对多关系；图结构就是多对多关系。虽然这样描述不准确，但好理解就OK。</p>
-<p>说到数据结构，让我想起 <strong>数据类型</strong>，简单的认为，数据类型是带有操作的值的总称，是操作的对象。数据类型有基本数据类型和非基本数据类型，如在C语言中，基本数据类型如int类型，其操作可以有加减乘除等操作，非基本数据类型，可以是数据结构和定义的操作，如顺序表（线性结构）和一些插入删除的操作，其实在C++中 ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">more ...</a>
+                <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
+                <div class="summary"><h4>1 Event类</h4>
+<p>位置：ryu\lib\alert.py中Event类</p>
+<p>有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？</p>
+<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
+<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
+<p>构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
+息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。</p>
+<h3>3 datapath</h3>
+<p>类位置：ryu\controller\controller.py中</p>
+<p>Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）</p>
+<p>属性:id，ports ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
                 </div>
             </article>
             <hr/>

@@ -1,5 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/all.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/all.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Ryu源码分析</title><link href="http://ysywh.github.io/pages/2015/07/10/Ryu%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-07-10:pages/2015/07/10/Ryu源码分析.html</id><summary type="html">&lt;h4&gt;1 Event类&lt;/h4&gt;
+&lt;p&gt;位置：ryu\lib\alert.py中Event类&lt;/p&gt;
+&lt;p&gt;有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？&lt;/p&gt;
+&lt;h3&gt;2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）&lt;/h3&gt;
+&lt;p&gt;位置：ryu\ofproto\ofproto_parser中 MsgBase()类，&lt;/p&gt;
+&lt;p&gt;构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
+息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。&lt;/p&gt;
+&lt;h3&gt;3 datapath&lt;/h3&gt;
+&lt;p&gt;类位置：ryu\controller\controller.py中&lt;/p&gt;
+&lt;p&gt;Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）&lt;/p&gt;
+&lt;p&gt;属性:id，ports，ofproto,ofproto_parser（继承来的）等&lt;/p&gt;
+&lt;p&gt;方法：send_msg，还有send_packet_out，send_flow_mod等，其实内部最后都调用了
+send_msg()&lt;/p&gt;
+&lt;h3&gt;4  datapath的两个属性ofproto,ofproto_parser&lt;/h3&gt;
+&lt;p&gt;dp = ofproto_protocol.ProtocolDesc(version=ofproto_v1_3.OFP_VERSION)  &lt;/p&gt;
+&lt;p&gt;位置：\ryu\ofproto\ofproto_protocol.py中定义了类ProtocolDesc&lt;/p&gt;
+&lt;p&gt;解释：通过ProtocolDesc类构造函数（&lt;strong&gt;init&lt;/strong&gt;）获得属于datapath的两个属性ofproto,ofproto_parser(即相应版本的协议模块名和协议解析模块名字，比如模块ofproto_v1_3, ofproto_v1_3_parser)，则这个模块成为data path的属性，通过dp.ofproto_parser可以调用相应版本的类、函数等。&lt;/p&gt;
+&lt;h3&gt;5 传统数据包解析&lt;/h3&gt;
+&lt;p&gt;传统包头协议位置：\ryu\lib\packet 中有ethernet ipv4等模块，通过Packet编解码传统包。
+用法：pkt = packet.Packet(msg.data)  通过Packet类解析出传统数据包&lt;/p&gt;
+&lt;p&gt;eth=pkt.get_protocols(ethernet.ethernet)[0] 通过ethernet.py中ethernet类匹配出帧头
+    dst = eth.dst
+    src = eth.src&lt;/p&gt;
+&lt;p&gt;帧头属性（如dst , src查看ethernet类即可）&lt;/p&gt;
+&lt;h3&gt;6 ofproto包：&lt;/h3&gt;
+&lt;p&gt;位置：\ryu\ofproto   &lt;/p&gt;
+&lt;p&gt;交互的包形成过程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;交换机发往控制器：&lt;/p&gt;
+&lt;p&gt;协议指定 -&amp;gt; 讯息产生,讯息自动解析(框架自动完成) -&amp;gt; 产生讯息实体msg（ev.msg） -&amp;gt;讯息实体msg解析(通过msg属性，如msg.match得到匹配部分)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;控制器发往交换机：
+    协议指定 -&amp;gt;讯息实体msg反解析(形成match和actions等)-&amp;gt;产生讯息实体msg(如OFPPacketOut) –&amp;gt;产生讯息(send_msg())&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注意：本节注意讯息和讯息实体（msg）概念的区分&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;6.1  ofproto_protocol.py模块（协议指定）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;作用：协议指定&lt;/p&gt;
+&lt;p&gt;过程：通过里面的ProtocolDesc()类来初始化data path的两个属性(如初始化出ofproto_v1_3, ofproto_v1_3_parser)，以此完成OF协议版本的指定&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;6.2  ofproto_parser.py模块（产生讯息后，对讯息解析，产生msg讯息实体）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;作用：针对交换机发往控制器讯息的解析，为了之后得到讯息实体（msg），msg即控制器和交换机之间
+openflow包(除去包头)的负载部分&lt;/p&gt;
+&lt;p&gt;过程：针对交换机发往控制器讯息的解析，框架自动调用header()和msg()方法，依次解析讯息（根据OF协议版本）。&lt;/p&gt;
+&lt;p&gt;除此，里面有MsgBase()类，将被协议解析模块中的类继承，以此获得讯息实体(msg)。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;6.3  of协议解析模块（如：ofproto_v1_3_parser.py）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;类比较多，分类别讨论：&lt;/p&gt;
+&lt;p&gt;这里，主要讨论继承类MsgBase()的Openflow讯息类,这些类产生交互的讯息实体msg&lt;/p&gt;
+&lt;p&gt;作用：根据控制器和交换机交换交互的包，用模块中相应类产生出讯息实体msg（of负载部分）。这种类分两种：第二种情况，msg实体在类中得到相应属性，并继承MsgBase()一些属性,而第一种情况需要主动调用类，写入属性值。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;第一种，交换机发往控制器消息：&lt;/p&gt;
+&lt;p&gt;举例：控制器收到的PacketIn包的类定义：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;@_register_parser
+@_set_msg_type(ofproto.OFPT_PACKET_IN)
+class OFPPacketIn(MsgBase):
+def __init__(self, data path, buffer_id=None, total_len=None, reason=None,table_id=None, cookie=None, match=None, data=None):
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;分析：对于packin包，通过这个类产生相应讯息实体msg，msg有两种属性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;特定Msg属性：对于OFPPacketIn的msg，里面有datapath,    buffer_id,total_len,reason,tab
+    le_id,cookie,match,data属性，其中data即传统数据包的以太帧，match是OFPMatch的对象实例，实例中有一个40元组的字典型属性（暂且这么理解），键比如in_port，通过match[in_port]访问匹配域的入端口，对象match竟然可以这么访问，OFPMatch中定义的吧）&lt;/li&gt;
+&lt;li&gt;基本属性：因为都继承类MsgBase(),则也继承了类MsgBase()中属性，作为msg基本属性：
+datapath，version，msg_type，msg_len，xid，buf   &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;原理：&lt;/p&gt;
+&lt;p&gt;类OFPPacketIn是交换机发给控制器讯息的类，对于交换机发给控制器的讯息，会触发此类,但由于此类用修饰符@_register_parse注册，则此类生成实体前，会先在修饰符函数_register_parse中调用此类中的parser函数进行对讯息进行解析，完成此类的msg实例化，产生讯息实体msg。&lt;/p&gt;
+&lt;p&gt;使用方法：如处理packin消息：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;@set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+def packet_in_handler(self, ev):
+msg = ev.msg   得到msg实体
+…
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解释：以上原理中所说的（Of讯息产生，并解析出msg讯息实体）相当于产生一个对应事件ev，应自定义事件管理函数（如packet_in_handler）对事件进行处理。&lt;/p&gt;
+&lt;p&gt;事件管理函数(Event hander)是以接收的事件ev为形参，使用@set_ev_cls（`ryu.controller.handler.set_ev_cls）修饰的函数。修饰符函数@set_ev_cls中第一个参数接受的讯息（Event+讯息类名），第二个参数有四种情况，描述交换机状态。（ryu.controller.handler中定义）。&lt;/p&gt;
+&lt;p&gt;其中第一个参数定义见ryu.controller.ofp_event.py，其中函数_create_ofp_msg_ev_class(msg_cls) 调用函数_ofp_msg_name_to_ev_name(msg_cls)产生事件名字作为set_ev_cls参数。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def _ofp_msg_name_to_ev_name(msg_name):
+return &amp;#39;Event&amp;#39; + msg_name
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中ev.msg是用来储存对应事件的OpenFlow 讯息实体。上例中是ryu.ofproto.ofproto_v1_3_parser. OFPPacketIn。&lt;/p&gt;
+&lt;p&gt;msg.datapath是存储OpenFlow交换器ryu.controller.controller.Datapath类所对应的实体。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第二种，控制器发往交换机消息&lt;/p&gt;
+&lt;p&gt;作用：这些类无@_register_parse的类（如OFPPacketOut），这些类用来控制器下发讯息产生讯息实体msg，方法是手动书写调用此类，参数是类应有的属性值如datapath，和情况a过程相反。产生讯息实体msg后通过msg的方法msg_send（msg）产生讯息发出去。&lt;/p&gt;
+&lt;p&gt;用法（根据类定义）：如类OFPPacketOut用法：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def send_packet_out(self, datapath, buffer_id, in_port):  #自定义
+    ofp = datapath.ofproto
+    ofp_parser = datapath.ofproto_parser
+    actions = [ofp_parser.OFPActionOutput(ofp.OFPP_FLOOD, 0)]
+    req=ofp_parser.OFPPacketOut(datapath, buffer_id,in_port, actions) #调用类形成讯息实体msg
+    datapath.send_msg(req)  #使用datapath方法把msg发出去
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于第一种情况（交换机发往控制器）的几种类：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OFPPacketIn(MsgBase):&lt;/li&gt;
+&lt;li&gt;OFPFlowRemoved(MsgBase):当交换机流表项被删除或是过期，向控制器发此消息&lt;/li&gt;
+&lt;li&gt;OFPPortStatus(MsgBase)：当交换机端口状态改变，向控制器发此消息&lt;/li&gt;
+&lt;li&gt;OFPErrorMsg(MsgBase): 交换机发往控制器关于发生错误的消息&lt;/li&gt;
+&lt;li&gt;OFPGetConfigReply(MsgBase)：对于OFPGetConfigRequest的回答消息&lt;/li&gt;
+&lt;li&gt;对于b情况（控制器下发给交换机）有类：&lt;/li&gt;
+&lt;li&gt;OFPFlowMod(MsgBase)：控制器向交换机发改变流表项的消息&lt;/li&gt;
+&lt;li&gt;OFPPacketOut(MsgBase)：控制器向交换机发的消息&lt;/li&gt;
+&lt;li&gt;OFPGetConfigRequest(MsgBase)：控制器发往交换机的交换机配置信息请求信息&lt;/li&gt;
+&lt;li&gt;OFPSetConfig(MsgBase): 控制器下发的交换机配置设置的要求消息，无需reply&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ryu框架自动调用完成的类：OFPHello，OFPEchoReply，OFPEchoRequest，OFPSwitchFeatures（回答控制器发往交换机OFPFeaturesRequest，前面四个是交换机发往控制器的）&lt;/p&gt;
+&lt;p&gt;注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。&lt;/p&gt;
+&lt;h3&gt;6.4  讯息实体msg解析&lt;/h3&gt;
+&lt;p&gt;作用：解析讯息实体msg，获得讯息实体内容。&lt;/p&gt;
+&lt;p&gt;对于控制器解析出的msg讯息实体，一般会有一些属性datapath，match，data等，具体根据哪种msg决定&lt;/p&gt;
+&lt;p&gt;1 一般属性的解析，如msg属性buffer_id，datapath可直接访问，如msg.datapath&lt;/p&gt;
+&lt;p&gt;2 对于match这个属性解析和反解析（生成）：&lt;/p&gt;
+&lt;p&gt;主要类：OFPMatch(StringifyMixin)类，形成match实体。
+  OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;生成match：直接用键值形式作为参数调用OFPMatch() 类：如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;match = parser.OFPMatch(
+in_port=1,
+eth_type=0x86dd,
+ipv6_src=(&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;,&amp;#39;ffff:ffff:ffff:ffff::&amp;#39;),
+ipv6_dst=&amp;#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&amp;#39;)
+if &amp;#39;ipv6_src&amp;#39; in match:
+print match[&amp;#39;ipv6_src&amp;#39;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。&lt;/p&gt;
+&lt;p&gt;当然，还有OFPMatchField匹配域，掩码问题...先不分析。&lt;/p&gt;
+&lt;p&gt;3 actions&lt;/p&gt;
+&lt;p&gt;作用：当进入交换机封包满足match匹配则执行动作action(每条流表项可以有多个action，组成action list，因此是数组型)。其次，action要作为指令instruction参数 。&lt;/p&gt;
+&lt;p&gt;用法：调用action类实例化action。&lt;/p&gt;
+&lt;p&gt;举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 &lt;/p&gt;
+&lt;p&gt;OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。&lt;/p&gt;
+&lt;p&gt;定义：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
+    super(OFPActionOutput, self).__init__()
+    self.port = port
+    self.max_len = max_len。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为
+OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Port是包出端口。可以是指定端口号（如1,2等），还可以是：
+OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。
+注：instruction(指令)&lt;/p&gt;
+&lt;p&gt;说明：匹配后执行的指令集（数组型，可包含多个指令），指导指令中包含的action如何执行，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。指令类由action对象作为参数生成instruction对象，instruction作为真正match后执行的动作。&lt;/p&gt;
+&lt;p&gt;用法：需要调用instruction相关类生成。有四种：OFPInstructionGotoTable，OFPInstructionWriteMetadata，OFPInstructionActions，OFPInstructionMeter，他们都继承OFPInstruction类。&lt;/p&gt;
+&lt;p&gt;例如OFPInstructionActions：定义如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;OFPInstructionActions&lt;/span&gt;(&lt;span class="n"&gt;OFPInstruction&lt;/span&gt;):
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type_&lt;/span&gt;, &lt;span class="n"&gt;actions&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;, &lt;span class="n"&gt;len_&lt;/span&gt;=&lt;span class="n"&gt;None&lt;/span&gt;):
+    ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；&lt;/li&gt;
+&lt;li&gt;OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；&lt;/li&gt;
+&lt;li&gt;OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;actions即为上面的action对象。&lt;/p&gt;
+&lt;p&gt;因此，OFPInstructionGotoTable（table转移，只支持单流表无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理
+其实，目前很多交换机只支持单流表，以上有几个指令是无意义的。&lt;/p&gt;
+&lt;p&gt;4 data属性&lt;/p&gt;
+&lt;p&gt;类：class Packet(object):&lt;/p&gt;
+&lt;p&gt;def &lt;strong&gt;init&lt;/strong&gt;(self, data=None, protocols=None, parse_cls=ethernet.ethernet):&lt;/p&gt;
+&lt;p&gt;Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）&lt;/p&gt;
+&lt;p&gt;位置：\ryu\lib\packet\packet.py&lt;/p&gt;
+&lt;p&gt;类方法：add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）
+get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表
+get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
+用法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;封包解析&lt;/p&gt;
+&lt;p&gt;对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。&lt;/p&gt;
+&lt;p&gt;pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    &lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet(msg.data)    #形成packet对象
+pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
+if not pkt_ethernet:
+return   # non Ethernet    
+eth_dst=pkt_eth.dst
+eth_src=pkt_eth.src
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。&lt;/p&gt;
+&lt;p&gt;解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;封包生成&lt;/p&gt;
+&lt;p&gt;生成空Packet对象-&amp;gt;生成协议对象（ethernet,ipv4等）-&amp;gt; add_protocol()把协议对象依次加入Packet空对象中-&amp;gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pkt = packet.Packet()   #生成空的Packet ()对象
+pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
+pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
+pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
+pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
+bin_packet = pkt.data  #提取封包好data属性
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;另一种写法（用API）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;e = ethernet.ethernet (...)
+i = ipv4.ipv4 (...)
+u = udp.udp (...)
+pkt = e/i/u
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="RYU souce code"></category></entry><entry><title>数据结构</title><link href="http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</id><summary type="html">&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。&lt;/p&gt;
 &lt;hr /&gt;
@@ -23,7 +262,95 @@
 &lt;p&gt;说完数据类型，再来看数据结构，每种数据结构都可以有一些相应的操作，比如插入、删除或查找数据等，好吧，数据结构加上操作就是可以使用的数据类型了。而插入对于不同的数据类型，甚至同一种数据结构，相同操作的机理也是不同的。比如对于链式存储的线性表（链表）和顺序存储的线性表（顺序表）对于查找操作的机理也是不一样的，即用不同方法查找（二分查找、Fbonacci查找）的效率不同，这就牵扯到&lt;strong&gt;算法&lt;/strong&gt;了。当然，除了数据结构操作的方法，包括一些其他问题解决办法，比如排序方法（冒泡排序、插入排序），都是有具体的算法的。算法的优劣，需要根据具体情况采用具体的解决办法，这才是最优的。&lt;/p&gt;
 &lt;p&gt;刚才数据结构中提到的数据关系，其实是一种逻辑关系，真正在计算机中存储不同数据结构，都会有两种物理关系，顺序存储和链式存储。必定这种物理关系需要反应在语言上，顺序存储则对应数据类型中的一维数组，链式存储则是一系列指针类型。因此，实现不同数据结构都可以使用顺序存储和链式存储，则数据结构和采用实现的存储结构无直接关系。比如，对于线性结构的线性表，可以是顺序存储实现，称为顺序表，也可以是链式存储实现，称为链式表。&lt;/p&gt;
 &lt;p&gt;当然，用不同存储方法实现数据结构后，对数据结构进行操作是有差异的。顺序存储最大的特点就是利于查找，即通过数组下标就可以快速完成，但是插入或是删除数据需要移动其他元素，复杂度O(n)；但是对于链式存储，插入和删除非常便利，因为是指针直接操作目标元素，不需要操作其他元素，但是对于查找等操作，却需要逐一遍历到目标元素才可以，不如顺序存储。虽然各有优劣，还是老话，需要根据实际情况选择合适的实现方式。&lt;/p&gt;
-&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</summary><category term="数据结构，算法"></category></entry><entry><title>OVS源码分析----用户层处理Upcall消息(2)</title><link href="http://ysywh.github.io/pages/2015/05/15/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(2).html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-15:pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</summary><category term="数据结构，算法"></category></entry><entry><title>OVS源码分析----datapath消息处理</title><link href="http://ysywh.github.io/pages/2015/05/22/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-22:pages/2015/05/22/OVS源码分析----datapath消息处理.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h3&gt;前言&lt;/h3&gt;
+&lt;p&gt;当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。&lt;/p&gt;
+&lt;p&gt;generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。&lt;/p&gt;
+&lt;p&gt;通信前，作为服务端的内核态要定义family（指定信道类型）和operation（处理函数），并且进行注册，则客户端可以通过注册的信息与之交互。直接以ovs内核态为例分析：&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;一 内核态对flow的接收与处理&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;1 定义注册genl数据结构（datapath\datapth.c）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_family dp_flow_genl_family = {
+    .id = GENL_ID_GENERATE,
+    .hdrsize = sizeof(struct ovs_header),
+    .name = OVS_FLOW_FAMILY,
+    .version = OVS_FLOW_VERSION,
+    .maxattr = OVS_FLOW_ATTR_MAX,
+     SET_NETNSOK
+};
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个是genl family结构体定义，名字dp_flow_genl_family，用来处理flow的family。参数都是genl family结构体的部分属性，对其进行初始化。id和name即为family id和name。hdrsize定义ovs协议头长度，genl使用netlink标准的attr来传输数据。注意，客户端通过name就可以发送数据，让指定的family接收。如一种8的dpif_linux_flow_to_ofpbuf函数中，就会调用函数nl_msg_put_genlmsghdr，传入参数ovs_flow_family，从而制定了内核接收到的通道family。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_ops dp_flow_genl_ops[] = {
+    { .cmd = OVS_FLOW_CMD_NEW,
+      .flags = GENL_ADMIN_PERM, /* Requires CAP_NET_ADMIN privilege. */
+      .policy = flow_policy,
+      .doit = ovs_flow_cmd_new_or_set
+    },…..
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个是genl operation的定义，名为dp_flow_genl_ops，主要用来定义对于flow的处理函数的定义。由于定义了数组，值罗列第一个genl ops。cmd是命令名字，可以看出处理函数的功能（这里主要是加入、更新或删除流表项flow），flag是属性设置，policy是接收到数据后，但没有触发事件处理函数之前所执行的过滤准则，比如对帧中数据attr的校验。doit是回调函数，generic netlink接收到数据触发，运行在进程上下文中，是对来自用户态数据进行执行操作的重点。doit函数接收skb和genl_info两个数据，skb即为触发此回调函数的socket buffer，genl_info结构体包含发送序号、发送客户端pid，头部指针和attrs(即经过genl_ops-&amp;gt;policy过滤后的结果，包含传递的数据。)。当然有的还有回调函数dumpit, dumpit与doit的区别是:dumpit的第一个参数skb不会携带从客户端发来的数据.
+定义实例化完family和ops后，需要通过genl_register_family和genl_register_ops进行注册。这样则可以进行通信。&lt;/p&gt;
+&lt;p&gt;2 调用处理函数进行流表项处理操作。
+定义注册完famliy和ops，即可与用户态进行交互（用户态通过指定famliy指定通信通道，从而内核态接收数据会触发相应的ops回调函数进行处理）。下来分析来自用户态下发flow的流表项处理。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static int ovs_flow_cmd_new_or_set(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这个是内核态对于flow的增加或是更新（action更新）的处理函数。判断不存在相同流表项，则扩展table、分配流表项空间然后把流表项flow放入bucket中。存在的话则更新action即可。&lt;/p&gt;
+&lt;p&gt;具体分析一下，首先需要把用户态传递过来的数据提取出来**a = info-&amp;gt;attrs，前面分析可知，传入参数info这个结构体数据成员attrs，attrs既是policy过滤后的数据。之后，调用函数ovs_flow_from_nlattrs，从a中提取key，调用validate_and_copy_actions把a中action放入变量acts（此处判断若为OVS_FLOW_CMD_NEW类型，即对于增加新流表项却没有action报错）。此后利用get_dp函数得到插入流表项的datapath（info-&amp;gt;userhdr-&amp;gt;dp_ifindex-&amp;gt;net_device -&amp;gt; vport -&amp;gt; datapath），继而找到相应流表table。&lt;/p&gt;
+&lt;p&gt;为了确认是否已存在相同流表项，先查找流表项flow = ovs_flow_tbl_lookup(table, &amp;amp;key, key_len);主要通过在table中匹配key查找。先分析不存在flow为false，则进入加入新流表项if语句中，先排除不是更新流表项操作（OVS_FLOW_CMD_SET），然后调用函数ovs_flow_tbl_expand扩展流表table空间，方便之后添加新流表项，然后分配流表项空间ovs_flow_alloc。下来即重要函数ovs_flow_tbl_insert，其向bucket中插入流表项flow，调用ovs_flow_cmd_build_info构造回复用户层的通知消息。对于存在流表项即只更新action部分，不再赘述。&lt;/p&gt;
+&lt;p&gt;对于ops中其他回调函数，如ovs_flow_cmd_del（删除流表项）原理一样，主要通过判断flow是否存在，存在则调用ovs_flow_tbl_remove (table, flow)函数删除流表项。&lt;/p&gt;
+&lt;p&gt;3 插入流表项&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;void ovs_flow_tbl_insert(struct flow_table *table, struct sw_flow *flow,
+             struct sw_flow_key *key, int key_len)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;关系：在ovs_flow_cmd_new_or_set中调用&lt;/p&gt;
+&lt;p&gt;功能：插入流表项。&lt;/p&gt;
+&lt;p&gt;数据结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;sw_flow：流表项flow的数据结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主要数据成员&lt;ul&gt;
+&lt;li&gt;sw_flow_key类型的key:key可以称为查找key，就是匹配流表项的匹配域字段组合（port、优先级、l2-l4），&lt;/li&gt;
+&lt;li&gt;sw_flow_actions类型的sf_acts:sf_acts用来存贮action的类型。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;flow_table：流表结构体&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主要成员&lt;ul&gt;
+&lt;li&gt;flex_array类型的bucket&lt;/li&gt;
+&lt;li&gt;锁rcu_head的rcu。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;之前2中分析了内核态接收到消息，提取出key和action等，找出相应datapath和table，则向table中插入流表项，现在主要分析如何向table插入流表项flow。&lt;/p&gt;
+&lt;p&gt;在ovs_flow_tbl_insert函数前，先调用函数rcu_assign_pointer(flow-&amp;gt;sf_acts, acts)把action插入到空白流表项flow的sf_acts（flow的action）字段中。则调用流表项插入函数ovs_flow_tbl_insert，传入table、流表项flow（目前只有action字段初始化了）、匹配域key等参数。函数中，调用函数ovs_flow_hash把key 进行hash后放入flow-&amp;gt;hash再通过memcpy函数把key复制到flow的key字段，即此时flow流表项就构成了，有了匹配域key和action两个重要部分。此时调用__flow_tbl_insert函数把flow插入table相应位置即可。函数中，先通过find_bucket函数，利用flow-&amp;gt;hash在table中找到应插入的哈希桶位置头部head，然后通过函数hlist_add_head_rcu把头部位置head写入flow-&amp;gt;hash_node参数即完成flow插入。可以看到flow中key的hash可以定位插入table的哈希桶位置。&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;二 内核态接收处理packet&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;内核态接受处理packet和接受处理flow原理类似，也是先定义注册generic netlink的family（name为OVS_PACKET_FAMILY）和ops，见用户层8）中调用函数dpif_linux_encode_execute发送packet包时，会指明OVS_PACKET_FAMILY通道，则会触发此通道的ops回调函数进行packet接收处理。下来详细对此回调函数ovs_packet_cmd_execute进行分析。&lt;/p&gt;
+&lt;p&gt;1 内核态调用回调函数接收处理packet &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;位置：datapath/datapath.c&lt;/p&gt;
+&lt;p&gt;调用memcpy函数把netlink接收到数据a的packet部分(应该是传统包内容)提取到packet参数中，a中还有action等字段。接下来会构造一个sw_flow结构体的flow来发送packet：&lt;/p&gt;
+&lt;p&gt;调用ovs_flow_extract函数，从packet的以太网帧头中提取key部分构造流表项flow的匹配域key，此
+外，还会调用函数ovs_flow_metadata_from_nlattrs直接从a的key字段解析补充flow的key，这些是a的packet中提取不到的一些字段（如tunnel id）。调用validate_and_copy_actions函数把actions提取到变量acts中，从而进一步利用函数rcu_assign_pointer把动作acts放入flow的action字段sf_acts中。此时匹配此packet的flow流表项构成。调用OVS_CB(packet)-&amp;gt;flow = flow;把flow放入packet的OVS_CB中（不理解？在后面处理packet时候可以直接关联找到此packet的action）。获取dp后调用函数ovs_execute_actions执行packet的动作。&lt;/p&gt;
+&lt;p&gt;2 执行packet关联的所有action&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int ovs_execute_actions(struct datapath *dp, struct sk_buff *skb)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;位置：datapath\actions.c&lt;/p&gt;
+&lt;p&gt;最开始就直接通过acts = rcu_dereference(OVS_CB(skb)-&amp;gt;flow-&amp;gt;sf_acts)提取出packet（即skb）的所有actio n。然后函数do_execute_actions（datapath\actions）传入dp、skb和action对packet执行一系列actions。在函数do_execute_actions中，通过逐一循环判断action类型，从而执行相应的操作。&lt;/p&gt;
+&lt;p&gt;这里主要讨论包处理类型为从端口输出，则会从packet中提取output端口号到参数pre_port，从而每次循环结束后调用do_output函数发送packet包，发送时候会对包进行克隆。&lt;/p&gt;
+&lt;p&gt;在do_output函数中，通过调用函数ovs_vport_rcu，利用参数dp和out_port得到发送端口实体vport（datapath端口结构体），从而调用ovs_vport_send(vport, skb)把packet发送到指定vport。&lt;/p&gt;
+&lt;p&gt;当然除了输出端口操作，还有push_vlan、pop_vlan、output_userspace（发送包到用户空间）等操作。对于发送用户空间会调用output_userspace函数，函数中调用ovs_dp_upcal（datapath\datapath.c）发送upcall消息，不再赘述。&lt;/p&gt;
+&lt;p&gt;3 调用底层设备进行packet发送&lt;/p&gt;
+&lt;p&gt;结构体：vport（datapath\vport.h）端口号、所属dp外有一个重要成员vport_ops，定义了端口所能执行的所有操作行为。&lt;/p&gt;
+&lt;p&gt;vport_ops：定义datapath的端口vport的所有行为函数。如send，用来从设备发送packet。
+首先初始化结构体vport_ops为ovs_netdev_vport_ops（datapath\vport-netdev.c）。定义了vport的所有操作函数，比如.send=netdev_send。
+static int netdev_send(struct vport &lt;em&gt;vport, struct sk_buff &lt;/em&gt;skb)&lt;/p&gt;
+&lt;p&gt;关系：在函数ovs_vport_send中，通过vport-&amp;gt;ops-&amp;gt;send(vport, skb)动态调用。&lt;/p&gt;
+&lt;p&gt;函数中，通过skb-&amp;gt;dev = netdev_vport-&amp;gt;dev;得到设备，然后调用dev_queue_xmit(skb)函数把packet放入队列中发送。&lt;/p&gt;</summary><category term="OVS souce code"></category></entry><entry><title>OVS源码分析----用户层处理Upcall消息(2)</title><link href="http://ysywh.github.io/pages/2015/05/15/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(2).html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-15:pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;
@@ -152,95 +479,7 @@ output类型、Header changes等action类型）。&lt;/p&gt;
 &lt;p&gt;与内核层建立socket的netlink连接，发送txnsp的request中信息（通过2中的aux传到txnsp中）并且接收来自内核的消息到reply中。参数genl_sock是netlink的socket, txnsp即表征内核层与用户层的一次连接，txnsp含有成员request和reply。&lt;/p&gt;
 &lt;p&gt;函数中，具体调用了nl_sock_transact_multiple__函数，此函数中有发送函数sendmsg(sock-&amp;gt;fd, &amp;amp;msg, 0)和接收函数nl_sock_recv__(sock, buf_txn-&amp;gt;reply, false)，分别发送了缓存request
 的信息并接收到reply缓存中，此后更新统计。&lt;/p&gt;
-&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</summary><category term="OVS souce code"></category></entry><entry><title>OVS源码分析----datapath消息处理</title><link href="http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----datapath消息处理.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
-&lt;h3&gt;前言&lt;/h3&gt;
-&lt;p&gt;当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。&lt;/p&gt;
-&lt;p&gt;generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。&lt;/p&gt;
-&lt;p&gt;通信前，作为服务端的内核态要定义family（指定信道类型）和operation（处理函数），并且进行注册，则客户端可以通过注册的信息与之交互。直接以ovs内核态为例分析：&lt;/p&gt;
-&lt;h4&gt;&lt;strong&gt;一 内核态对flow的接收与处理&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;1 定义注册genl数据结构（datapath\datapth.c）：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_family dp_flow_genl_family = {
-    .id = GENL_ID_GENERATE,
-    .hdrsize = sizeof(struct ovs_header),
-    .name = OVS_FLOW_FAMILY,
-    .version = OVS_FLOW_VERSION,
-    .maxattr = OVS_FLOW_ATTR_MAX,
-     SET_NETNSOK
-};
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;这个是genl family结构体定义，名字dp_flow_genl_family，用来处理flow的family。参数都是genl family结构体的部分属性，对其进行初始化。id和name即为family id和name。hdrsize定义ovs协议头长度，genl使用netlink标准的attr来传输数据。注意，客户端通过name就可以发送数据，让指定的family接收。如一种8的dpif_linux_flow_to_ofpbuf函数中，就会调用函数nl_msg_put_genlmsghdr，传入参数ovs_flow_family，从而制定了内核接收到的通道family。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;static struct genl_ops dp_flow_genl_ops[] = {
-    { .cmd = OVS_FLOW_CMD_NEW,
-      .flags = GENL_ADMIN_PERM, /* Requires CAP_NET_ADMIN privilege. */
-      .policy = flow_policy,
-      .doit = ovs_flow_cmd_new_or_set
-    },…..
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;这个是genl operation的定义，名为dp_flow_genl_ops，主要用来定义对于flow的处理函数的定义。由于定义了数组，值罗列第一个genl ops。cmd是命令名字，可以看出处理函数的功能（这里主要是加入、更新或删除流表项flow），flag是属性设置，policy是接收到数据后，但没有触发事件处理函数之前所执行的过滤准则，比如对帧中数据attr的校验。doit是回调函数，generic netlink接收到数据触发，运行在进程上下文中，是对来自用户态数据进行执行操作的重点。doit函数接收skb和genl_info两个数据，skb即为触发此回调函数的socket buffer，genl_info结构体包含发送序号、发送客户端pid，头部指针和attrs(即经过genl_ops-&amp;gt;policy过滤后的结果，包含传递的数据。)。当然有的还有回调函数dumpit, dumpit与doit的区别是:dumpit的第一个参数skb不会携带从客户端发来的数据.
-定义实例化完family和ops后，需要通过genl_register_family和genl_register_ops进行注册。这样则可以进行通信。&lt;/p&gt;
-&lt;p&gt;2 调用处理函数进行流表项处理操作。
-定义注册完famliy和ops，即可与用户态进行交互（用户态通过指定famliy指定通信通道，从而内核态接收数据会触发相应的ops回调函数进行处理）。下来分析来自用户态下发flow的流表项处理。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;static int ovs_flow_cmd_new_or_set(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;这个是内核态对于flow的增加或是更新（action更新）的处理函数。判断不存在相同流表项，则扩展table、分配流表项空间然后把流表项flow放入bucket中。存在的话则更新action即可。&lt;/p&gt;
-&lt;p&gt;具体分析一下，首先需要把用户态传递过来的数据提取出来**a = info-&amp;gt;attrs，前面分析可知，传入参数info这个结构体数据成员attrs，attrs既是policy过滤后的数据。之后，调用函数ovs_flow_from_nlattrs，从a中提取key，调用validate_and_copy_actions把a中action放入变量acts（此处判断若为OVS_FLOW_CMD_NEW类型，即对于增加新流表项却没有action报错）。此后利用get_dp函数得到插入流表项的datapath（info-&amp;gt;userhdr-&amp;gt;dp_ifindex-&amp;gt;net_device -&amp;gt; vport -&amp;gt; datapath），继而找到相应流表table。&lt;/p&gt;
-&lt;p&gt;为了确认是否已存在相同流表项，先查找流表项flow = ovs_flow_tbl_lookup(table, &amp;amp;key, key_len);主要通过在table中匹配key查找。先分析不存在flow为false，则进入加入新流表项if语句中，先排除不是更新流表项操作（OVS_FLOW_CMD_SET），然后调用函数ovs_flow_tbl_expand扩展流表table空间，方便之后添加新流表项，然后分配流表项空间ovs_flow_alloc。下来即重要函数ovs_flow_tbl_insert，其向bucket中插入流表项flow，调用ovs_flow_cmd_build_info构造回复用户层的通知消息。对于存在流表项即只更新action部分，不再赘述。&lt;/p&gt;
-&lt;p&gt;对于ops中其他回调函数，如ovs_flow_cmd_del（删除流表项）原理一样，主要通过判断flow是否存在，存在则调用ovs_flow_tbl_remove (table, flow)函数删除流表项。&lt;/p&gt;
-&lt;p&gt;3 插入流表项&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;void ovs_flow_tbl_insert(struct flow_table *table, struct sw_flow *flow,
-             struct sw_flow_key *key, int key_len)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;关系：在ovs_flow_cmd_new_or_set中调用&lt;/p&gt;
-&lt;p&gt;功能：插入流表项。&lt;/p&gt;
-&lt;p&gt;数据结构&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;sw_flow：流表项flow的数据结构&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;主要数据成员&lt;ul&gt;
-&lt;li&gt;sw_flow_key类型的key:key可以称为查找key，就是匹配流表项的匹配域字段组合（port、优先级、l2-l4），&lt;/li&gt;
-&lt;li&gt;sw_flow_actions类型的sf_acts:sf_acts用来存贮action的类型。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;flow_table：流表结构体&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;主要成员&lt;ul&gt;
-&lt;li&gt;flex_array类型的bucket&lt;/li&gt;
-&lt;li&gt;锁rcu_head的rcu。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;之前2中分析了内核态接收到消息，提取出key和action等，找出相应datapath和table，则向table中插入流表项，现在主要分析如何向table插入流表项flow。&lt;/p&gt;
-&lt;p&gt;在ovs_flow_tbl_insert函数前，先调用函数rcu_assign_pointer(flow-&amp;gt;sf_acts, acts)把action插入到空白流表项flow的sf_acts（flow的action）字段中。则调用流表项插入函数ovs_flow_tbl_insert，传入table、流表项flow（目前只有action字段初始化了）、匹配域key等参数。函数中，调用函数ovs_flow_hash把key 进行hash后放入flow-&amp;gt;hash再通过memcpy函数把key复制到flow的key字段，即此时flow流表项就构成了，有了匹配域key和action两个重要部分。此时调用__flow_tbl_insert函数把flow插入table相应位置即可。函数中，先通过find_bucket函数，利用flow-&amp;gt;hash在table中找到应插入的哈希桶位置头部head，然后通过函数hlist_add_head_rcu把头部位置head写入flow-&amp;gt;hash_node参数即完成flow插入。可以看到flow中key的hash可以定位插入table的哈希桶位置。&lt;/p&gt;
-&lt;h4&gt;&lt;strong&gt;二 内核态接收处理packet&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;内核态接受处理packet和接受处理flow原理类似，也是先定义注册generic netlink的family（name为OVS_PACKET_FAMILY）和ops，见用户层8）中调用函数dpif_linux_encode_execute发送packet包时，会指明OVS_PACKET_FAMILY通道，则会触发此通道的ops回调函数进行packet接收处理。下来详细对此回调函数ovs_packet_cmd_execute进行分析。&lt;/p&gt;
-&lt;p&gt;1 内核态调用回调函数接收处理packet &lt;/p&gt;
-&lt;p&gt;&lt;code&gt;static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;位置：datapath/datapath.c&lt;/p&gt;
-&lt;p&gt;调用memcpy函数把netlink接收到数据a的packet部分(应该是传统包内容)提取到packet参数中，a中还有action等字段。接下来会构造一个sw_flow结构体的flow来发送packet：&lt;/p&gt;
-&lt;p&gt;调用ovs_flow_extract函数，从packet的以太网帧头中提取key部分构造流表项flow的匹配域key，此
-外，还会调用函数ovs_flow_metadata_from_nlattrs直接从a的key字段解析补充flow的key，这些是a的packet中提取不到的一些字段（如tunnel id）。调用validate_and_copy_actions函数把actions提取到变量acts中，从而进一步利用函数rcu_assign_pointer把动作acts放入flow的action字段sf_acts中。此时匹配此packet的flow流表项构成。调用OVS_CB(packet)-&amp;gt;flow = flow;把flow放入packet的OVS_CB中（不理解？在后面处理packet时候可以直接关联找到此packet的action）。获取dp后调用函数ovs_execute_actions执行packet的动作。&lt;/p&gt;
-&lt;p&gt;2 执行packet关联的所有action&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;int ovs_execute_actions(struct datapath *dp, struct sk_buff *skb)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;位置：datapath\actions.c&lt;/p&gt;
-&lt;p&gt;最开始就直接通过acts = rcu_dereference(OVS_CB(skb)-&amp;gt;flow-&amp;gt;sf_acts)提取出packet（即skb）的所有actio n。然后函数do_execute_actions（datapath\actions）传入dp、skb和action对packet执行一系列actions。在函数do_execute_actions中，通过逐一循环判断action类型，从而执行相应的操作。&lt;/p&gt;
-&lt;p&gt;这里主要讨论包处理类型为从端口输出，则会从packet中提取output端口号到参数pre_port，从而每次循环结束后调用do_output函数发送packet包，发送时候会对包进行克隆。&lt;/p&gt;
-&lt;p&gt;在do_output函数中，通过调用函数ovs_vport_rcu，利用参数dp和out_port得到发送端口实体vport（datapath端口结构体），从而调用ovs_vport_send(vport, skb)把packet发送到指定vport。&lt;/p&gt;
-&lt;p&gt;当然除了输出端口操作，还有push_vlan、pop_vlan、output_userspace（发送包到用户空间）等操作。对于发送用户空间会调用output_userspace函数，函数中调用ovs_dp_upcal（datapath\datapath.c）发送upcall消息，不再赘述。&lt;/p&gt;
-&lt;p&gt;3 调用底层设备进行packet发送&lt;/p&gt;
-&lt;p&gt;结构体：vport（datapath\vport.h）端口号、所属dp外有一个重要成员vport_ops，定义了端口所能执行的所有操作行为。&lt;/p&gt;
-&lt;p&gt;vport_ops：定义datapath的端口vport的所有行为函数。如send，用来从设备发送packet。
-首先初始化结构体vport_ops为ovs_netdev_vport_ops（datapath\vport-netdev.c）。定义了vport的所有操作函数，比如.send=netdev_send。
-static int netdev_send(struct vport &lt;em&gt;vport, struct sk_buff &lt;/em&gt;skb)&lt;/p&gt;
-&lt;p&gt;关系：在函数ovs_vport_send中，通过vport-&amp;gt;ops-&amp;gt;send(vport, skb)动态调用。&lt;/p&gt;
-&lt;p&gt;函数中，通过skb-&amp;gt;dev = netdev_vport-&amp;gt;dev;得到设备，然后调用dev_queue_xmit(skb)函数把packet放入队列中发送。&lt;/p&gt;</summary><category term="OVS souce code"></category></entry><entry><title>OVS源码分析----用户层处理Upcall消息(1)</title><link href="http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(1).html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</summary><category term="OVS souce code"></category></entry><entry><title>OVS源码分析----用户层处理Upcall消息(1)</title><link href="http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(1).html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;

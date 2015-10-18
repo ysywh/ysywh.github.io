@@ -78,6 +78,39 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
+                <div class="summary"><h4>1 Event类</h4>
+<p>位置：ryu\lib\alert.py中Event类</p>
+<p>有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？</p>
+<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
+<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
+<p>构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
+息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。</p>
+<h3>3 datapath</h3>
+<p>类位置：ryu\controller\controller.py中</p>
+<p>Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）</p>
+<p>属性:id，ports ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/22/OVS源码分析----datapath消息处理.html">OVS源码分析----datapath消息处理</a></h2>
+                <div class="summary"><p></br></p>
+<h3>前言</h3>
+<p>当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。</p>
+<p>generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。</p>
+<p>通信前，作为服务端的内核态要定义family（指定信道类型）和operation（处理函数），并且进行注册，则客户端可以通过注册的信息与之交互。直接以ovs内核态为例分析：</p>
+<h4><strong>一 内核态对flow的接收与处理</strong></h4>
+<p>1 定义注册genl数据结构（datapath\datapth.c）：</p>
+<div class="highlight"><pre>static struct genl_family dp_flow_genl_family = {
+    .id = GENL_ID_GENERATE,
+    .hdrsize ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/22/OVS源码分析----datapath消息处理.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">OVS源码分析----用户层处理Upcall消息(2)</a></h2>
                 <div class="summary"><p></br></p>
 <h3>前言</h3>
@@ -95,22 +128,6 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 <li>
 <p>facet（ofproto ...</p></li></ul>
                     <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----datapath消息处理.html">OVS源码分析----datapath消息处理</a></h2>
-                <div class="summary"><p></br></p>
-<h3>前言</h3>
-<p>当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。</p>
-<p>generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。</p>
-<p>通信前，作为服务端的内核态要定义family（指定信道类型）和operation（处理函数），并且进行注册，则客户端可以通过注册的信息与之交互。直接以ovs内核态为例分析：</p>
-<h4><strong>一 内核态对flow的接收与处理</strong></h4>
-<p>1 定义注册genl数据结构（datapath\datapth.c）：</p>
-<div class="highlight"><pre>static struct genl_family dp_flow_genl_family = {
-    .id = GENL_ID_GENERATE,
-    .hdrsize ...</pre></div>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----datapath消息处理.html">more ...</a>
                 </div>
             </article>
             <hr/>
@@ -165,51 +182,16 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">Cbench测试Opendaylight性能</a></h2>
-                <div class="summary"><p></br></p>
-<p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
-<p>实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。</p>
-<h3>一：测试平台：</h3>
-<p>由于测试结果和测试平台的性能紧密联系，因此记录下测试平台参数。</p>
-<blockquote>
-<p>硬件参数：</p>
-</blockquote>
-<ul>
-<li>
-<p>CPU: Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz</p>
-</li>
-<li>
-<p>Memory: 8GB DDR3 - 1600 Mhz</p>
-</li>
-</ul>
-<blockquote>
-<p>软件参数:</p>
-</blockquote>
-<ul>
-<li>
-<p>OS: Ubuntu 14.04</p>
-</li>
-<li>
-<p>Java: OpenJDK java version "1.7.0"</p>
-</li>
-<li>
-<p>Opendaylight版本:Helium-SR2</p>
-</li>
-<li>
-<p>Opendaylight设置为初始默认值</p>
-</li>
-</ul>
-<h3>二：测试步骤</h3>
-<p>准备工作：先安装好<a href="https://www.opendaylight.org/downloads">OpenDaylight</a>和<a href="https://github.com/deepurple/cbench-src">Cbench</a>。</p>
-<p>1 开启opendaylight:</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" /></p>
-<p>2 ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
 
+        <ul class="pagination">
+                <li class="prev disabled"><a href="#">&laquo;</a></li>
+                    <li class="active"><a
+                            href="http://ysywh.github.io/category/sdn.html">1</a></li>
+                    <li class=""><a
+                            href="http://ysywh.github.io/category/sdn2.html">2</a></li>
+                <li class="next"><a
+                        href="http://ysywh.github.io/category/sdn2.html">&raquo;</a></li>
+        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
@@ -238,8 +220,8 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                        <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
+                            RYU souce code
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -248,13 +230,18 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
                             Cbench OpenDaylight
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
+                            数据结构，算法
                         </a>
                     </li>
                 </ul>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh"
+>
+<head>
+    <title>Ryu源码分析 - YsY记录点滴</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">
+
+        <meta name="author" content="ysy" />
+        <meta name="keywords" content="RYU souce code" />
+        <meta name="description" content="1 Event类 位置：ryu\lib\alert.py中Event类 有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？ 2 讯息实体msg的类：MsgBase()类（讯息实体的基本类） 位置：ryu\ofproto\ofproto_parser中 MsgBase()类， 构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯 息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。 3 datapath 类位置：ryu\controller\controller.py中 Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性） 属性:id，ports ..." />
+
+        <meta property="og:site_name" content="YsY记录点滴" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Ryu源码分析"/>
+        <meta property="og:url" content="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html"/>
+        <meta property="og:description" content="1 Event类 位置：ryu\lib\alert.py中Event类 有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？ 2 讯息实体msg的类：MsgBase()类（讯息实体的基本类） 位置：ryu\ofproto\ofproto_parser中 MsgBase()类， 构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯 息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。 3 datapath 类位置：ryu\controller\controller.py中 Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性） 属性:id，ports ..."/>
+        <meta property="article:published_time" content="2015-07-10" />
+            <meta property="article:section" content="SDN" />
+            <meta property="article:tag" content="RYU souce code" />
+            <meta property="article:author" content="ysy" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://ysywh.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://ysywh.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://ysywh.github.io/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://ysywh.github.io/theme/css/style.css" type="text/css"/>
+
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="YsY记录点滴 ATOM Feed"/>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://ysywh.github.io/" class="navbar-brand">
+YsY记录点滴            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://github.com">ITEM1</a></li>
+                    <li><a href="URL">ITEM2</a></li>
+                         <li><a href="http://ysywh.github.io/pages/About me.html">
+                             About Me
+                          </a></li>
+                        <li >
+                            <a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a>
+                        </li>
+                        <li >
+                            <a href="http://ysywh.github.io/category/program.html">Program</a>
+                        </li>
+                        <li class="active">
+                            <a href="http://ysywh.github.io/category/sdn.html">Sdn</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://ysywh.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html"
+                       rel="bookmark"
+                       title="Permalink to Ryu源码分析">
+                        Ryu源码分析
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-07-10T12:12:00+08:00"> 2015-07-10</time>
+    </span>
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://ysywh.github.io/tag/ryu-souce-code.html">RYU souce code</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h4>1 Event类</h4>
+<p>位置：ryu\lib\alert.py中Event类</p>
+<p>有很多属性 调用类方法parser返回一个名为msg的Event类？和ev.msg什么关系？</p>
+<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
+<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
+<p>构造函数后有属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯
+息实体msg的基本属性。此类会被其他产生讯息的类继承。同时继承这些基本属性。</p>
+<h3>3 datapath</h3>
+<p>类位置：ryu\controller\controller.py中</p>
+<p>Datapath(ofproto_protocol.ProtocolDesc) 可以看出datapath继承了ProtocolDesc类（见下条，继承的类中得到datapath的两个属性）</p>
+<p>属性:id，ports，ofproto,ofproto_parser（继承来的）等</p>
+<p>方法：send_msg，还有send_packet_out，send_flow_mod等，其实内部最后都调用了
+send_msg()</p>
+<h3>4  datapath的两个属性ofproto,ofproto_parser</h3>
+<p>dp = ofproto_protocol.ProtocolDesc(version=ofproto_v1_3.OFP_VERSION)  </p>
+<p>位置：\ryu\ofproto\ofproto_protocol.py中定义了类ProtocolDesc</p>
+<p>解释：通过ProtocolDesc类构造函数（<strong>init</strong>）获得属于datapath的两个属性ofproto,ofproto_parser(即相应版本的协议模块名和协议解析模块名字，比如模块ofproto_v1_3, ofproto_v1_3_parser)，则这个模块成为data path的属性，通过dp.ofproto_parser可以调用相应版本的类、函数等。</p>
+<h3>5 传统数据包解析</h3>
+<p>传统包头协议位置：\ryu\lib\packet 中有ethernet ipv4等模块，通过Packet编解码传统包。
+用法：pkt = packet.Packet(msg.data)  通过Packet类解析出传统数据包</p>
+<p>eth=pkt.get_protocols(ethernet.ethernet)[0] 通过ethernet.py中ethernet类匹配出帧头
+    dst = eth.dst
+    src = eth.src</p>
+<p>帧头属性（如dst , src查看ethernet类即可）</p>
+<h3>6 ofproto包：</h3>
+<p>位置：\ryu\ofproto   </p>
+<p>交互的包形成过程：</p>
+<ul>
+<li>
+<p>交换机发往控制器：</p>
+<p>协议指定 -&gt; 讯息产生,讯息自动解析(框架自动完成) -&gt; 产生讯息实体msg（ev.msg） -&gt;讯息实体msg解析(通过msg属性，如msg.match得到匹配部分)</p>
+</li>
+<li>
+<p>控制器发往交换机：
+    协议指定 -&gt;讯息实体msg反解析(形成match和actions等)-&gt;产生讯息实体msg(如OFPPacketOut) –&gt;产生讯息(send_msg())</p>
+</li>
+</ul>
+<p>注意：本节注意讯息和讯息实体（msg）概念的区分</p>
+<p><strong>6.1  ofproto_protocol.py模块（协议指定）</strong></p>
+<p>作用：协议指定</p>
+<p>过程：通过里面的ProtocolDesc()类来初始化data path的两个属性(如初始化出ofproto_v1_3, ofproto_v1_3_parser)，以此完成OF协议版本的指定</p>
+<p><strong>6.2  ofproto_parser.py模块（产生讯息后，对讯息解析，产生msg讯息实体）</strong></p>
+<p>作用：针对交换机发往控制器讯息的解析，为了之后得到讯息实体（msg），msg即控制器和交换机之间
+openflow包(除去包头)的负载部分</p>
+<p>过程：针对交换机发往控制器讯息的解析，框架自动调用header()和msg()方法，依次解析讯息（根据OF协议版本）。</p>
+<p>除此，里面有MsgBase()类，将被协议解析模块中的类继承，以此获得讯息实体(msg)。</p>
+<p><strong>6.3  of协议解析模块（如：ofproto_v1_3_parser.py）</strong></p>
+<p>类比较多，分类别讨论：</p>
+<p>这里，主要讨论继承类MsgBase()的Openflow讯息类,这些类产生交互的讯息实体msg</p>
+<p>作用：根据控制器和交换机交换交互的包，用模块中相应类产生出讯息实体msg（of负载部分）。这种类分两种：第二种情况，msg实体在类中得到相应属性，并继承MsgBase()一些属性,而第一种情况需要主动调用类，写入属性值。</p>
+<ul>
+<li>
+<p>第一种，交换机发往控制器消息：</p>
+<p>举例：控制器收到的PacketIn包的类定义：</p>
+<div class="highlight"><pre>@_register_parser
+@_set_msg_type(ofproto.OFPT_PACKET_IN)
+class OFPPacketIn(MsgBase):
+def __init__(self, data path, buffer_id=None, total_len=None, reason=None,table_id=None, cookie=None, match=None, data=None):
+</pre></div>
+
+
+<p>分析：对于packin包，通过这个类产生相应讯息实体msg，msg有两种属性：</p>
+<ul>
+<li>特定Msg属性：对于OFPPacketIn的msg，里面有datapath,    buffer_id,total_len,reason,tab
+    le_id,cookie,match,data属性，其中data即传统数据包的以太帧，match是OFPMatch的对象实例，实例中有一个40元组的字典型属性（暂且这么理解），键比如in_port，通过match[in_port]访问匹配域的入端口，对象match竟然可以这么访问，OFPMatch中定义的吧）</li>
+<li>基本属性：因为都继承类MsgBase(),则也继承了类MsgBase()中属性，作为msg基本属性：
+datapath，version，msg_type，msg_len，xid，buf   </li>
+</ul>
+<p>原理：</p>
+<p>类OFPPacketIn是交换机发给控制器讯息的类，对于交换机发给控制器的讯息，会触发此类,但由于此类用修饰符@_register_parse注册，则此类生成实体前，会先在修饰符函数_register_parse中调用此类中的parser函数进行对讯息进行解析，完成此类的msg实例化，产生讯息实体msg。</p>
+<p>使用方法：如处理packin消息：</p>
+<div class="highlight"><pre>@set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+def packet_in_handler(self, ev):
+msg = ev.msg   得到msg实体
+…
+</pre></div>
+
+
+<p>解释：以上原理中所说的（Of讯息产生，并解析出msg讯息实体）相当于产生一个对应事件ev，应自定义事件管理函数（如packet_in_handler）对事件进行处理。</p>
+<p>事件管理函数(Event hander)是以接收的事件ev为形参，使用@set_ev_cls（`ryu.controller.handler.set_ev_cls）修饰的函数。修饰符函数@set_ev_cls中第一个参数接受的讯息（Event+讯息类名），第二个参数有四种情况，描述交换机状态。（ryu.controller.handler中定义）。</p>
+<p>其中第一个参数定义见ryu.controller.ofp_event.py，其中函数_create_ofp_msg_ev_class(msg_cls) 调用函数_ofp_msg_name_to_ev_name(msg_cls)产生事件名字作为set_ev_cls参数。</p>
+<div class="highlight"><pre>def _ofp_msg_name_to_ev_name(msg_name):
+return &#39;Event&#39; + msg_name
+</pre></div>
+
+
+<p>其中ev.msg是用来储存对应事件的OpenFlow 讯息实体。上例中是ryu.ofproto.ofproto_v1_3_parser. OFPPacketIn。</p>
+<p>msg.datapath是存储OpenFlow交换器ryu.controller.controller.Datapath类所对应的实体。</p>
+</li>
+<li>
+<p>第二种，控制器发往交换机消息</p>
+<p>作用：这些类无@_register_parse的类（如OFPPacketOut），这些类用来控制器下发讯息产生讯息实体msg，方法是手动书写调用此类，参数是类应有的属性值如datapath，和情况a过程相反。产生讯息实体msg后通过msg的方法msg_send（msg）产生讯息发出去。</p>
+<p>用法（根据类定义）：如类OFPPacketOut用法：</p>
+<div class="highlight"><pre>def send_packet_out(self, datapath, buffer_id, in_port):  #自定义
+    ofp = datapath.ofproto
+    ofp_parser = datapath.ofproto_parser
+    actions = [ofp_parser.OFPActionOutput(ofp.OFPP_FLOOD, 0)]
+    req=ofp_parser.OFPPacketOut(datapath, buffer_id,in_port, actions) #调用类形成讯息实体msg
+    datapath.send_msg(req)  #使用datapath方法把msg发出去
+</pre></div>
+
+
+</li>
+</ul>
+<p>对于第一种情况（交换机发往控制器）的几种类：</p>
+<ul>
+<li>OFPPacketIn(MsgBase):</li>
+<li>OFPFlowRemoved(MsgBase):当交换机流表项被删除或是过期，向控制器发此消息</li>
+<li>OFPPortStatus(MsgBase)：当交换机端口状态改变，向控制器发此消息</li>
+<li>OFPErrorMsg(MsgBase): 交换机发往控制器关于发生错误的消息</li>
+<li>OFPGetConfigReply(MsgBase)：对于OFPGetConfigRequest的回答消息</li>
+<li>对于b情况（控制器下发给交换机）有类：</li>
+<li>OFPFlowMod(MsgBase)：控制器向交换机发改变流表项的消息</li>
+<li>OFPPacketOut(MsgBase)：控制器向交换机发的消息</li>
+<li>OFPGetConfigRequest(MsgBase)：控制器发往交换机的交换机配置信息请求信息</li>
+<li>OFPSetConfig(MsgBase): 控制器下发的交换机配置设置的要求消息，无需reply</li>
+</ul>
+<p>Ryu框架自动调用完成的类：OFPHello，OFPEchoReply，OFPEchoRequest，OFPSwitchFeatures（回答控制器发往交换机OFPFeaturesRequest，前面四个是交换机发往控制器的）</p>
+<p>注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。</p>
+<h3>6.4  讯息实体msg解析</h3>
+<p>作用：解析讯息实体msg，获得讯息实体内容。</p>
+<p>对于控制器解析出的msg讯息实体，一般会有一些属性datapath，match，data等，具体根据哪种msg决定</p>
+<p>1 一般属性的解析，如msg属性buffer_id，datapath可直接访问，如msg.datapath</p>
+<p>2 对于match这个属性解析和反解析（生成）：</p>
+<p>主要类：OFPMatch(StringifyMixin)类，形成match实体。
+  OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。</p>
+<ul>
+<li>
+<p>解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）</p>
+</li>
+<li>
+<p>生成match：直接用键值形式作为参数调用OFPMatch() 类：如：</p>
+<div class="highlight"><pre>match = parser.OFPMatch(
+in_port=1,
+eth_type=0x86dd,
+ipv6_src=(&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;,&#39;ffff:ffff:ffff:ffff::&#39;),
+ipv6_dst=&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;)
+if &#39;ipv6_src&#39; in match:
+print match[&#39;ipv6_src&#39;]
+</pre></div>
+
+
+</li>
+</ul>
+<p>注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。</p>
+<p>当然，还有OFPMatchField匹配域，掩码问题...先不分析。</p>
+<p>3 actions</p>
+<p>作用：当进入交换机封包满足match匹配则执行动作action(每条流表项可以有多个action，组成action list，因此是数组型)。其次，action要作为指令instruction参数 。</p>
+<p>用法：调用action类实例化action。</p>
+<p>举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 </p>
+<p>OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。</p>
+<p>定义：</p>
+<div class="highlight"><pre>def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
+    super(OFPActionOutput, self).__init__()
+    self.port = port
+    self.max_len = max_len。
+</pre></div>
+
+
+<p>参数：</p>
+<ul>
+<li>
+<p>max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为
+OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。</p>
+</li>
+<li>
+<p>Port是包出端口。可以是指定端口号（如1,2等），还可以是：
+OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。</p>
+</li>
+</ul>
+<p>其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。
+注：instruction(指令)</p>
+<p>说明：匹配后执行的指令集（数组型，可包含多个指令），指导指令中包含的action如何执行，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。指令类由action对象作为参数生成instruction对象，instruction作为真正match后执行的动作。</p>
+<p>用法：需要调用instruction相关类生成。有四种：OFPInstructionGotoTable，OFPInstructionWriteMetadata，OFPInstructionActions，OFPInstructionMeter，他们都继承OFPInstruction类。</p>
+<p>例如OFPInstructionActions：定义如下：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="n">OFPInstructionActions</span>(<span class="n">OFPInstruction</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, <span class="n">type_</span>, <span class="n">actions</span>=<span class="n">None</span>, <span class="n">len_</span>=<span class="n">None</span>):
+    ...
+</pre></div>
+
+
+<p>参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：</p>
+<ul>
+<li>OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；</li>
+<li>OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；</li>
+<li>OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）</li>
+</ul>
+<p>actions即为上面的action对象。</p>
+<p>因此，OFPInstructionGotoTable（table转移，只支持单流表无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理
+其实，目前很多交换机只支持单流表，以上有几个指令是无意义的。</p>
+<p>4 data属性</p>
+<p>类：class Packet(object):</p>
+<p>def <strong>init</strong>(self, data=None, protocols=None, parse_cls=ethernet.ethernet):</p>
+<p>Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）</p>
+<p>位置：\ryu\lib\packet\packet.py</p>
+<p>类方法：add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）
+get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表
+get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
+用法：</p>
+<ul>
+<li>
+<p>封包解析</p>
+<p>对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。</p>
+<p>pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    </p>
+<p>例如：</p>
+<div class="highlight"><pre>pkt = packet.Packet(msg.data)    #形成packet对象
+pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
+if not pkt_ethernet:
+return   # non Ethernet    
+eth_dst=pkt_eth.dst
+eth_src=pkt_eth.src
+</pre></div>
+
+
+<p>解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。</p>
+<p>解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）</p>
+</li>
+<li>
+<p>封包生成</p>
+<p>生成空Packet对象-&gt;生成协议对象（ethernet,ipv4等）-&gt; add_protocol()把协议对象依次加入Packet空对象中-&gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。</p>
+<p>例如：</p>
+<div class="highlight"><pre>pkt = packet.Packet()   #生成空的Packet ()对象
+pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
+pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
+pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
+pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
+bin_packet = pkt.data  #提取封包好data属性
+</pre></div>
+
+
+<p>另一种写法（用API）：</p>
+<div class="highlight"><pre>e = ethernet.ethernet (...)
+i = ipv4.ipv4 (...)
+u = udp.udp (...)
+pkt = e/i/u
+</pre></div>
+
+
+</li>
+</ul>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'ysywhgithubio'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'Ryu源码分析';
+                var disqus_url = 'http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html';
+
+            var disqus_config = function () {
+                this.language = "zh";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://github.com/ysywh/"><i class="fa fa-my-github-square fa-lg"></i> my github</a></li>
+                <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="http://ysywh.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
+                            OVS souce code
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://ysywh.github.io/tag/mapreduce.html">
+                            mapreduce
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
+                            RYU souce code
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
+                            数据结构，算法
+                        </a>
+                    </li>
+                </ul>
+            </li>
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://www.sdnlab.com/" target="_blank">
+                sdnlab
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.sdnap.com/" target="_blank">
+                sdnap
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.muzixing.com/" target="_blank">
+                muzixing
+            </a>
+        </li>
+      </ul>
+    </li>
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 yansy
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://ysywh.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://ysywh.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://ysywh.github.io/theme/js/respond.min.js"></script>
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'ysywhgithubio'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-62970575-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>
