@@ -1,85 +1,79 @@
 <!DOCTYPE html>
-<html lang="zh"
->
+<html lang="zh">
 <head>
-    <title>RYU souce code - YsY记录点滴</title>
-    <!-- Using the latest rendering mode for IE -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
+    <title>YsY记录点滴</title>
+    <meta name="description" content="">
+    <meta name="author" content="yansy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://ysywh.github.io/theme/html5.js"></script>
+    <![endif]-->
 
+    <!-- Le styles -->
+    <link href="http://ysywh.github.io/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/local.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/pygments.css" rel="stylesheet">
 
-
-    <meta name="author" content="yansy" />
-    <meta name="keywords" content="RYU souce code" />
-
-    <!-- Open Graph tags -->
-        <meta property="og:site_name" content="YsY记录点滴" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="YsY记录点滴"/>
-        <meta property="og:url" content="http://ysywh.github.io"/>
-        <meta property="og:description" content="YsY记录点滴"/>
-
-
-    <!-- Bootstrap -->
-        <link rel="stylesheet" href="http://ysywh.github.io/theme/css/bootstrap.min.css" type="text/css"/>
-    <link href="http://ysywh.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="http://ysywh.github.io/theme/css/pygments/native.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://ysywh.github.io/theme/css/style.css" type="text/css"/>
-
-        <link href="http://ysywh.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
-              title="YsY记录点滴 ATOM Feed"/>
+    <!-- So Firefox can bookmark->"abo this site" -->
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate" title="YsY记录点滴" type="application/atom+xml">
+        <link href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate" title="YsY记录点滴" type="application/rss+xml">
 
 </head>
+
 <body>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="http://ysywh.github.io/" class="navbar-brand">
-YsY记录点滴            </a>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                    <li><a href="http://github.com">ITEM1</a></li>
-                    <li><a href="URL">ITEM2</a></li>
-                         <li><a href="http://ysywh.github.io/pages/About me.html">
-                             About Me
-                          </a></li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a>
-                        </li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/program.html">Program</a>
-                        </li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/sdn.html">Sdn</a>
-                        </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="http://ysywh.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-</div> <!-- /.navbar -->
-<!-- Banner -->
-<!-- End Banner -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9">
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
 
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></h2>
-                <div class="summary"><h3>前言</h3>
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://ysywh.github.io">YsY记录点滴</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="http://github.com">ITEM1</a></li>
+            <li><a href="URL">ITEM2</a></li>
+            
+            <li><a href="http://ysywh.github.io/pages/About me.html">About Me</a></li>
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+        
+
+        
+
+
+    <div class='article'>
+        <div class="content-title">
+            <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html"><h1>Ryu代码分析----openflow消息属性分析</h1></a>
+2015-07-22
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ 
+        </div>
+        
+        <div><h3>前言</h3>
 <p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
 <ul>
 <li>
@@ -97,14 +91,172 @@ total_len     Full length of frame
 reason        Reason packet is being sent.
 
               | OFPR_NO_MATCH
-              | OFPR_ACTION ...</pre></div>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
-                <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
+              | OFPR_ACTION
+              | OFPR_INVALID_TTL
+table_id      ID of the table that was looked up
+cookie        Cookie of the flow entry that was looked up
+match         Instance of ``OFPMatch``
+data          Ethernet frame
+</pre></div>
+
+
+<hr />
+<h4><strong>1 一般属性的解析</strong></h4>
+<p>如msg属性buffer_id，datapath可直接访问，如msg.datapath**</p>
+<h4><strong>2 对于match这个属性解析和反解析（生成）：</strong></h4>
+<p>match属性解析主要用在packet-in消息中的属性match的解析，而match生成用于flowmod消息的match构造上。</p>
+<p>用到主要类：OFPMatch(StringifyMixin)类，形成match实体。</p>
+<p>OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。</p>
+<ul>
+<li>
+<p>解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）</p>
+</li>
+<li>
+<p>生成match：直接用键值形式作为参数调用OFPMatch() 类：如：</p>
+<div class="highlight"><pre>match = parser.OFPMatch(
+in_port=1,
+eth_type=0x86dd,
+ipv6_src=(&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;,&#39;ffff:ffff:ffff:ffff::&#39;),
+ipv6_dst=&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;)
+if &#39;ipv6_src&#39; in match:
+print match[&#39;ipv6_src&#39;]
+</pre></div>
+
+
+</li>
+</ul>
+<p>注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。</p>
+<p>当然，还有OFPMatchField匹配域，掩码问题...先不分析。</p>
+<h4><strong>3 actions 、 instruction</strong></h4>
+<p>作用：当进入交换机封包满足match匹配则执行指令instruction，有些指令中含有动作action(每条流表项可以有多个action，组成action list，因此是数组型)。instruction是flowmod消息下发时候包含的，当然，有的instruction中含有action。而packet-out消息直接含有action属性。</p>
+<p>对于flowmod，action是包含于instruction中的；而对于packet-out,则只有actions。因此，我们这里先对action进行分析，后再分析instruction。</p>
+<p><strong>actions</strong></p>
+<p>用法：调用action类实例化action。</p>
+<p>举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 </p>
+<p>OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。</p>
+<p>定义：</p>
+<div class="highlight"><pre>def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
+    super(OFPActionOutput, self).__init__()
+    self.port = port
+    self.max_len = max_len。
+</pre></div>
+
+
+<p>参数：</p>
+<ul>
+<li>
+<p>max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。</p>
+</li>
+<li>
+<p>Port是包出端口。可以是指定端口号（如1,2等），还可以是：</p>
+<p>OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。</p>
+</li>
+</ul>
+<p>其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。</p>
+<p>注意，actions可以有很多，因此actions是一个数组型，包含多个action实体。</p>
+<p><strong>instruction(指令)</strong></p>
+<p>说明：当匹配一条流表项后，则执行流表项的指令集（数组型，可包含多个指令），有的指令中又可以包含多个action，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。</p>
+<p>用法：需要调用instruction相关类生成。主要有四种：</p>
+<ul>
+<li>OFPInstructionGotoTable</li>
+<li>OFPInstructionWriteMetadata</li>
+<li>OFPInstructionActions</li>
+<li>OFPInstructionMeter</li>
+</ul>
+<p>他们都继承OFPInstruction类，例如OFPInstructionActions：定义如下：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="n">OFPInstructionActions</span>(<span class="n">OFPInstruction</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, <span class="n">type_</span>, <span class="n">actions</span>=<span class="n">None</span>, <span class="n">len_</span>=<span class="n">None</span>):
+    ...
+</pre></div>
+
+
+<p>参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：</p>
+<ul>
+<li>OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；</li>
+<li>OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；</li>
+<li>OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）</li>
+</ul>
+<p>actions即为上面的action对象。</p>
+<p>因此，OFPInstructionGotoTable（table转移，在只是支持单流表的交换机无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理。</p>
+<h3>4 data属性</h3>
+<p>data是msg中一个很重要的属性，当数据层面的交换机接收到传统包，data就是这个传统包的所有内容或是报头内容。</p>
+<p>对data的解析出现在packet-in中，当packetout时候，有时候会用到data的封装。</p>
+<p>主要类：class Packet(object):</p>
+<p><code>def __init__(self, data=None, protocols=None, parse_cls=ethernet.ethernet)</code></p>
+<p>Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）</p>
+<p>位置：\ryu\lib\packet\packet.py</p>
+<p>类方法：</p>
+<ul>
+<li>
+<p>add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）。</p>
+</li>
+<li>
+<p>get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表</p>
+</li>
+<li>
+<p>get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
+用法：</p>
+</li>
+<li>
+<p>封包解析</p>
+<p>对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。</p>
+<p>pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    </p>
+<p>例如：</p>
+<div class="highlight"><pre>pkt = packet.Packet(msg.data)    #形成packet对象
+pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
+if not pkt_ethernet:
+return   # non Ethernet    
+eth_dst=pkt_eth.dst
+eth_src=pkt_eth.src
+</pre></div>
+
+
+<p>解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。</p>
+<p>解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）</p>
+</li>
+<li>
+<p>封包生成</p>
+<p>生成空Packet对象-&gt;生成协议对象（ethernet,ipv4等）-&gt; add_protocol()把协议对象依次加入Packet空对象中-&gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。</p>
+<p>例如：</p>
+<div class="highlight"><pre>pkt = packet.Packet()   #生成空的Packet ()对象
+pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
+pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
+pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
+pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
+bin_packet = pkt.data  #提取封包好data属性
+</pre></div>
+
+
+<p>另一种写法（用API）：</p>
+<div class="highlight"><pre>e = ethernet.ethernet (...)
+i = ipv4.ipv4 (...)
+u = udp.udp (...)
+pkt = e/i/u
+</pre></div>
+
+
+</li>
+</ul>
+<p>通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。</p></div>
+        <hr />
+    </div>
+		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html"><h2>Ryu源码分析</h2></a>
+        <div class= "well small"> 2015-07-10
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
 <h4>1 Event类</h4>
 <p>位置：ryu\lib\alert.py中Event类</p>
 <p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
@@ -113,158 +265,95 @@ reason        Reason packet is being sent.
 <p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
 <p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
 <h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中 ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
+<p>类位置：ryu\controller\controller.py中 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">read more</a></div>
+    </div>	
+				
+<div class="pagination">
+<ul>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
 
-        </div>
-        <div class="col-sm-3" id="sidebar">
-            <aside>
+    <li class="active"><a href="http://ysywh.github.io/tag/ryu-souce-code.html">1</a></li>
 
-<section class="well well-sm">
-    <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
-              <ul class="list-group" id="social">
-                <li class="list-group-item"><a href="https://github.com/ysywh/"><i class="fa fa-my-github-square fa-lg"></i> my github</a></li>
-                <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
-              </ul>
-            </li>
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
 
-
-
-            <li class="list-group-item"><a href="http://ysywh.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
-                <ul class="list-group " id="tags">
-                    <li class="list-group-item tag-1">
-                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
-                            OVS souce code
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-2">
-                        <a href="http://ysywh.github.io/tag/mapreduce.html">
-                            mapreduce
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-2">
-                        <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
-                            RYU souce code
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase-mapreduce.html">
-                            HBase MapReduce
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/mapreduce-shu-ju-jie-gou.html">
-                            Mapreduce 数据结构
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase.html">
-                            HBase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
-      <ul class="list-group" id="links">
-        <li class="list-group-item">
-            <a href="http://www.sdnlab.com/" target="_blank">
-                sdnlab
-            </a>
-        </li>
-        <li class="list-group-item">
-            <a href="http://www.sdnap.com/" target="_blank">
-                sdnap
-            </a>
-        </li>
-        <li class="list-group-item">
-            <a href="http://www.muzixing.com/" target="_blank">
-                muzixing
-            </a>
-        </li>
-      </ul>
-    </li>
-    </ul>
-</section>
-            </aside>
-        </div>
-    </div>
+</ul>
 </div>
+ 
+  
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://ysywh.github.io/archives.html">Archives</a>
+                <li><a href="http://ysywh.github.io/tags.html">Tags</a>
+
+
+
+                <li><a href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate">RSS feed</a></li>
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a></li>
+                <li><a href="http://ysywh.github.io/category/program.html">program</a></li>
+                <li><a href="http://ysywh.github.io/category/sdn.html">SDN</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://www.sdnlab.com/">sdnlab</a></li>
+                <li><a href="http://www.sdnap.com/">sdnap</a></li>
+                <li><a href="http://www.muzixing.com/">muzixing</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/ysywh/">my github</a></li>
+                <li><a href="#">Another social link</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
 <footer>
-   <div class="container">
-      <hr>
-      <div class="row">
-         <div class="col-xs-10">&copy; 2015 yansy
-            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
-            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
-            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
-      </div>
-   </div>
+<br />
+<p><a href="http://ysywh.github.io">YsY记录点滴</a> &copy; yansy 2015</p>
 </footer>
-<script src="http://ysywh.github.io/theme/js/jquery.min.js"></script>
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="http://ysywh.github.io/theme/js/bootstrap.min.js"></script>
-
-<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="http://ysywh.github.io/theme/js/respond.min.js"></script>
-
-    <!-- Disqus -->
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'ysywhgithubio'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var s = document.createElement('script');
-            s.async = true;
-            s.type = 'text/javascript';
-            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
-    </script>
-    <!-- End Disqus Code -->
-    <!-- Google Analytics -->
-    <script type="text/javascript">
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-62970575-1']);
-        _gaq.push(['_trackPageview']);
-
-        (function () {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-    <!-- End Google Analytics Code -->
-
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ysywh.github.io/theme/bootstrap-collapse.js"></script>
+<script>var _gaq=[['_setAccount','UA-62970575-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+<a href="https://github.com/ysywh"><img style="position: absolute; top: 40px; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" /></a>
+ 
 </body>
 </html>

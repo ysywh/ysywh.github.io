@@ -1,85 +1,79 @@
 <!DOCTYPE html>
-<html lang="zh"
->
+<html lang="zh">
 <head>
-    <title>HBase MapReduce - YsY记录点滴</title>
-    <!-- Using the latest rendering mode for IE -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
+    <title>YsY记录点滴</title>
+    <meta name="description" content="">
+    <meta name="author" content="yansy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://ysywh.github.io/theme/html5.js"></script>
+    <![endif]-->
 
+    <!-- Le styles -->
+    <link href="http://ysywh.github.io/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/local.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/pygments.css" rel="stylesheet">
 
-
-    <meta name="author" content="yansy" />
-    <meta name="keywords" content="HBase MapReduce" />
-
-    <!-- Open Graph tags -->
-        <meta property="og:site_name" content="YsY记录点滴" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="YsY记录点滴"/>
-        <meta property="og:url" content="http://ysywh.github.io"/>
-        <meta property="og:description" content="YsY记录点滴"/>
-
-
-    <!-- Bootstrap -->
-        <link rel="stylesheet" href="http://ysywh.github.io/theme/css/bootstrap.min.css" type="text/css"/>
-    <link href="http://ysywh.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="http://ysywh.github.io/theme/css/pygments/native.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://ysywh.github.io/theme/css/style.css" type="text/css"/>
-
-        <link href="http://ysywh.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
-              title="YsY记录点滴 ATOM Feed"/>
+    <!-- So Firefox can bookmark->"abo this site" -->
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate" title="YsY记录点滴" type="application/atom+xml">
+        <link href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate" title="YsY记录点滴" type="application/rss+xml">
 
 </head>
+
 <body>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="http://ysywh.github.io/" class="navbar-brand">
-YsY记录点滴            </a>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                    <li><a href="http://github.com">ITEM1</a></li>
-                    <li><a href="URL">ITEM2</a></li>
-                         <li><a href="http://ysywh.github.io/pages/About me.html">
-                             About Me
-                          </a></li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a>
-                        </li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/program.html">Program</a>
-                        </li>
-                        <li >
-                            <a href="http://ysywh.github.io/category/sdn.html">Sdn</a>
-                        </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="http://ysywh.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-</div> <!-- /.navbar -->
-<!-- Banner -->
-<!-- End Banner -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9">
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
 
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">Mapreduce API 操作HBase</a></h2>
-                <div class="summary"><h3><strong>前言</strong></h3>
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://ysywh.github.io">YsY记录点滴</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="http://github.com">ITEM1</a></li>
+            <li><a href="URL">ITEM2</a></li>
+            
+            <li><a href="http://ysywh.github.io/pages/About me.html">About Me</a></li>
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+        
+
+        
+
+
+    <div class='article'>
+        <div class="content-title">
+            <a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html"><h1>Mapreduce API 操作HBase</h1></a>
+2015-06-03
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ 
+        </div>
+        
+        <div><h3><strong>前言</strong></h3>
 <p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
 <ul>
 <li>
@@ -97,158 +91,285 @@ YsY记录点滴            </a>
 <div class="highlight"><pre>public class hbase{
 static Configuration conf = HBaseConfiguration.create();
 static HBaseAdmin admin;
-public static void ...</pre></div>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
+public static void main(String[] args){
+    try {
+        admin = new HBaseAdmin(conf);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-        </div>
-        <div class="col-sm-3" id="sidebar">
-            <aside>
-
-<section class="well well-sm">
-    <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
-              <ul class="list-group" id="social">
-                <li class="list-group-item"><a href="https://github.com/ysywh/"><i class="fa fa-my-github-square fa-lg"></i> my github</a></li>
-                <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
-              </ul>
-            </li>
+    createTable(&quot;access_yansiyu2&quot;);
+    addRow(&quot;access_yansiyu2&quot;);
+    ...
+    }
+...
+}
+</pre></div>
 
 
+<p>分析：先得到一个缺省的“配置”对象conf，然后用类HBaseAdmin构造对象admin,HBaseAdmin提供了管理HBase数据库的表信息的接口，因此之后通过操作admin就可以对表进行部分操作，比如建立、删除表等。但是，对于向表中添加删除数据等操作用HTable类对象进行操作，后面会遇到。</p>
+<p>类HBaseAdmin有很多表操作的api成员函数，比如createTable创建表，deleteTable删除表，添加列addColumn,enableTable使表有效，使表无效disableTable等等。</p>
+<p>2 创建表</p>
+<div class="highlight"><pre><span class="nt">public</span> <span class="nt">static</span> <span class="nt">void</span> <span class="nt">createTable</span><span class="o">(</span><span class="nt">String</span> <span class="nt">tablename</span><span class="o">)</span><span class="p">{</span>
+    <span class="n">try</span> <span class="err">{</span>
+        <span class="n">if</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">tableExists</span><span class="p">(</span><span class="n">tablename</span><span class="p">))</span><span class="err">{</span>  
+            <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;table is existed&quot;</span><span class="p">);</span>
+        <span class="p">}</span><span class="nt">else</span><span class="p">{</span>  
+            <span class="n">HTableDescriptor</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">new</span> <span class="n">HTableDescriptor</span><span class="p">(</span><span class="n">Bytes</span><span class="o">.</span><span class="n">toBytes</span><span class="p">(</span><span class="n">tablename</span><span class="p">));</span>
+            <span class="n">HColumnDescriptor</span> <span class="n">coldef</span> <span class="o">=</span> <span class="n">new</span> <span class="n">HColumnDescriptor</span><span class="p">(</span><span class="n">Bytes</span><span class="o">.</span><span class="n">toBytes</span><span class="p">(</span><span class="s2">&quot;colfamily&quot;</span><span class="p">));</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">addFamily</span><span class="p">(</span><span class="n">coldef</span><span class="p">);</span>
+            <span class="n">admin</span><span class="o">.</span><span class="n">createTable</span><span class="p">(</span><span class="n">desc</span><span class="p">);</span>
+            <span class="n">Boolean</span> <span class="n">avail</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">isTableAvailable</span><span class="p">(</span><span class="n">Bytes</span><span class="o">.</span><span class="n">toBytes</span><span class="p">(</span><span class="n">tablename</span><span class="p">));</span>
+            <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;Table create: &quot;</span> <span class="o">+</span> <span class="n">avail</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="err">}</span> <span class="nt">catch</span> <span class="o">(</span><span class="nt">IOException</span> <span class="nt">e</span><span class="o">)</span> <span class="p">{</span>
+        <span class="o">//</span> <span class="n">TODO</span> <span class="n">Auto</span><span class="o">-</span><span class="n">generated</span> <span class="n">catch</span> <span class="k">block</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="err">}</span>
+</pre></div>
 
-            <li class="list-group-item"><a href="http://ysywh.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
-                <ul class="list-group " id="tags">
-                    <li class="list-group-item tag-1">
-                        <a href="http://ysywh.github.io/tag/ovs-souce-code.html">
-                            OVS souce code
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-2">
-                        <a href="http://ysywh.github.io/tag/mapreduce.html">
-                            mapreduce
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-2">
-                        <a href="http://ysywh.github.io/tag/ryu-souce-code.html">
-                            RYU souce code
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
-                            数据结构，算法
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase-mapreduce.html">
-                            HBase MapReduce
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/mapreduce-shu-ju-jie-gou.html">
-                            Mapreduce 数据结构
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase.html">
-                            HBase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
-      <ul class="list-group" id="links">
-        <li class="list-group-item">
-            <a href="http://www.sdnlab.com/" target="_blank">
-                sdnlab
-            </a>
-        </li>
-        <li class="list-group-item">
-            <a href="http://www.sdnap.com/" target="_blank">
-                sdnap
-            </a>
-        </li>
-        <li class="list-group-item">
-            <a href="http://www.muzixing.com/" target="_blank">
-                muzixing
-            </a>
-        </li>
-      </ul>
-    </li>
-    </ul>
-</section>
-            </aside>
-        </div>
+
+<p>分析：通过第一步，这一步就可以创建表，需要调用admin的建表函数createTable即可。当然要实例化一个表描述器desc和列族描述器coldef,并且向desc中添加coldef,然后admin.createTable(desc)即可建立表。</p>
+<p>3 添加数据</p>
+<div class="highlight"><pre>public static void addRow(String tablename){
+    try {
+        HTable table = new HTable(conf,tablename);
+        Put put = new Put(Bytes.toBytes(&quot;row1&quot;));
+        put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;col1&quot;), Bytes.toBytes(&quot;value1&quot;));
+        put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;col2&quot;), Bytes.toBytes(&quot;value2&quot;));
+        table.put(put);
+    } catch (RetriesExhaustedWithDetailsException | InterruptedIOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+}
+</pre></div>
+
+
+<p>分析：这里有一个重要类HTable，可以用来和HBase表直接通信，比如向表中添加、删除、查看等操作，主要调用类HTable的成员函数即可，如put（添加数据），delete（删除数据）、get（获取指定行数据），getTableName获取表名，isTableEnabled检查表是否有有效等等。</p>
+<p>这里用到了put(Put put)，则传入数据要实例化类Put。</p>
+<p><strong>实验过程</strong></p>
+<p>先把代码打成jar包（如hbase_api.jar），然后直接在利用命令<code>hadoop jar hbase_api.jar</code>执行即可:</p>
+<p>先执行jar包：</p>
+<blockquote>
+<p><img alt="2" src="http://gitlab.local/course/course_hadoop/uploads/a19fac284f9b812d2a1f4d9e93998527/2.png" /></p>
+</blockquote>
+<p>查看建立的表和数据</p>
+<blockquote>
+<p><img alt="1" src="http://gitlab.local/course/course_hadoop/uploads/3693cb7303a57932ca1a6ccedf4f83a5/1.png" /></p>
+</blockquote>
+<p>发现表access_ysy已经建立，且加入两行数据。验证成功。</p>
+<p></br>
+二 <strong>用MapReduce完成hdfs数据向habse表的导入</strong></p>
+<p>一中是通过api直接建立hbase表，并对表进行数据操作。但如果数据已经存在，如何导入，则显得尤为重要。这里将通过mapreduce，将hadoop中已经存在的数据文件的数据导入hbase表中。</p>
+<p>主要通过map函数将数据读入，并输出到相同key值的reduce函数中，则遍历逐行的将每行的各个字段写入hbase表中即可。</p>
+<p>整个代码比较简单，主要有三个类，建立表的类、map类和reduce类。因为hbase表不存在，则先建立一个表：</p>
+<p>1 建表</p>
+<div class="highlight"><pre>private static final String targetTable = &quot;mapreduce_yansiyu&quot;;
+static Configuration config = HBaseConfiguration.create();
+//创建表，表名为 targetTable，列族列表为cfs
+public static void createTable(String tablename, String[] cfs) throws IOException {
+    //建表
+    HBaseAdmin admin = new HBaseAdmin(config);
+    if (admin.tableExists(tablename)) {
+        System.out.println(&quot;table already exists&quot;);
+    }
+    else {
+        HTableDescriptor tableDesc = new HTableDescriptor(tablename);
+        for (int i = 0; i &lt; cfs.length; i++) {
+            //向表中加入列族
+            tableDesc.addFamily(new HColumnDescriptor(cfs[i]));
+        }
+        //创建表
+        admin.createTable(tableDesc);
+        System.out.println(&quot;create table successly&quot;);
+    }
+}
+</pre></div>
+
+
+<p>2 map类</p>
+<div class="highlight"><pre> public static class InputMapper extends Mapper&lt;Object, Text, NullWritable, Text&gt; {
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        //输出键值对的 键 为一样， 即空值。则map输出将进入同一个reduce中
+        context.write(NullWritable.get(), value);
+    }
+}
+</pre></div>
+
+
+<p>可以看出读入的map中的数据，输出的键值对的键都相同，则都将进入同一个reduce中。</p>
+<p>3 reduce类</p>
+<div class="highlight"><pre>    public static class Reducer extends TableReducer&lt;NullWritable, Text, ImmutableBytesWritable&gt;{
+    String time;
+    String spName;
+    String userID;
+    String serverIP;
+    String hostName;
+    String uploadTraffic;
+    String downloadTraffic;
+    public void reduce(NullWritable key, Iterable&lt;Text&gt; values, Context context) throws IOException, InterruptedException{
+        //逐行将数据写入hbase表中
+        for (Text val : values){
+            String line = val.toString();
+            String[] fields = line.split(&quot;\t&quot;);
+            time = fields[0];
+            userID = fields[1];
+            serverIP = fields[2];
+            hostName = fields[3];
+            spName = fields[4];
+            uploadTraffic = fields[5];
+            downloadTraffic = fields[6];
+            Put put = new Put(Bytes.toBytes(time));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;userID&quot;), Bytes.toBytes(userID));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;serverIP&quot;), Bytes.toBytes(serverIP));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;hostName&quot;), Bytes.toBytes(hostName));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;spName&quot;), Bytes.toBytes(spName));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;uploadTraffic&quot;), Bytes.toBytes(uploadTraffic));
+            put.add(Bytes.toBytes(&quot;colfamily&quot;), Bytes.toBytes(&quot;downloadTraffic&quot;), Bytes.toBytes(downloadTraffic));
+            context.write(null, put);
+        }
+    }
+}
+</pre></div>
+
+
+<p>整体思路很简单，values是一个数组，每个数据等效为一行数据，因此逐行遍历输出到habse表中即可。这里需要注意的是，hbase表输入数据必须通过对象put，因为需要把输出的值设置为put类型的对象。</p>
+<p>当然，要正常运行，不同于平常的mapreduce的函数是，主函数中需要设置zookeeper,并且必须初始化habse表类型的的reduce类：</p>
+<p>主函数，如下：</p>
+<div class="highlight"><pre>    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+    // TODO Auto-generated method stub
+    String[] cfs = {&quot;colfamily&quot;};
+    //配置zookeeper
+    config.set(&quot;hbase.zookeeper.quorum&quot;, &quot;Master&quot;);
+    //创建表
+    createTable(targetTable, cfs);
+    Job job = new Job(config, &quot;InputHBase&quot;);
+    job.setJarByClass(hdfs2hbase.class);
+    job.setMapperClass(InputMapper.class);
+
+    TableMapReduceUtil.initTableReducerJob(
+            targetTable,        
+            Reducer.class,    
+            job);
+    FileInputFormat.addInputPath(job, new Path(args[0]));
+    job.setOutputKeyClass(NullWritable.class);
+    job.setOutputValueClass(Text.class);
+    boolean b = job.waitForCompletion(true);
+    if(!b){
+        throw new IOException(&quot;error&quot;);
+    }
+}
+</pre></div>
+
+
+<p><strong>实验过程</strong></p>
+<p>先把代码打成jar包（如Hbase_Input.jar），然后直接在利用命令hadoop jar Hbase_Input.jar /user/yansiyu/hbase/access.log`执行即可，但是注意执行时候后面要加上输入文件的位置:</p>
+<p>先执行jar包：</p>
+<blockquote>
+<p><img alt="3" src="http://gitlab.local/course/course_hadoop/uploads/364bb8e4c35cc21778bd0f323ccbe41a/3.png" /></p>
+</blockquote>
+<p>查看建立的表和导入的数据</p>
+<blockquote>
+<p><img alt="4" src="http://gitlab.local/course/course_hadoop/uploads/78b6e43c161dd17a055a83a89af60114/4.png" /></p>
+</blockquote>
+<p>发现表mapreduce_yansiyu已经建立，并且与原来的access.log中数据进行对比，hbase表中数据导入成功。</p>
+<h4><strong>结语</strong></h4>
+<p>总体来说，hbase shell或是api操作还是比较简答的，但是究其原理较为复杂，理解它却更显重要。</p>
+<p>通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。</p></div>
+        <hr />
     </div>
+		
+<div class="pagination">
+<ul>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+
+    <li class="active"><a href="http://ysywh.github.io/tag/hbase-mapreduce.html">1</a></li>
+
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+
+</ul>
 </div>
+ 
+  
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://ysywh.github.io/archives.html">Archives</a>
+                <li><a href="http://ysywh.github.io/tags.html">Tags</a>
+
+
+
+                <li><a href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate">RSS feed</a></li>
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a></li>
+                <li><a href="http://ysywh.github.io/category/program.html">program</a></li>
+                <li><a href="http://ysywh.github.io/category/sdn.html">SDN</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://www.sdnlab.com/">sdnlab</a></li>
+                <li><a href="http://www.sdnap.com/">sdnap</a></li>
+                <li><a href="http://www.muzixing.com/">muzixing</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/ysywh/">my github</a></li>
+                <li><a href="#">Another social link</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
 <footer>
-   <div class="container">
-      <hr>
-      <div class="row">
-         <div class="col-xs-10">&copy; 2015 yansy
-            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
-            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
-            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
-      </div>
-   </div>
+<br />
+<p><a href="http://ysywh.github.io">YsY记录点滴</a> &copy; yansy 2015</p>
 </footer>
-<script src="http://ysywh.github.io/theme/js/jquery.min.js"></script>
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="http://ysywh.github.io/theme/js/bootstrap.min.js"></script>
-
-<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="http://ysywh.github.io/theme/js/respond.min.js"></script>
-
-    <!-- Disqus -->
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'ysywhgithubio'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var s = document.createElement('script');
-            s.async = true;
-            s.type = 'text/javascript';
-            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
-    </script>
-    <!-- End Disqus Code -->
-    <!-- Google Analytics -->
-    <script type="text/javascript">
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-62970575-1']);
-        _gaq.push(['_trackPageview']);
-
-        (function () {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-    <!-- End Google Analytics Code -->
-
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ysywh.github.io/theme/bootstrap-collapse.js"></script>
+<script>var _gaq=[['_setAccount','UA-62970575-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+<a href="https://github.com/ysywh"><img style="position: absolute; top: 40px; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" /></a>
+ 
 </body>
 </html>

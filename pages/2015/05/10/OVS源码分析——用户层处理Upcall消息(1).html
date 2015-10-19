@@ -58,8 +58,8 @@
         <div class="span9">
     <div class='article'>
         <div class="content-title">
-            <h1>Cbench测试Opendaylight性能</h1>
-2015-04-03
+            <h1>OVS源码分析——用户层处理Upcall消息(1)</h1>
+2015-05-10
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
@@ -68,84 +68,48 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
         </div>
 	
         <div><p></br></p>
-<p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
-<p>实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。</p>
-<h3>一：测试平台：</h3>
-<p>由于测试结果和测试平台的性能紧密联系，因此记录下测试平台参数。</p>
-<blockquote>
-<p>硬件参数：</p>
-</blockquote>
+<h3>前言</h3>
+<p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
+key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
+<p>下俩将按照用户层接收upcall消息与处理的流程进行分析：</p>
+<p>用户层接收upcall消息，通过ofproto实体完成底层消息接收功能的。ofproto是ofproto_dpif类型数据结构，具有数据成员dpif（ofproto\ofproto-dpif.c）。通过ofproto—&gt;dpif与内核交互数据。</p>
+<p>upcall处理流程如图:</p>
+<p></br></p>
+<h4><strong>1）   upcall消息处理函数handle_upcalls(ofproto\ofproto-dpif.c)</strong></h4>
+<p><code>static int handle_upcalls(struct ofproto_dpif *ofproto, unsigned int max_batch)</code></p>
+<p><strong>功能</strong>：接收upcall消息并对miss_upcall类型消息调用处理。</p>
+<p>函数中处理流程如下</p>
+<p>1 调用upcall消息接收函数：
+    error = dpif_recv(ofproto-&gt;dpif, upcall, buf);
+ 调用ofproto实体对应的成员组件实体dpif进行接收，把消息存入缓存buf中，并且把具体消息放入upcall中。具体分析见后。</p>
+<p>2 switch判断upcall消息的三种类型，并分别处理。</p>
 <ul>
-<li>
-<p>CPU: Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz</p>
-</li>
-<li>
-<p>Memory: 8GB DDR3 - 1600 Mhz</p>
-</li>
+<li>对于SFLOW_UPCALL消息，调用handle_sflow_upcall处理，并ofpbuf_uninit(buf)清除缓存。</li>
+<li>对于BAD_UPCALL消息，直接清除缓存。</li>
+<li>对于MISS_UPCALL消息（重点），计数后，跳出switch用handle_miss_upcalls进行处理。</li>
 </ul>
-<blockquote>
-<p>软件参数:</p>
-</blockquote>
-<ul>
-<li>
-<p>OS: Ubuntu 14.04</p>
-</li>
-<li>
-<p>Java: OpenJDK java version "1.7.0"</p>
-</li>
-<li>
-<p>Opendaylight版本:Helium-SR2</p>
-</li>
-<li>
-<p>Opendaylight设置为初始默认值</p>
-</li>
-</ul>
-<h3>二：测试步骤</h3>
-<p>准备工作：先安装好<a href="https://www.opendaylight.org/downloads">OpenDaylight</a>和<a href="https://github.com/deepurple/cbench-src">Cbench</a>。</p>
-<p>1 开启opendaylight:</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" /></p>
-<p>2 安装Opendaylight控制器测试组件：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench2.png" /></p>
-<p>说明：Opendaylight不同于其他控制器，需要测试组件的支持，且测试组件具有两种测试模式：RPC和data store模式（区别见最后说明），以下分别用Cbench进行吞吐量和延时的测试.</p>
-<h3>RPC模式性能测试</h3>
-<p>首先，在RPC模式下进行Opendaylight性能测试：</p>
-<p>1 在opendaylight中开启RPC模式的测试组件：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench3.png" /></p>
-<p>2 开启Cbench，测试控制器吞吐量(throughput)性能:</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench4.png" /></p>
-<p>这里简单说明一下参数意义，s是交换机数量，M是每个交换机连接的主机数量，m是每次测试周期，l是测试循环次数，-t是进行吞吐量throughput测试，没有t则是延时latency测试。后面测试命令不再赘述。</p>
-<p>吞吐量测试结果截图：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench5.png" /></p>
-<p>测试结果简单解释：截图第二行显示测试性能的方面，可以看到是throughout，则是吞吐量测试。测试结果有10行数据，每行代表一次测试，每行有4个结果，单位是秒，代表每个交换机的测试结果，最后会有每毫秒的结果。最后一行是测试总的结果。</p>
-<p>3 开启Cbench，测试控制器延时（latency）性能：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench6.png" /></p>
-<p>测试结果截图：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench7.png" /></p>
-<p>特别说明：延迟测试结果要对测试的结果取倒数才是延迟。</p>
-<h3>data store模式性能测试</h3>
-<p>其次，在data store模式下进行Opendaylight性能测试:</p>
-<p>1关闭RPC模式，开启data store模式的测试组件：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench8.png" /></p>
-<p>2 开启Cbench，测试控制器吞吐量(throughput)性能:</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench9.png" /></p>
-<p>吞吐量测试结果截图：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench10.png" /></p>
-<p>3 开启Cbench，测试控制器延时（latency）性能：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench11.png" /></p>
-<p>延迟测试结果截图：</p>
-<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench12.png" /> </p>
-<h3>说明</h3>
-<p>1 两种模式特别说明，来自Opendaylight官网：</p>
-<ul>
-<li>
-<p>RPC : programming flows directly through an RPC to the OF Plugin</p>
-</li>
-<li>
-<p>data store : programming flows by writing them into the MD-SAL config space, from where they are picked up by the FRM and programmed into the plugin)</p>
-</li>
-</ul>
-<p>2 参数命令和结果截图说明见4和5，之后的不再赘述。</p>
-<p>3 测试结果的文本数据，见附件result.txt</p></div>
+<p>3 对MISS_UPCALL消息调用handle_miss_upcalls进行着重处理。并紧后进行buf缓存清除。</p>
+<p></br></p>
+<h4><strong>2）消息接收函数dpif_recv（lib\dpif.c）</strong></h4>
+<p><code>int dpif_recv(struct dpif *dpif, struct dpif_upcall *upcall, struct ofpbuf *buf)</code></p>
+<p><strong>关系</strong>：handle_upcalls中调用此函数。</p>
+<p><strong>功能</strong>：与内核层通信获交互upcall消息。</p>
+<p>1 调用recv(dpif, upcall, buf)函数进行upcall消息接收，放入upcall中，至此得到upcall消息。其中通过指针dpif具体调用了底层的接收函数dpif_linux_recv（位于Lib\dpif-linux中），此函数中调用socket函数从内核汇总接收netlink的msg，存到ofpbuf中，即error = nl_sock_recv(ch-
+>sock, buf, false)，随后并调用error = parse_odp_packet(buf, upcall, &amp;dp_ifindex)解析出upcall消息。</p>
+<p>2 <code>odp_flow_key_format(upcall-&gt;key, upcall-&gt;key_len, &amp;flow)</code>利用这个函数得到的upcall消息解析得到flow消息进行日志输出。</p>
+<p></br></p>
+<h4><strong>3) miss_upcall消息处理函数</strong></h4>
+<p><code>static void handle_miss_upcalls(struct ofproto_dpif *ofproto, struct dpif_upcall *upcalls,size_t n_upcalls)</code></p>
+<p><strong>关系</strong>：handle_upcalls中被调用</p>
+<p><strong>功能</strong>：对miss_upcall消息具体进程处理。</p>
+<p>1 先利用for循环对upcall消息进行处理，为了从每个upcall的packet中提取出flow，然后比较flow，把具有相同flow的每个upcall的packet放入结构体flow_miss中，定义这个结构体变量为miss，然后对他们方便统一处理。</p>
+<p>循环中：利用函数ofproto_dpif_extract_flow_key从upcall消息中提取出flow（lib\flow.h中定义了这个数据结构），并利用函数flow_extract对flow的优先级、mark、in_port进行字段填充（实际中是对数据包协议各层进行逐层解析）。此后flow_hash(&amp;miss-&gt;flow, 0)对miss结构中的flow进行哈希处理，利用existing_miss = flow_miss_find(&amp;todo, &amp;miss-&gt;flow, hash)把flow放入todo list的列表结构中。</p>
+<p>2 调用handle_flow_miss函数进行flow处理。</p>
+<p><code>handle_flow_miss(ofproto, miss, flow_miss_ops, &amp;n_ops)</code></p>
+<p>传入ofproto和miss，对flow进行处理，得到处理结果类型flow_miss_ops，n_ops是得到的类型个数。得到处理类型用于后面根据这个类型进行处理。具体见函数。</p>
+<p>数据结构：flow_miss_op：此类型数据结构具有数据成员dpif_op这个数据结构（lib\dpif.c），定义了三种flow处理类型（dpif_flow_put\delete\execute）。</p>
+<p>3 调用<code>dpif_operate(ofproto-&gt;dpif, dpif_ops, n_ops)</code>函数，根据dpif_op中的处理类型进行分别三种处理（dpif_flow_put\delete\execute）。</p>
+<p>以上完成了从用户层获取upcall消息，并对MISS_UPCALL类型消息进行处理存入miss（结构体miss_flow）。至此，接下来要具体对miss进行处理（构造facet和对miss执行action）。</p></div>
 	
         <hr>
 
@@ -153,7 +117,7 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'ysywhgithubio'; 
-    var disqus_title = 'Cbench测试Opendaylight性能';
+    var disqus_title = 'OVS源码分析——用户层处理Upcall消息(1)';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
