@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>RYU souce code - YsY记录点滴</title>
+    <title>HBase - YsY记录点滴</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
 
 
     <meta name="author" content="yansy" />
-    <meta name="keywords" content="RYU souce code" />
+    <meta name="keywords" content="HBase" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="YsY记录点滴" />
@@ -78,43 +78,40 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></h2>
-                <div class="summary"><h3>前言</h3>
-<p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
+                <h2><a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">HBase & HBase shell</a></h2>
+                <div class="summary"><p></br></p>
+<h3><strong>前言</strong></h3>
+<p>HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。</p>
 <ul>
 <li>
-<p>msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等</p>
+<p>面向列：解决稀疏问题，即众多的列，但并非每列都有数据，且经常只访问很少的列</p>
 </li>
 <li>
-<p>每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 </p>
+<p>基于HDFS：解决海量问题，即低成本可扩展地处理以十亿为单位的数据表</p>
+</li>
+<li>
+<p>高性能：解决高速问题，即高吞吐量和高并发</p>
 </li>
 </ul>
-<p>当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。</p>
-<p>packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。</p>
-<p>Packet-in消息属性：</p>
-<div class="highlight"><pre>buffer_id     ID assigned by datapath
-total_len     Full length of frame
-reason        Reason packet is being sent.
-
-              | OFPR_NO_MATCH
-              | OFPR_ACTION ...</pre></div>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></h2>
-                <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
-<h4>1 Event类</h4>
-<p>位置：ryu\lib\alert.py中Event类</p>
-<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
-<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
-<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
-<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
-<h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中 ...</p>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">more ...</a>
+<hr />
+<h3><strong>一 Hbase 与 RRBMS对比</strong></h3>
+<p>RDBMS是基于关系型数据库，而HBase基于列模式的映射数据库，是Nosql模式。Hbase表示为简单的键-值对，简化了关系型数据库。用处不同。</p>
+<ul>
+<li>
+<p>数据类型：Hbase只有简单的字符串类型，即只保存字符串。关系型数据库数据类型很丰富。</p>
+</li>
+<li>
+<p>数据操作：插入、查询、删除和清空等操作，不像关系型数据库表与表之间有关系，所以无表与表之间的关联操作，因为其实也不需要。</p>
+</li>
+<li>
+<p>存储模式：Hbase基于列存储,则有些列字段值可以无，且不同列族存储的文件是分离的。</p>
+</li>
+</ul>
+<p>除此之外，Hbase更新数据时候会保留一定数量的版本。</p>
+<p></br></p>
+<h3><strong>二 系统框架</strong></h3>
+<p>构成：Client,Zookeeper，HMaster ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">more ...</a>
                 </div>
             </article>
             <hr/>

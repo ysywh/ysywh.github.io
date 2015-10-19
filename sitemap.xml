@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://ysywh.github.io/</loc>
-<lastmod>2015-10-19T09:42:12-00:00</lastmod>
+<lastmod>2015-10-19T09:55:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://ysywh.github.io/archives.html</loc>
-<lastmod>2015-10-19T09:42:12-00:00</lastmod>
+<lastmod>2015-10-19T09:55:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://ysywh.github.io/tags.html</loc>
-<lastmod>2015-10-19T09:42:12-00:00</lastmod>
+<lastmod>2015-10-19T09:55:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://ysywh.github.io/categories.html</loc>
-<lastmod>2015-10-19T09:42:12-00:00</lastmod>
+<lastmod>2015-10-19T09:55:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -47,6 +47,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html</loc>
+<lastmod>2015-08-30T17:30:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+
+<url>
+<loc>http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html</loc>
 <lastmod>2015-08-30T17:30:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
@@ -187,6 +194,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://ysywh.github.io/tag/cbench-opendaylight.html</loc>
+<lastmod>2015-08-30T17:30:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://ysywh.github.io/tag/hbase.html</loc>
 <lastmod>2015-08-30T17:30:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>

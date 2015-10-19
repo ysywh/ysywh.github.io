@@ -78,6 +78,44 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">HBase & HBase shell</a></h2>
+                <div class="summary"><p></br></p>
+<h3><strong>前言</strong></h3>
+<p>HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。</p>
+<ul>
+<li>
+<p>面向列：解决稀疏问题，即众多的列，但并非每列都有数据，且经常只访问很少的列</p>
+</li>
+<li>
+<p>基于HDFS：解决海量问题，即低成本可扩展地处理以十亿为单位的数据表</p>
+</li>
+<li>
+<p>高性能：解决高速问题，即高吞吐量和高并发</p>
+</li>
+</ul>
+<hr />
+<h3><strong>一 Hbase 与 RRBMS对比</strong></h3>
+<p>RDBMS是基于关系型数据库，而HBase基于列模式的映射数据库，是Nosql模式。Hbase表示为简单的键-值对，简化了关系型数据库。用处不同。</p>
+<ul>
+<li>
+<p>数据类型：Hbase只有简单的字符串类型，即只保存字符串。关系型数据库数据类型很丰富。</p>
+</li>
+<li>
+<p>数据操作：插入、查询、删除和清空等操作，不像关系型数据库表与表之间有关系，所以无表与表之间的关联操作，因为其实也不需要。</p>
+</li>
+<li>
+<p>存储模式：Hbase基于列存储,则有些列字段值可以无，且不同列族存储的文件是分离的。</p>
+</li>
+</ul>
+<p>除此之外，Hbase更新数据时候会保留一定数量的版本。</p>
+<p></br></p>
+<h3><strong>二 系统框架</strong></h3>
+<p>构成：Client,Zookeeper，HMaster ...</p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">设计模式——相关计数pairs、stripes实现</a></h2>
                 <div class="summary"><h4><strong>前言</strong></h4>
 <p><strong>设计模式</strong>对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。</p>
@@ -200,8 +238,13 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/hbase.html">
+                            HBase
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -215,8 +258,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
                         </a>
                     </li>
                 </ul>

@@ -77,6 +77,51 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></h2>
+                <div class="summary"><p>2015-3-8 by ysy   </p>
+<p><br></p>
+<p>利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  </p>
+<hr />
+<h4>一：实验目标</h4>
+<ul>
+<li>
+<p>学习docker基本命令</p>
+</li>
+<li>
+<p>搭建只有一个master和两个slave的Hadoop集群环境</p>
+</li>
+<li>
+<p>进行wordcount实验,理解mapreduce和hdfs等工作机制</p>
+</li>
+</ul>
+<h4>二：docker基本命令</h4>
+<p>docket是目前较为流行的虚拟化技术，可以方便轻松的在Linux中建立容器，达到虚拟化需求。</p>
+<p>基本操作命令如下，更多参考<a href="!http://dockerpool.com/static/books/docker_practice/index.html">这里</a>。</p>
+<ul>
+<li>
+<p>启动容器：<code>docker run 镜像名</code></p>
+</li>
+<li>
+<p>暂停容器：<code>docker stop 容器名</code></p>
+</li>
+<li>
+<p>重启开启容器：<code>docker start 容器名</code></p>
+</li>
+<li>
+<p>进入容器：<code>docker attach 容器名</code></p>
+</li>
+</ul>
+<h4>三：Hadoop集群环境搭建</h4>
+<p>1 Hadoop集群分为一个master和两个slave，因此依次用docker开启相应容器,其中需要做端口映射：</p>
+<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
+<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
+<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
+<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务 ...</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></h2>
                 <div class="summary"><p>2015-3-2 by ysy  </p>
 <p><br></p>
@@ -149,8 +194,13 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/letter-count.html">
+                            letter count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/hbase.html">
+                            HBase
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -164,8 +214,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/letter-count.html">
-                            letter count
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
                         </a>
                     </li>
                 </ul>
