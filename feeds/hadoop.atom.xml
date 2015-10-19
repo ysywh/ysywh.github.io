@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/hadoop.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Mapreduce API 操作HBase</title><link href="http://ysywh.github.io/Mapreduce%20API%20%E6%93%8D%E4%BD%9CHBase.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-03:Mapreduce API 操作HBase.html</id><summary type="html">&lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>YsY记录点滴</title><link href="http://ysywh.github.io/" rel="alternate"></link><link href="http://ysywh.github.io/feeds/hadoop.atom.xml" rel="self"></link><id>http://ysywh.github.io/</id><updated>2015-10-01T17:30:00+08:00</updated><entry><title>Mapreduce API 操作HBase</title><link href="http://ysywh.github.io/pages/2015/06/03/Mapreduce%20API%20%E6%93%8D%E4%BD%9CHBase.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-03:pages/2015/06/03/Mapreduce API 操作HBase.html</id><summary type="html">&lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -206,7 +206,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;p&gt;发现表mapreduce_yansiyu已经建立，并且与原来的access.log中数据进行对比，hbase表中数据导入成功。&lt;/p&gt;
 &lt;h4&gt;&lt;strong&gt;结语&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;总体来说，hbase shell或是api操作还是比较简答的，但是究其原理较为复杂，理解它却更显重要。&lt;/p&gt;
-&lt;p&gt;通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。&lt;/p&gt;</summary><category term="HBase MapReduce"></category></entry><entry><title>HBase &amp; HBase shell</title><link href="http://ysywh.github.io/HBase%20&amp;%20HBase%20shell.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:HBase &amp; HBase shell.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。&lt;/p&gt;</summary><category term="HBase MapReduce"></category></entry><entry><title>HBase &amp; HBase shell</title><link href="http://ysywh.github.io/pages/2015/06/01/HBase%20&amp;%20HBase%20shell.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/HBase &amp; HBase shell.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。&lt;/p&gt;
 &lt;ul&gt;
@@ -287,7 +287,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;h3&gt;&lt;strong&gt;后记&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;这里记录两个需要特别注意的地方：&lt;/p&gt;
 &lt;p&gt;1 导入数据的命令要在linux终端中输入，而不是hbase的CLI模式中&lt;/p&gt;
-&lt;p&gt;2 生成的hfile文件所在的整体目录权限要进行修改，否则下一步导入会因为权限问题而休止等待。&lt;/p&gt;</summary><category term="HBase"></category></entry><entry><title>设计模式——相关计数pairs、stripes实现</title><link href="http://ysywh.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E7%9B%B8%E5%85%B3%E8%AE%A1%E6%95%B0pairs%E3%80%81stripes%E5%AE%9E%E7%8E%B0.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-28:设计模式——相关计数pairs、stripes实现.html</id><summary type="html">&lt;h4&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;2 生成的hfile文件所在的整体目录权限要进行修改，否则下一步导入会因为权限问题而休止等待。&lt;/p&gt;</summary><category term="HBase"></category></entry><entry><title>设计模式——相关计数pairs、stripes实现</title><link href="http://ysywh.github.io/pages/2015/05/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E7%9B%B8%E5%85%B3%E8%AE%A1%E6%95%B0pairs%E3%80%81stripes%E5%AE%9E%E7%8E%B0.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-28:pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html</id><summary type="html">&lt;h4&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;设计模式&lt;/strong&gt;对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。&lt;/p&gt;
 &lt;p&gt;这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。&lt;/p&gt;
 &lt;p&gt;这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。&lt;/p&gt;
@@ -445,7 +445,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;p&gt;当然，也可以把stripes中反序和正序作加和，输出就和pairs相同，只需要在map的第二个for循环里，比较i和j元素大小，反序的直接context.write()输出就行。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;结语&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;stripes和pairs表现出的性能是不同的。pairs的map输出的键由于是pair，因此类型多样，不利于conbiners排序，而stripes方法中map输出键为元素个数，减少了排序，且在combiners有更多的机会执行局部聚集，且高效利用内存。总的来说，在唯维度和数据很大的情况下，stripes性能更优。&lt;/p&gt;
-&lt;p&gt;此外，&lt;strong&gt;特别注意&lt;/strong&gt;stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。&lt;/p&gt;</summary><category term="Mapreduce 数据结构"></category></entry><entry><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link href="http://ysywh.github.io/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html" rel="alternate"></link><updated>2015-08-19T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-11:Docker搭建Hadoop集群环境和Wordcount实验.html</id><summary type="html">&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;此外，&lt;strong&gt;特别注意&lt;/strong&gt;stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。&lt;/p&gt;</summary><category term="Mapreduce 数据结构"></category></entry><entry><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link href="http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html" rel="alternate"></link><updated>2015-08-19T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-11:pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html</id><summary type="html">&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  &lt;/p&gt;
 &lt;hr /&gt;
 &lt;h4&gt;一：实验目标&lt;/h4&gt;
@@ -521,7 +521,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;li&gt;
 &lt;p&gt;其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 &lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</summary><category term="MapReduce"></category><category term="word count"></category><category term="Docker"></category></entry><entry><title>MapReduce之letter count</title><link href="http://ysywh.github.io/MapReduce%E4%B9%8Bletter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:MapReduce之letter count.html</id><summary type="html">&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/ul&gt;</summary><category term="MapReduce"></category><category term="word count"></category><category term="Docker"></category></entry><entry><title>MapReduce之letter count</title><link href="http://ysywh.github.io/pages/2015/03/02/MapReduce%E4%B9%8Bletter%20count.html" rel="alternate"></link><updated>2015-10-01T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce之letter count.html</id><summary type="html">&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;1 创建新的工程lettercount,并且加载需要的Hadoop库：&lt;/p&gt;
