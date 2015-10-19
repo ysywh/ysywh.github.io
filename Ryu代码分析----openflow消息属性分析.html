@@ -54,23 +54,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="http://ysywh.github.io/Ryu代码分析----openflow消息属性分析.html"><h1>Ryu代码分析----openflow消息属性分析</h1></a>
+            <h1>Ryu代码分析----openflow消息属性分析</h1>
 2015-07-22
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
 
 
- 
         </div>
-        
+	
         <div><h3>前言</h3>
 <p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
 <ul>
@@ -236,48 +230,23 @@ pkt = e/i/u
 </li>
 </ul>
 <p>通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Ryu代码分析----openflow消息属性分析';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/Ryu源码分析.html"><h2>Ryu源码分析</h2></a>
-        <div class= "well small"> 2015-07-10
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
-<h4>1 Event类</h4>
-<p>位置：ryu\lib\alert.py中Event类</p>
-<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
-<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
-<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
-<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
-<h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/Ryu源码分析.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="http://ysywh.github.io/tag/ryu-souce-code.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">

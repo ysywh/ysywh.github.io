@@ -54,22 +54,18 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
- 
-
     <div class='article'>
-        <a href="http://ysywh.github.io/Cbench测试Opendaylight性能.html"><h2>Cbench测试Opendaylight性能</h2></a>
-        <div class= "well small"> 2015-04-03
+        <div class="content-title">
+            <h1>Cbench测试Opendaylight性能</h1>
+2015-04-03
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
 
 
- </div>
-        <div class="summary"><p></br></p>
+        </div>
+	
+        <div><p></br></p>
 <p>要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机</p>
 <p>实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。</p>
 <h3>一：测试平台：</h3>
@@ -106,111 +102,65 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <p>准备工作：先安装好<a href="https://www.opendaylight.org/downloads">OpenDaylight</a>和<a href="https://github.com/deepurple/cbench-src">Cbench</a>。</p>
 <p>1 开启opendaylight:</p>
 <p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench1.png" /></p>
-<p>2 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/Cbench测试Opendaylight性能.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/Docker搭建Hadoop集群环境和Wordcount实验.html"><h2>Docker搭建Hadoop集群环境和Wordcount实验</h2></a>
-        <div class= "well small"> 2015-03-11
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  </p>
-<hr />
-<h4>一：实验目标</h4>
+<p>2 安装Opendaylight控制器测试组件：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench2.png" /></p>
+<p>说明：Opendaylight不同于其他控制器，需要测试组件的支持，且测试组件具有两种测试模式：RPC和data store模式（区别见最后说明），以下分别用Cbench进行吞吐量和延时的测试.</p>
+<h3>RPC模式性能测试</h3>
+<p>首先，在RPC模式下进行Opendaylight性能测试：</p>
+<p>1 在opendaylight中开启RPC模式的测试组件：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench3.png" /></p>
+<p>2 开启Cbench，测试控制器吞吐量(throughput)性能:</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench4.png" /></p>
+<p>这里简单说明一下参数意义，s是交换机数量，M是每个交换机连接的主机数量，m是每次测试周期，l是测试循环次数，-t是进行吞吐量throughput测试，没有t则是延时latency测试。后面测试命令不再赘述。</p>
+<p>吞吐量测试结果截图：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench5.png" /></p>
+<p>测试结果简单解释：截图第二行显示测试性能的方面，可以看到是throughout，则是吞吐量测试。测试结果有10行数据，每行代表一次测试，每行有4个结果，单位是秒，代表每个交换机的测试结果，最后会有每毫秒的结果。最后一行是测试总的结果。</p>
+<p>3 开启Cbench，测试控制器延时（latency）性能：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench6.png" /></p>
+<p>测试结果截图：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench7.png" /></p>
+<p>特别说明：延迟测试结果要对测试的结果取倒数才是延迟。</p>
+<h3>data store模式性能测试</h3>
+<p>其次，在data store模式下进行Opendaylight性能测试:</p>
+<p>1关闭RPC模式，开启data store模式的测试组件：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench8.png" /></p>
+<p>2 开启Cbench，测试控制器吞吐量(throughput)性能:</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench9.png" /></p>
+<p>吞吐量测试结果截图：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench10.png" /></p>
+<p>3 开启Cbench，测试控制器延时（latency）性能：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench11.png" /></p>
+<p>延迟测试结果截图：</p>
+<p><img alt="" src="http://7xnkv8.com1.z0.glb.clouddn.com/cbench12.png" /> </p>
+<h3>说明</h3>
+<p>1 两种模式特别说明，来自Opendaylight官网：</p>
 <ul>
 <li>
-<p>学习docker基本命令</p>
+<p>RPC : programming flows directly through an RPC to the OF Plugin</p>
 </li>
 <li>
-<p>搭建只有一个master和两个slave的Hadoop集群环境</p>
-</li>
-<li>
-<p>进行wordcount实验,理解mapreduce和hdfs等工作机制</p>
+<p>data store : programming flows by writing them into the MD-SAL config space, from where they are picked up by the FRM and programmed into the plugin)</p>
 </li>
 </ul>
-<h4>二：docker基本命令</h4>
-<p>docket是目前较为流行的虚拟化技术，可以方便轻松的在Linux中建立容器，达到虚拟化需求。</p>
-<p>基本操作命令如下，更多参考<a href="!http://dockerpool.com/static/books/docker_practice/index.html">这里</a>。</p>
-<ul>
-<li>
-<p>启动容器：<code>docker run 镜像名</code></p>
-</li>
-<li>
-<p>暂停容器：<code>docker stop 容器名</code></p>
-</li>
-<li>
-<p>重启开启容器：<code>docker start 容器名</code></p>
-</li>
-<li>
-<p>进入容器：<code>docker attach 容器名</code></p>
-</li>
-</ul>
-<h4>三：Hadoop集群环境搭建</h4>
-<p>1 Hadoop集群分为一个master和两个slave，因此依次用docker开启相应容器,其中需要做端口映射：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
-<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/Docker搭建Hadoop集群环境和Wordcount实验.html">read more</a></div>
-    </div>	
-				
+<p>2 参数命令和结果截图说明见4和5，之后的不再赘述。</p>
+<p>3 测试结果的文本数据，见附件result.txt</p></div>
+	
+        <hr>
 
- 
-        
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Cbench测试Opendaylight性能';
 
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/MapReduce之letter count.html"><h2>MapReduce之letter count</h2></a>
-        <div class= "well small"> 2015-03-02
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
-<hr />
-<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
-<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
-<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
-<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
-<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
-<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
-<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
-<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
-<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
-<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/MapReduce之letter count.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev"><a href="http://ysywh.github.io/author/ysy2.html">&larr; Previous</a></li>
-
-    <li class=""><a href="http://ysywh.github.io/author/ysy.html">1</a></li>
-    <li class=""><a href="http://ysywh.github.io/author/ysy2.html">2</a></li>
-    <li class="active"><a href="http://ysywh.github.io/author/ysy3.html">3</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

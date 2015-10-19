@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 01 Oct 2015 17:30:00 +0800</lastBuildDate><item><title>Ryu代码分析----openflow消息属性分析</title><link>http://ysywh.github.io/pages/2015/07/22/Ryu%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90----openflow%E6%B6%88%E6%81%AF%E5%B1%9E%E6%80%A7%E5%88%86%E6%9E%90.html</link><description>&lt;h3&gt;前言&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 01 Oct 2015 17:30:00 +0800</lastBuildDate><item><title>Ryu代码分析----openflow消息属性分析</title><link>http://ysywh.github.io/Ryu%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90----openflow%E6%B6%88%E6%81%AF%E5%B1%9E%E6%80%A7%E5%88%86%E6%9E%90.html</link><description>&lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -163,7 +163,7 @@ pkt = e/i/u
 
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-07-22:pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html</guid><category>RYU souce code</category></item><item><title>Ryu源码分析</title><link>http://ysywh.github.io/pages/2015/07/10/Ryu%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html</link><description>&lt;p&gt;Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：&lt;/p&gt;
+&lt;p&gt;通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-07-22:Ryu代码分析----openflow消息属性分析.html</guid><category>RYU souce code</category></item><item><title>Ryu源码分析</title><link>http://ysywh.github.io/Ryu%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html</link><description>&lt;p&gt;Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：&lt;/p&gt;
 &lt;h4&gt;1 Event类&lt;/h4&gt;
 &lt;p&gt;位置：ryu\lib\alert.py中Event类&lt;/p&gt;
 &lt;p&gt;有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。&lt;/p&gt;
@@ -282,7 +282,7 @@ return &amp;#39;Event&amp;#39; + msg_name
 &lt;li&gt;OFPSetConfig(MsgBase): 控制器下发的交换机配置设置的要求消息，无需reply&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Ryu框架自动调用完成的类：OFPHello，OFPEchoReply，OFPEchoRequest，OFPSwitchFeatures（回答控制器发往交换机OFPFeaturesRequest，前面四个是交换机发往控制器的）&lt;/p&gt;
-&lt;p&gt;注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-07-10:pages/2015/07/10/Ryu源码分析.html</guid><category>RYU souce code</category></item><item><title>Mapreduce API 操作HBase</title><link>http://ysywh.github.io/pages/2015/06/03/Mapreduce%20API%20%E6%93%8D%E4%BD%9CHBase.html</link><description>&lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;注意：此类还有很多，只要是继承MsgBase的类，都属于产生控制器交换机交互讯息的类。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-07-10:Ryu源码分析.html</guid><category>RYU souce code</category></item><item><title>Mapreduce API 操作HBase</title><link>http://ysywh.github.io/Mapreduce%20API%20%E6%93%8D%E4%BD%9CHBase.html</link><description>&lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -489,7 +489,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;p&gt;发现表mapreduce_yansiyu已经建立，并且与原来的access.log中数据进行对比，hbase表中数据导入成功。&lt;/p&gt;
 &lt;h4&gt;&lt;strong&gt;结语&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;总体来说，hbase shell或是api操作还是比较简答的，但是究其原理较为复杂，理解它却更显重要。&lt;/p&gt;
-&lt;p&gt;通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-03:pages/2015/06/03/Mapreduce API 操作HBase.html</guid><category>HBase MapReduce</category></item><item><title>HBase &amp; HBase shell</title><link>http://ysywh.github.io/pages/2015/06/01/HBase%20&amp;%20HBase%20shell.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-03:Mapreduce API 操作HBase.html</guid><category>HBase MapReduce</category></item><item><title>HBase &amp; HBase shell</title><link>http://ysywh.github.io/HBase%20&amp;%20HBase%20shell.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。&lt;/p&gt;
 &lt;ul&gt;
@@ -570,8 +570,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;h3&gt;&lt;strong&gt;后记&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;这里记录两个需要特别注意的地方：&lt;/p&gt;
 &lt;p&gt;1 导入数据的命令要在linux终端中输入，而不是hbase的CLI模式中&lt;/p&gt;
-&lt;p&gt;2 生成的hfile文件所在的整体目录权限要进行修改，否则下一步导入会因为权限问题而休止等待。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/HBase &amp; HBase shell.html</guid><category>HBase</category></item><item><title>数据结构</title><link>http://ysywh.github.io/pages/2015/06/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html</link><description>&lt;p&gt;2015-6-1 by ysy   &lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;2 生成的hfile文件所在的整体目录权限要进行修改，否则下一步导入会因为权限问题而休止等待。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:HBase &amp; HBase shell.html</guid><category>HBase</category></item><item><title>数据结构</title><link>http://ysywh.github.io/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html</link><description>&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;&lt;strong&gt;数据结构&lt;/strong&gt;：一组有特定数据关系的数据元素集合。根据数据关系，因此衍生出以下四种基本类型的数据结构：&lt;/p&gt;
@@ -594,7 +593,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;p&gt;说完数据类型，再来看数据结构，每种数据结构都可以有一些相应的操作，比如插入、删除或查找数据等，好吧，数据结构加上操作就是可以使用的数据类型了。而插入对于不同的数据类型，甚至同一种数据结构，相同操作的机理也是不同的。比如对于链式存储的线性表（链表）和顺序存储的线性表（顺序表）对于查找操作的机理也是不一样的，即用不同方法查找（二分查找、Fbonacci查找）的效率不同，这就牵扯到&lt;strong&gt;算法&lt;/strong&gt;了。当然，除了数据结构操作的方法，包括一些其他问题解决办法，比如排序方法（冒泡排序、插入排序），都是有具体的算法的。算法的优劣，需要根据具体情况采用具体的解决办法，这才是最优的。&lt;/p&gt;
 &lt;p&gt;刚才数据结构中提到的数据关系，其实是一种逻辑关系，真正在计算机中存储不同数据结构，都会有两种物理关系，顺序存储和链式存储。必定这种物理关系需要反应在语言上，顺序存储则对应数据类型中的一维数组，链式存储则是一系列指针类型。因此，实现不同数据结构都可以使用顺序存储和链式存储，则数据结构和采用实现的存储结构无直接关系。比如，对于线性结构的线性表，可以是顺序存储实现，称为顺序表，也可以是链式存储实现，称为链式表。&lt;/p&gt;
 &lt;p&gt;当然，用不同存储方法实现数据结构后，对数据结构进行操作是有差异的。顺序存储最大的特点就是利于查找，即通过数组下标就可以快速完成，但是插入或是删除数据需要移动其他元素，复杂度O(n)；但是对于链式存储，插入和删除非常便利，因为是指针直接操作目标元素，不需要操作其他元素，但是对于查找等操作，却需要逐一遍历到目标元素才可以，不如顺序存储。虽然各有优劣，还是老话，需要根据实际情况选择合适的实现方式。&lt;/p&gt;
-&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:pages/2015/06/01/数据结构.html</guid><category>数据结构，算法</category></item><item><title>设计模式——相关计数pairs、stripes实现</title><link>http://ysywh.github.io/pages/2015/05/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E7%9B%B8%E5%85%B3%E8%AE%A1%E6%95%B0pairs%E3%80%81stripes%E5%AE%9E%E7%8E%B0.html</link><description>&lt;h4&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-06-01:数据结构.html</guid><category>数据结构，算法</category></item><item><title>设计模式——相关计数pairs、stripes实现</title><link>http://ysywh.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E7%9B%B8%E5%85%B3%E8%AE%A1%E6%95%B0pairs%E3%80%81stripes%E5%AE%9E%E7%8E%B0.html</link><description>&lt;h4&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h4&gt;
 &lt;p&gt;&lt;strong&gt;设计模式&lt;/strong&gt;对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。&lt;/p&gt;
 &lt;p&gt;这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。&lt;/p&gt;
 &lt;p&gt;这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。&lt;/p&gt;
@@ -752,7 +751,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 &lt;p&gt;当然，也可以把stripes中反序和正序作加和，输出就和pairs相同，只需要在map的第二个for循环里，比较i和j元素大小，反序的直接context.write()输出就行。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;结语&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;stripes和pairs表现出的性能是不同的。pairs的map输出的键由于是pair，因此类型多样，不利于conbiners排序，而stripes方法中map输出键为元素个数，减少了排序，且在combiners有更多的机会执行局部聚集，且高效利用内存。总的来说，在唯维度和数据很大的情况下，stripes性能更优。&lt;/p&gt;
-&lt;p&gt;此外，&lt;strong&gt;特别注意&lt;/strong&gt;stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-28:pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html</guid><category>Mapreduce 数据结构</category></item><item><title>OVS源码分析——datapath消息处理</title><link>http://ysywh.github.io/pages/2015/05/22/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;此外，&lt;strong&gt;特别注意&lt;/strong&gt;stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-28:设计模式——相关计数pairs、stripes实现.html</guid><category>Mapreduce 数据结构</category></item><item><title>OVS源码分析——datapath消息处理</title><link>http://ysywh.github.io/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。&lt;/p&gt;
 &lt;p&gt;generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。&lt;/p&gt;
@@ -840,7 +839,7 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 首先初始化结构体vport_ops为ovs_netdev_vport_ops（datapath\vport-netdev.c）。定义了vport的所有操作函数，比如.send=netdev_send。
 static int netdev_send(struct vport &lt;em&gt;vport, struct sk_buff &lt;/em&gt;skb)&lt;/p&gt;
 &lt;p&gt;关系：在函数ovs_vport_send中，通过vport-&amp;gt;ops-&amp;gt;send(vport, skb)动态调用。&lt;/p&gt;
-&lt;p&gt;函数中，通过skb-&amp;gt;dev = netdev_vport-&amp;gt;dev;得到设备，然后调用dev_queue_xmit(skb)函数把packet放入队列中发送。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-22:pages/2015/05/22/OVS源码分析——datapath消息处理.html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——用户层处理Upcall消息(2)</title><link>http://ysywh.github.io/pages/2015/05/15/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(2).html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;函数中，通过skb-&amp;gt;dev = netdev_vport-&amp;gt;dev;得到设备，然后调用dev_queue_xmit(skb)函数把packet放入队列中发送。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-22:OVS源码分析——datapath消息处理.html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——用户层处理Upcall消息(2)</title><link>http://ysywh.github.io/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(2).html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;
@@ -969,7 +968,7 @@ output类型、Header changes等action类型）。&lt;/p&gt;
 &lt;p&gt;与内核层建立socket的netlink连接，发送txnsp的request中信息（通过2中的aux传到txnsp中）并且接收来自内核的消息到reply中。参数genl_sock是netlink的socket, txnsp即表征内核层与用户层的一次连接，txnsp含有成员request和reply。&lt;/p&gt;
 &lt;p&gt;函数中，具体调用了nl_sock_transact_multiple__函数，此函数中有发送函数sendmsg(sock-&amp;gt;fd, &amp;amp;msg, 0)和接收函数nl_sock_recv__(sock, buf_txn-&amp;gt;reply, false)，分别发送了缓存request
 的信息并接收到reply缓存中，此后更新统计。&lt;/p&gt;
-&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-15:pages/2015/05/15/OVS源码分析——用户层处理Upcall消息(2).html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——用户层处理Upcall消息(1)</title><link>http://ysywh.github.io/pages/2015/05/10/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(1).html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;至此，用户层信息发送到内核层，内核层真正执行动作。内核层和用户层交互完成。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-15:OVS源码分析——用户层处理Upcall消息(2).html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——用户层处理Upcall消息(1)</title><link>http://ysywh.github.io/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%B1%82%E5%A4%84%E7%90%86Upcall%E6%B6%88%E6%81%AF(1).html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
 key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：&lt;/p&gt;
@@ -1011,7 +1010,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;p&gt;传入ofproto和miss，对flow进行处理，得到处理结果类型flow_miss_ops，n_ops是得到的类型个数。得到处理类型用于后面根据这个类型进行处理。具体见函数。&lt;/p&gt;
 &lt;p&gt;数据结构：flow_miss_op：此类型数据结构具有数据成员dpif_op这个数据结构（lib\dpif.c），定义了三种flow处理类型（dpif_flow_put\delete\execute）。&lt;/p&gt;
 &lt;p&gt;3 调用&lt;code&gt;dpif_operate(ofproto-&amp;gt;dpif, dpif_ops, n_ops)&lt;/code&gt;函数，根据dpif_op中的处理类型进行分别三种处理（dpif_flow_put\delete\execute）。&lt;/p&gt;
-&lt;p&gt;以上完成了从用户层获取upcall消息，并对MISS_UPCALL类型消息进行处理存入miss（结构体miss_flow）。至此，接下来要具体对miss进行处理（构造facet和对miss执行action）。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-10:pages/2015/05/10/OVS源码分析——用户层处理Upcall消息(1).html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——OpenFlow消息处理</title><link>http://ysywh.github.io/pages/2015/05/02/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94OpenFlow%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;以上完成了从用户层获取upcall消息，并对MISS_UPCALL类型消息进行处理存入miss（结构体miss_flow）。至此，接下来要具体对miss进行处理（构造facet和对miss执行action）。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-10:OVS源码分析——用户层处理Upcall消息(1).html</guid><category>OVS souce code</category></item><item><title>OVS源码分析——OpenFlow消息处理</title><link>http://ysywh.github.io/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E2%80%94OpenFlow%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;OVS作为交换机，可以通过安全通道与控制器进行消息交互。控制器向OVS下发Openflow消息，可以完成对数据层面策略下发，流控制等功能。OVS接收到控制器下发的Openflow消息，需要对其进行接收，解析与处理，如安装流表项等操作。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;下文按照OVS接收处理openflow消息的处理流程进行分析：&lt;/p&gt;
@@ -1073,7 +1072,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;h4&gt;4 static enum ofperr add_flow(struct ofproto *ofproto, struct ofconn *ofconn,const struct ofputil_flow_mod *fm, const struct ofp_header *request)&lt;/h4&gt;
 &lt;p&gt;选择flowmod指定id的表，根据flowmod消息创建分类流规则rule，并且插入rule，等再有相同流过来进行匹配，从而创建流表项。具体如下：&lt;/p&gt;
 &lt;p&gt;先通过fm-&amp;gt;table_id获得flowmod指定id的流表，如果id号大于指定的最大流表数则会返回相应error类型。找到table id后，根据函数rule_alloc()分配一个分类器rule，随后调用函数cls_rule_init(&amp;amp;rule-&amp;gt;cr, &amp;amp;fm-&amp;gt;match, fm-&amp;gt;priority)填充rule-&amp;gt;cr，则rule的匹配域和优先级字段基本填充完成。之后进行冲突检测（check for overlap），防止重复添加相同rule。之后对rule各个字段进行填充，调用函数oftable_replace_rule插入这个初始化好的rule。&lt;/p&gt;
-&lt;p&gt;这样addflow任务基本完成，等待以后相同流在核心层匹配失败后，upcall到用户层，则会根据匹配这个rule进行流表项的建立工作，如果不存在匹配的rule，则会丢弃或是上交controller，具体见用户态处理upcall消息分析。至于modify和delete类型flowmod消息，基本分析相同，如对command为modify的flowmod消息，则修改指定rule的action。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-02:pages/2015/05/02/OVS源码分析——OpenFlow消息处理.html</guid><category>OVS souce code</category></item><item><title>Cbench测试Opendaylight性能</title><link>http://ysywh.github.io/pages/2015/04/03/Cbench%E6%B5%8B%E8%AF%95Opendaylight%E6%80%A7%E8%83%BD.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;这样addflow任务基本完成，等待以后相同流在核心层匹配失败后，upcall到用户层，则会根据匹配这个rule进行流表项的建立工作，如果不存在匹配的rule，则会丢弃或是上交controller，具体见用户态处理upcall消息分析。至于modify和delete类型flowmod消息，基本分析相同，如对command为modify的flowmod消息，则修改指定rule的action。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-05-02:OVS源码分析——OpenFlow消息处理.html</guid><category>OVS souce code</category></item><item><title>Cbench测试Opendaylight性能</title><link>http://ysywh.github.io/Cbench%E6%B5%8B%E8%AF%95Opendaylight%E6%80%A7%E8%83%BD.html</link><description>&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;p&gt;要求和目标：用Cbench测试Opendaylight控制器的吞吐量和延时性能，拓扑简单设定为四个交换机&lt;/p&gt;
 &lt;p&gt;实验通过Cbench模拟出拓扑，并对Opendaylight进行测试。&lt;/p&gt;
 &lt;h3&gt;一：测试平台：&lt;/h3&gt;
@@ -1151,8 +1150,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;2 参数命令和结果截图说明见4和5，之后的不再赘述。&lt;/p&gt;
-&lt;p&gt;3 测试结果的文本数据，见附件result.txt&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-04-03:pages/2015/04/03/Cbench测试Opendaylight性能.html</guid><category>Cbench OpenDaylight</category></item><item><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link>http://ysywh.github.io/pages/2015/03/11/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html</link><description>&lt;p&gt;2015-3-8 by ysy   &lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;3 测试结果的文本数据，见附件result.txt&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Sun, 30 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-04-03:Cbench测试Opendaylight性能.html</guid><category>Cbench OpenDaylight</category></item><item><title>Docker搭建Hadoop集群环境和Wordcount实验</title><link>http://ysywh.github.io/Docker%E6%90%AD%E5%BB%BAHadoop%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E5%92%8CWordcount%E5%AE%9E%E9%AA%8C.html</link><description>&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  &lt;/p&gt;
 &lt;hr /&gt;
 &lt;h4&gt;一：实验目标&lt;/h4&gt;
@@ -1228,8 +1226,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;li&gt;
 &lt;p&gt;其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 &lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Wed, 19 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-03-11:pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html</guid><category>mapreduce</category><category>word count</category></item><item><title>MapReduce之letter count</title><link>http://ysywh.github.io/pages/2015/03/02/MapReduce%E4%B9%8Bletter%20count.html</link><description>&lt;p&gt;2015-3-2 by ysy  &lt;/p&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Wed, 19 Aug 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-03-11:Docker搭建Hadoop集群环境和Wordcount实验.html</guid><category>MapReduce</category><category>word count</category><category>Docker</category></item><item><title>MapReduce之letter count</title><link>http://ysywh.github.io/MapReduce%E4%B9%8Bletter%20count.html</link><description>&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;p&gt;本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;1 创建新的工程lettercount,并且加载需要的Hadoop库：&lt;/p&gt;
@@ -1244,4 +1241,4 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
 &lt;p&gt;4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：&lt;/p&gt;
 &lt;p&gt;&lt;img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /&gt;&lt;/p&gt;
 &lt;p&gt;5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Thu, 01 Oct 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-03-02:pages/2015/03/02/MapReduce之letter count.html</guid><category>mapreduce</category><category>letter count</category></item></channel></rss>
+&lt;p&gt;&lt;img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Thu, 01 Oct 2015 17:30:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-03-02:MapReduce之letter count.html</guid><category>mapreduce</category><category>letter count</category></item></channel></rss>

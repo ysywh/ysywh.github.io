@@ -54,23 +54,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="http://ysywh.github.io/设计模式——相关计数pairs、stripes实现.html"><h1>设计模式——相关计数pairs、stripes实现</h1></a>
+            <h1>设计模式——相关计数pairs、stripes实现</h1>
 2015-05-28
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
 
 
- 
         </div>
-        
+	
         <div><h4><strong>前言</strong></h4>
 <p><strong>设计模式</strong>对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。</p>
 <p>这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。</p>
@@ -230,21 +224,23 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <p><strong>结语</strong>：</p>
 <p>stripes和pairs表现出的性能是不同的。pairs的map输出的键由于是pair，因此类型多样，不利于conbiners排序，而stripes方法中map输出键为元素个数，减少了排序，且在combiners有更多的机会执行局部聚集，且高效利用内存。总的来说，在唯维度和数据很大的情况下，stripes性能更优。</p>
 <p>此外，<strong>特别注意</strong>stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = '设计模式——相关计数pairs、stripes实现';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="http://ysywh.github.io/tag/mapreduce-shu-ju-jie-gou.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">

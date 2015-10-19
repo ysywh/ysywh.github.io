@@ -54,23 +54,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="http://ysywh.github.io/Mapreduce API 操作HBase.html"><h1>Mapreduce API 操作HBase</h1></a>
+            <h1>Mapreduce API 操作HBase</h1>
 2015-06-03
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
 
 
- 
         </div>
-        
+	
         <div><h3><strong>前言</strong></h3>
 <p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
 <ul>
@@ -279,185 +273,23 @@ public static void createTable(String tablename, String[] cfs) throws IOExceptio
 <h4><strong>结语</strong></h4>
 <p>总体来说，hbase shell或是api操作还是比较简答的，但是究其原理较为复杂，理解它却更显重要。</p>
 <p>通过这一学期学习---老师讲解与自己练习，从hadoop最基本的原理，mapreduce程序的书写，到hive、pig和hbase的学习与操作，让我对基于hadoop的大数据处理技术有了基本的了解，深知这也只是入门的皮毛而已。在今后的学习中，能够深入其本质，拓展更宽的知识，并能项目或工作结合起来，也许是进一步学习的目标吧。</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Mapreduce API 操作HBase';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/HBase & HBase shell.html"><h2>HBase & HBase shell</h2></a>
-        <div class= "well small"> 2015-06-01
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p></br></p>
-<h3><strong>前言</strong></h3>
-<p>HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。</p>
-<ul>
-<li>
-<p>面向列：解决稀疏问题，即众多的列，但并非每列都有数据，且经常只访问很少的列</p>
-</li>
-<li>
-<p>基于HDFS：解决海量问题，即低成本可扩展地处理以十亿为单位的数据表</p>
-</li>
-<li>
-<p>高性能：解决高速问题，即高吞吐量和高并发</p>
-</li>
-</ul>
-<hr />
-<h3><strong>一 Hbase 与 RRBMS对比</strong></h3>
-<p>RDBMS是基于关系型数据库，而HBase基于列模式的映射数据库，是Nosql模式。Hbase表示为简单的键-值对，简化了关系型数据库。用处不同。</p>
-<ul>
-<li>
-<p>数据类型：Hbase只有简单的字符串类型，即只保存字符串。关系型数据库数据类型很丰富。</p>
-</li>
-<li>
-<p>数据操作：插入、查询、删除和清空等操作，不像关系型数据库表与表之间有关系，所以无表与表之间的关联操作，因为其实也不需要。</p>
-</li>
-<li>
-<p>存储模式：Hbase基于列存储,则有些列字段值可以无，且不同列族存储的文件是分离的。</p>
-</li>
-</ul>
-<p>除此之外，Hbase更新数据时候会保留一定数量的版本。</p>
-<p></br></p>
-<h3><strong>二 系统框架</strong></h3>
-<p>构成：Client,Zookeeper，HMaster ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/HBase & HBase shell.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/设计模式——相关计数pairs、stripes实现.html"><h2>设计模式——相关计数pairs、stripes实现</h2></a>
-        <div class= "well small"> 2015-05-28
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><h4><strong>前言</strong></h4>
-<p><strong>设计模式</strong>对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。</p>
-<p>这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。</p>
-<p>这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。</p>
-<p></br>
-<strong>实验目标</strong></p>
-<div class="highlight"><pre>2,3,1,4,5,2,3
-1,2,5,2
-4,5
-1,3,4,1 ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/设计模式——相关计数pairs、stripes实现.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/Docker搭建Hadoop集群环境和Wordcount实验.html"><h2>Docker搭建Hadoop集群环境和Wordcount实验</h2></a>
-        <div class= "well small"> 2015-03-11
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  </p>
-<hr />
-<h4>一：实验目标</h4>
-<ul>
-<li>
-<p>学习docker基本命令</p>
-</li>
-<li>
-<p>搭建只有一个master和两个slave的Hadoop集群环境</p>
-</li>
-<li>
-<p>进行wordcount实验,理解mapreduce和hdfs等工作机制</p>
-</li>
-</ul>
-<h4>二：docker基本命令</h4>
-<p>docket是目前较为流行的虚拟化技术，可以方便轻松的在Linux中建立容器，达到虚拟化需求。</p>
-<p>基本操作命令如下，更多参考<a href="!http://dockerpool.com/static/books/docker_practice/index.html">这里</a>。</p>
-<ul>
-<li>
-<p>启动容器：<code>docker run 镜像名</code></p>
-</li>
-<li>
-<p>暂停容器：<code>docker stop 容器名</code></p>
-</li>
-<li>
-<p>重启开启容器：<code>docker start 容器名</code></p>
-</li>
-<li>
-<p>进入容器：<code>docker attach 容器名</code></p>
-</li>
-</ul>
-<h4>三：Hadoop集群环境搭建</h4>
-<p>1 Hadoop集群分为一个master和两个slave，因此依次用docker开启相应容器,其中需要做端口映射：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
-<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/Docker搭建Hadoop集群环境和Wordcount实验.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/MapReduce之letter count.html"><h2>MapReduce之letter count</h2></a>
-        <div class= "well small"> 2015-03-02
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
-<hr />
-<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
-<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
-<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
-<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
-<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
-<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
-<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
-<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
-<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
-<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/MapReduce之letter count.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="http://ysywh.github.io/category/hadoop.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
