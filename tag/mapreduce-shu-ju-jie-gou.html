@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>Tags - YsY记录点滴</title>
+    <title>Mapreduce 数据结构 - YsY记录点滴</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -11,7 +11,8 @@
 
 
 
-        <meta name="author" content="yansy" />
+    <meta name="author" content="yansy" />
+    <meta name="keywords" content="Mapreduce 数据结构" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="YsY记录点滴" />
@@ -76,112 +77,23 @@ YsY记录点滴            </a>
     <div class="row">
         <div class="col-sm-9">
 
-    <section id="tags">
-        <h1>Tags for YsY记录点滴</h1>
-        <div class="panel-group" id="accordion">            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-cbench-opendaylight">Cbench OpenDaylight <span class="badge pull-right">1</span></a>
-                    </h4>
+            <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">设计模式——相关计数pairs、stripes实现</a></h2>
+                <div class="summary"><h4><strong>前言</strong></h4>
+<p><strong>设计模式</strong>对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。</p>
+<p>这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。</p>
+<p>这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。</p>
+<p></br>
+<strong>实验目标</strong></p>
+<div class="highlight"><pre>2,3,1,4,5,2,3
+1,2,5,2
+4,5
+1,3,4,1 ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">more ...</a>
                 </div>
-                <div id="collapse-cbench-opendaylight" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-04-03T12:12:00+08:00">2015-04-03</time></span> <a href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">Cbench测试Opendaylight性能</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-letter-count">letter count <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-letter-count" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-02T18:10:00+08:00">2015-03-02</time></span> <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-mapreduce">mapreduce <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-mapreduce" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-11T12:12:00+08:00">2015-03-11</time></span> <a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-03-02T18:10:00+08:00">2015-03-02</time></span> <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-mapreduce-shu-ju-jie-gou">Mapreduce 数据结构 <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-mapreduce-shu-ju-jie-gou" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-05-28T12:12:00+08:00">2015-05-28</time></span> <a href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">设计模式——相关计数pairs、stripes实现</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-ovs-souce-code">OVS souce code <span class="badge pull-right">4</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-ovs-souce-code" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-05-22T12:12:00+08:00">2015-05-22</time></span> <a href="http://ysywh.github.io/pages/2015/05/22/OVS源码分析----datapath消息处理.html">OVS源码分析----datapath消息处理</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-10T12:12:00+08:00">2015-05-10</time></span> <a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">OVS源码分析----用户层处理Upcall消息(1)</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-15T12:12:00+08:00">2015-05-15</time></span> <a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">OVS源码分析----用户层处理Upcall消息(2)</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-02T12:12:00+08:00">2015-05-02</time></span> <a href="http://ysywh.github.io/pages/2015/05/02/OVS源码分析————OpenFlow消息处理.html">OVS源码分析----OpenFlow消息处理</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-ryu-souce-code">RYU souce code <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-ryu-souce-code" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-07-22T12:12:00+08:00">2015-07-22</time></span> <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-07-10T12:12:00+08:00">2015-07-10</time></span> <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-shu-ju-jie-gou-suan-fa">数据结构，算法 <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-shu-ju-jie-gou-suan-fa" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-06-01T12:12:00+08:00">2015-06-01</time></span> <a href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">数据结构</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-word-count">word count <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-word-count" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-11T12:12:00+08:00">2015-03-11</time></span> <a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </article>
+            <hr/>
 
-    </section>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

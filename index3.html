@@ -2,7 +2,7 @@
 <html lang="zh"
 >
 <head>
-    <title>Tags - YsY记录点滴</title>
+    <title>YsY记录点滴</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,7 +10,7 @@
 
 
 
-
+<link rel="canonical" href="http://ysywh.github.io">
         <meta name="author" content="yansy" />
 
     <!-- Open Graph tags -->
@@ -76,112 +76,41 @@ YsY记录点滴            </a>
     <div class="row">
         <div class="col-sm-9">
 
-    <section id="tags">
-        <h1>Tags for YsY记录点滴</h1>
-        <div class="panel-group" id="accordion">            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-cbench-opendaylight">Cbench OpenDaylight <span class="badge pull-right">1</span></a>
-                    </h4>
+            <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></h2>
+                <div class="summary"><p>2015-3-2 by ysy  </p>
+<p><br></p>
+<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
+<hr />
+<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
+<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
+<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
+<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
+<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
+<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
+<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
+<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
+<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
+<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
+<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
+<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
+<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">more ...</a>
                 </div>
-                <div id="collapse-cbench-opendaylight" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-04-03T12:12:00+08:00">2015-04-03</time></span> <a href="http://ysywh.github.io/pages/2015/04/03/Cbench测试Opendaylight性能.html">Cbench测试Opendaylight性能</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-letter-count">letter count <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-letter-count" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-02T18:10:00+08:00">2015-03-02</time></span> <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-mapreduce">mapreduce <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-mapreduce" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-11T12:12:00+08:00">2015-03-11</time></span> <a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-03-02T18:10:00+08:00">2015-03-02</time></span> <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">MapReduce之letter count</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-mapreduce-shu-ju-jie-gou">Mapreduce 数据结构 <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-mapreduce-shu-ju-jie-gou" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-05-28T12:12:00+08:00">2015-05-28</time></span> <a href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">设计模式——相关计数pairs、stripes实现</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-ovs-souce-code">OVS souce code <span class="badge pull-right">4</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-ovs-souce-code" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-05-22T12:12:00+08:00">2015-05-22</time></span> <a href="http://ysywh.github.io/pages/2015/05/22/OVS源码分析----datapath消息处理.html">OVS源码分析----datapath消息处理</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-10T12:12:00+08:00">2015-05-10</time></span> <a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析----用户层处理Upcall消息(1).html">OVS源码分析----用户层处理Upcall消息(1)</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-15T12:12:00+08:00">2015-05-15</time></span> <a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析----用户层处理Upcall消息(2).html">OVS源码分析----用户层处理Upcall消息(2)</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-05-02T12:12:00+08:00">2015-05-02</time></span> <a href="http://ysywh.github.io/pages/2015/05/02/OVS源码分析————OpenFlow消息处理.html">OVS源码分析----OpenFlow消息处理</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-ryu-souce-code">RYU souce code <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-ryu-souce-code" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-07-22T12:12:00+08:00">2015-07-22</time></span> <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">Ryu代码分析----openflow消息属性分析</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-07-10T12:12:00+08:00">2015-07-10</time></span> <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">Ryu源码分析</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-shu-ju-jie-gou-suan-fa">数据结构，算法 <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-shu-ju-jie-gou-suan-fa" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-06-01T12:12:00+08:00">2015-06-01</time></span> <a href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">数据结构</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-word-count">word count <span class="badge pull-right">1</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-word-count" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-03-11T12:12:00+08:00">2015-03-11</time></span> <a href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">Docker搭建Hadoop集群环境和Wordcount实验</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </article>
+            <hr/>
 
-    </section>
+        <ul class="pagination">
+                <li class="prev"><a href="http://ysywh.github.io/index2.html">&laquo;</a>
+                </li>
+                    <li class=""><a
+                            href="http://ysywh.github.io/index.html">1</a></li>
+                    <li class=""><a
+                            href="http://ysywh.github.io/index2.html">2</a></li>
+                    <li class="active"><a
+                            href="http://ysywh.github.io/index3.html">3</a></li>
+                <li class="next disabled"><a href="#">&raquo;</a></li>
+        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

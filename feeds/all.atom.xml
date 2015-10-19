@@ -306,7 +306,165 @@ return &amp;#39;Event&amp;#39; + msg_name
 &lt;p&gt;说完数据类型，再来看数据结构，每种数据结构都可以有一些相应的操作，比如插入、删除或查找数据等，好吧，数据结构加上操作就是可以使用的数据类型了。而插入对于不同的数据类型，甚至同一种数据结构，相同操作的机理也是不同的。比如对于链式存储的线性表（链表）和顺序存储的线性表（顺序表）对于查找操作的机理也是不一样的，即用不同方法查找（二分查找、Fbonacci查找）的效率不同，这就牵扯到&lt;strong&gt;算法&lt;/strong&gt;了。当然，除了数据结构操作的方法，包括一些其他问题解决办法，比如排序方法（冒泡排序、插入排序），都是有具体的算法的。算法的优劣，需要根据具体情况采用具体的解决办法，这才是最优的。&lt;/p&gt;
 &lt;p&gt;刚才数据结构中提到的数据关系，其实是一种逻辑关系，真正在计算机中存储不同数据结构，都会有两种物理关系，顺序存储和链式存储。必定这种物理关系需要反应在语言上，顺序存储则对应数据类型中的一维数组，链式存储则是一系列指针类型。因此，实现不同数据结构都可以使用顺序存储和链式存储，则数据结构和采用实现的存储结构无直接关系。比如，对于线性结构的线性表，可以是顺序存储实现，称为顺序表，也可以是链式存储实现，称为链式表。&lt;/p&gt;
 &lt;p&gt;当然，用不同存储方法实现数据结构后，对数据结构进行操作是有差异的。顺序存储最大的特点就是利于查找，即通过数组下标就可以快速完成，但是插入或是删除数据需要移动其他元素，复杂度O(n)；但是对于链式存储，插入和删除非常便利，因为是指针直接操作目标元素，不需要操作其他元素，但是对于查找等操作，却需要逐一遍历到目标元素才可以，不如顺序存储。虽然各有优劣，还是老话，需要根据实际情况选择合适的实现方式。&lt;/p&gt;
-&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</summary><category term="数据结构，算法"></category></entry><entry><title>OVS源码分析----datapath消息处理</title><link href="http://ysywh.github.io/pages/2015/05/22/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-22:pages/2015/05/22/OVS源码分析----datapath消息处理.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;一口气理清了数据结构、数据类型等概念，当做基础吧。为了更好理解和分析数据结构，后期一些基本数据结构估计大多数用C语言实现，可能一些算法，比如查找或是排序，重点在于方法和实现，就用Python等语言，便于实现。&lt;/p&gt;</summary><category term="数据结构，算法"></category></entry><entry><title>设计模式——相关计数pairs、stripes实现</title><link href="http://ysywh.github.io/pages/2015/05/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E7%9B%B8%E5%85%B3%E8%AE%A1%E6%95%B0pairs%E3%80%81stripes%E5%AE%9E%E7%8E%B0.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-28:pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html</id><summary type="html">&lt;h4&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;设计模式&lt;/strong&gt;对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。&lt;/p&gt;
+&lt;p&gt;这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。&lt;/p&gt;
+&lt;p&gt;这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;
+&lt;strong&gt;实验目标&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;2,3,1,4,5,2,3
+1,2,5,2
+4,5
+1,3,4,1
+3,1
+4,2,1,5,5,3
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上面数据是待统计数据，可以理解为：每个编号代表一种商品id,每一行数据为一个人一次购买记录，则有6人购买，即有6行购买记录，现在统计每对商品出现的总次数（对于同一次购买记录中相同物品不进行统计）。如对于（2,1),应该为2+2+0+0+0+1=5.&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;一 pairs的实现&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;代码逻辑&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt; &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Mapper&lt;/span&gt;
+    &lt;span class="n"&gt;method&lt;/span&gt; &lt;span class="n"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt;
+            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt;
+                &lt;span class="n"&gt;Emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pair&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;//出现一次发送一次计数&lt;/span&gt;
+
+ &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Reducer&lt;/span&gt;
+    &lt;span class="n"&gt;method&lt;/span&gt; &lt;span class="n"&gt;Reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pair&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;counts&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;c1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c2&lt;/span&gt;&lt;span class="p"&gt;,...])&lt;/span&gt;
+        &lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;c1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c2&lt;/span&gt;&lt;span class="p"&gt;,...])&lt;/span&gt;               &lt;span class="c1"&gt;//统计出现的次数&lt;/span&gt;
+        &lt;span class="n"&gt;Emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pair&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;分析：pairs的思想比较简单，就是在pair中统计出每一对，并且计为1，传到reduce中进行加和得出每一对出现的次数。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;代码&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;Map部分：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;public static class Map extends Mapper&amp;lt;Object,Text,Text,IntWritable&amp;gt;{
+    protected void map(Object key1, Text value1,Context context) throws IOException, InterruptedException {
+        String[] goods=new String[6];
+        goods=value1.toString().trim().split(&amp;quot;,&amp;quot;);
+        for(int i=0 ; i &amp;lt; goods.length-1;i++){
+            for (int j =i+1 ; j&amp;lt;goods.length;j++){
+                if(goods[i].equals(goods[j]))continue;
+                if(Integer.valueOf(goods[i]) &amp;lt; Integer.valueOf(goods[j])){
+                    context.write(new Text(&amp;quot;(&amp;quot;+goods[i]+&amp;quot;,&amp;quot;+goods[j]+&amp;quot;)&amp;quot;), new IntWritable(1));
+                }
+                else{
+                    context.write(new Text(&amp;quot;(&amp;quot;+goods[j]+&amp;quot;,&amp;quot;+goods[i]+&amp;quot;)&amp;quot;), new IntWritable(1));
+                }
+            }
+        }
+
+    }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Reduce部分：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;public static class Reduce extends Reducer&amp;lt;Text,IntWritable,Text,Text&amp;gt;{
+
+    private static Text result = new Text(); 
+    public void reduce(Text key,Iterable&amp;lt;IntWritable&amp;gt; values,Context context) throws IOException,InterruptedException{ 
+        int sum = 0;
+        //对获取的&amp;lt;key,value-list&amp;gt;计算value的和  
+        for(IntWritable val:values){  
+            sum++;
+        }  
+        String sums = String.valueOf(sum);
+        result.set(sums); 
+        context.write(key, result);  
+    }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;&lt;strong&gt;二 stripes的实现&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;代码逻辑：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt; &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Mapper&lt;/span&gt;
+     &lt;span class="n"&gt;method&lt;/span&gt; &lt;span class="n"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt;
+             &lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="nl"&gt;AssociativeArray&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;counter&lt;/span&gt;
+             &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt;
+                &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;               &lt;span class="c1"&gt;//统计和item i同时出现的单词的计数&lt;/span&gt;
+             &lt;span class="n"&gt;Emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stripe&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+ &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Reducer&lt;/span&gt;
+    &lt;span class="n"&gt;method&lt;/span&gt; &lt;span class="n"&gt;Reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stripes&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;H1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;H2&lt;/span&gt;&lt;span class="p"&gt;,...])&lt;/span&gt;
+        &lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="nl"&gt;AssociativeArray&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;counter&lt;/span&gt;
+        &lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;H1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;H2&lt;/span&gt;&lt;span class="p"&gt;,...]&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;   &lt;span class="c1"&gt;//按元素进行统计Element-wise sum&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+            &lt;span class="n"&gt;Emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pair&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;分析：stripes较为复杂，每次map输出的键不再是pair，而是一个，值为一个hashmap（字典型），字典的键不同于map输出键，字典的值是字典的键出现的次数。这样，如第一行输出(2，{3：2，1：1,4:1,5:1,2:1});(3，{1:1,4:1,5:1,2:1,3:1}）,(1,{4:1,5:1,2:1,3:1}),(4,{5:1,2:1,3:1}),(5,{2:1,3:1}),(2,{3:1})。
+在reduce中，对所有输入“字典数据”进行统计（Element-wise sum)，即点加和，对应元素位置的值求和。这样每一个reduce输出，就可以得到一个元素和其他每个元素共同出现的次数。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;代码&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;Map:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;public static class Map extends Mapper&amp;lt;Object,Text,Text,MapWritable&amp;gt;{
+    protected void map(Object key1, Text value1,Context context) throws IOException, InterruptedException {
+        String[] goods=new String[6];
+        goods=value1.toString().trim().split(&amp;quot;,&amp;quot;);
+        for(int i=0 ; i &amp;lt; goods.length-1;i++){
+            MapWritable map = new MapWritable(); 
+            for (int j =i+1 ; j&amp;lt;goods.length;j++){
+                if(goods[i].equals(goods[j]))continue;
+                if(map.get(new Text(goods[j])) == null){
+                    map.put(new Text(goods[j]), new IntWritable(1));
+                }
+                else{
+                     IntWritable val = (IntWritable) map.get(new Text(goods[j]));
+                     IntWritable temp = new IntWritable( val.get() + 1 );
+                     map.put(new Text(goods[j]),temp);
+                }
+            }
+            if (!map.isEmpty()) {
+                context.write(new Text(goods[i]), map);
+            }
+       }
+    }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Reduce::&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;public static class Reduce extends Reducer&amp;lt;Text,MapWritable,Text,Text&amp;gt;{
+    public void reduce(Text key,Iterable&amp;lt;MapWritable&amp;gt; values,Context context) throws IOException,InterruptedException{ 
+        HashMap&amp;lt;String , Integer&amp;gt; map = new HashMap&amp;lt;String , Integer&amp;gt;(); 
+        for (MapWritable val:values){  
+            for(Writable map_key : val.keySet()){
+                if(map.get(map_key.toString()) == null){
+                    map.put(map_key.toString(), Integer.valueOf(val.get(map_key).toString()));
+                }
+                else{
+                    Integer temp = map.get(map_key.toString())+Integer.valueOf(val.get(map_key).toString());
+                    map.put(map_key.toString(),temp);
+                }
+            }
+        }  
+        for(String map_key : map.keySet()){
+             String key_pair = &amp;quot;(&amp;quot;+key.toString()+&amp;quot;,&amp;quot;+map_key+&amp;quot;)&amp;quot;;
+             context.write(new Text(key_pair),new Text(map.get(map_key).toString()));
+        } 
+    }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这里需要注意一下，map输出的键值对中的值采用MapWritable类型，代码思路和伪代码相同。&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;三 实验结果&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;pairs（左），stripes（右）:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;center&gt;&lt;img alt="pairs" src="http://7xnkv8.com1.z0.glb.clouddn.com/pairs.png" /&gt; 
+&lt;img alt="stripes" src="http://7xnkv8.com1.z0.glb.clouddn.com/stripes.png" /&gt;&lt;/center&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在pairs结果中，如（1,2），在实验数据计数可以发现，的确为5次，在stripes中，由于代码没有进一步对反序输出做加和，则结果应该是(1,2)和（2,1）之和，为3+2=5，结果与pairs统计相同，这不影响算法的整体思路，因此成功实现了pairs和stripes的代码实现。&lt;/p&gt;
+&lt;p&gt;当然，也可以把stripes中反序和正序作加和，输出就和pairs相同，只需要在map的第二个for循环里，比较i和j元素大小，反序的直接context.write()输出就行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;结语&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;stripes和pairs表现出的性能是不同的。pairs的map输出的键由于是pair，因此类型多样，不利于conbiners排序，而stripes方法中map输出键为元素个数，减少了排序，且在combiners有更多的机会执行局部聚集，且高效利用内存。总的来说，在唯维度和数据很大的情况下，stripes性能更优。&lt;/p&gt;
+&lt;p&gt;此外，&lt;strong&gt;特别注意&lt;/strong&gt;stripes算法中，map输出为MapWritable类型，不能使用MapHash类型中作为输出输入类型的键值对类型（否则会出现空指针异常错误），可选类型见api库的org.apache.hadoop.io，里面还罗列了许多继承了writeble的数据类型。&lt;/p&gt;</summary><category term="Mapreduce 数据结构"></category></entry><entry><title>OVS源码分析----datapath消息处理</title><link href="http://ysywh.github.io/pages/2015/05/22/OVS%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90----datapath%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86.html" rel="alternate"></link><updated>2015-08-30T17:30:00+08:00</updated><author><name>ysy</name></author><id>tag:ysywh.github.io,2015-05-22:pages/2015/05/22/OVS源码分析----datapath消息处理.html</id><summary type="html">&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
 &lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;当packet进入datapath无法匹配则通过netlink上交给用户态，处理完成后用户态会通过generic netlink与内核态进行交互，把流表项flow和packet发给内核态进行处理。下面分析内核态如何通过generic netlink接收flow与packet，并且进行相应处理。&lt;/p&gt;
 &lt;p&gt;generic netlink：ovs的内核和用户态通过generic netlink(genl，泛型netlink，比netlink支持更多协议，功能更多)交互。genl任然是cs模式，内核为服务端，用户态为客户端（内核中还有一个genl控制器，属于内核态的客户端，用来分配通信通道）。类似socket，genl建立一系列通信通道，genl family对应这些通道，从而交互。&lt;/p&gt;
