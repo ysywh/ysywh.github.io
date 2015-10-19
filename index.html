@@ -118,6 +118,31 @@ reason        Reason packet is being sent.
             </article>
             <hr/>
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">Mapreduce API 操作HBase</a></h2>
+                <div class="summary"><h3><strong>前言</strong></h3>
+<p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
+<ul>
+<li>
+<p>用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</p>
+</li>
+<li>
+<p>用MapReduce完成hdfs数据向habse表的导入</p>
+</li>
+</ul>
+<p>通过写java代码，打成jar包，然后直接运行即可。</p>
+<h3><strong>一 用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</strong></h3>
+<p>这里只对简单的几个操作函数（建表，添加数据）进行分析，其他类似：</p>
+<p>其中用到了几个和Hbase相关的类（HBaseAdmin、HBaseConfiguration、HTable、HTableDescriptor、Put、Get、Scanner等）与其成员函数，具体含义可以看这个<a href="http://blog.csdn.net/lifuxiangcaohui/article/details/39997205">链接</a>，讲解很明白。</p>
+<p>1 建立管理habse的接口对象</p>
+<div class="highlight"><pre>public class hbase{
+static Configuration conf = HBaseConfiguration.create();
+static HBaseAdmin admin;
+public static void ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">HBase & HBase shell</a></h2>
                 <div class="summary"><p></br></p>
 <h3><strong>前言</strong></h3>
@@ -182,22 +207,6 @@ reason        Reason packet is being sent.
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">设计模式——相关计数pairs、stripes实现</a></h2>
-                <div class="summary"><h4><strong>前言</strong></h4>
-<p><strong>设计模式</strong>对于以后写代码很重要，就像现成的模板一样，可以在解决具体问题时候套用。简单的设计模式有计数、分类、过滤出来、排序、去重计数和相关计数，还有相关计数。</p>
-<p>这里主要对“相关计数”这种设计模式进行Mapreduce分析与实现。实现方法主要有两种，pairs和stripes。效率有很大不同，尤其数据量和维度增大时候，stripes的性能就体现的更突出。</p>
-<p>这种设计模式实际应用很多，主要是同现矩阵的建立，比如词库的同现矩阵建立，即某场景下，统计出任意两个词语出现的次数（或者概率）；再比如在超市，会分析大量顾客的购买记录得出商品之间的关系，因为有时候顾客买了这个就会买两一个，因此要通过挖掘这种关系来决定商品的摆放位置。这项生活中的例子，都用到了相关计数这种设计模式，因此其在数据挖掘等领域有重要作用。</p>
-<p></br>
-<strong>实验目标</strong></p>
-<div class="highlight"><pre>2,3,1,4,5,2,3
-1,2,5,2
-4,5
-1,3,4,1 ...</pre></div>
-                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/05/28/设计模式——相关计数pairs、stripes实现.html">more ...</a>
-                </div>
-            </article>
-            <hr/>
 
         <ul class="pagination">
                 <li class="prev disabled"><a href="#">&laquo;</a></li>
@@ -243,6 +252,16 @@ reason        Reason packet is being sent.
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
                             数据结构，算法
                         </a>
@@ -253,13 +272,8 @@ reason        Reason packet is being sent.
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase.html">
-                            HBase
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/hbase-mapreduce.html">
+                            HBase MapReduce
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -268,8 +282,8 @@ reason        Reason packet is being sent.
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/hbase.html">
+                            HBase
                         </a>
                     </li>
                 </ul>

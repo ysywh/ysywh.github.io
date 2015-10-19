@@ -78,6 +78,31 @@ YsY记录点滴            </a>
         <div class="col-sm-9">
 
             <article>
+                <h2><a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">Mapreduce API 操作HBase</a></h2>
+                <div class="summary"><h3><strong>前言</strong></h3>
+<p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
+<ul>
+<li>
+<p>用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</p>
+</li>
+<li>
+<p>用MapReduce完成hdfs数据向habse表的导入</p>
+</li>
+</ul>
+<p>通过写java代码，打成jar包，然后直接运行即可。</p>
+<h3><strong>一 用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</strong></h3>
+<p>这里只对简单的几个操作函数（建表，添加数据）进行分析，其他类似：</p>
+<p>其中用到了几个和Hbase相关的类（HBaseAdmin、HBaseConfiguration、HTable、HTableDescriptor、Put、Get、Scanner等）与其成员函数，具体含义可以看这个<a href="http://blog.csdn.net/lifuxiangcaohui/article/details/39997205">链接</a>，讲解很明白。</p>
+<p>1 建立管理habse的接口对象</p>
+<div class="highlight"><pre>public class hbase{
+static Configuration conf = HBaseConfiguration.create();
+static HBaseAdmin admin;
+public static void ...</pre></div>
+                    <a class="btn btn-default btn-xs" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">more ...</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">HBase & HBase shell</a></h2>
                 <div class="summary"><p></br></p>
 <h3><strong>前言</strong></h3>
@@ -233,6 +258,16 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/word-count.html">
+                            word count
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
+                            Cbench OpenDaylight
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://ysywh.github.io/tag/shu-ju-jie-gou-suan-fa.html">
                             数据结构，算法
                         </a>
@@ -243,13 +278,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/hbase.html">
-                            HBase
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/cbench-opendaylight.html">
-                            Cbench OpenDaylight
+                        <a href="http://ysywh.github.io/tag/hbase-mapreduce.html">
+                            HBase MapReduce
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -258,8 +288,8 @@ YsY记录点滴            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://ysywh.github.io/tag/word-count.html">
-                            word count
+                        <a href="http://ysywh.github.io/tag/hbase.html">
+                            HBase
                         </a>
                     </li>
                 </ul>
