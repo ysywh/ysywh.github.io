@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>YsY记录点滴</title>
+    <meta name="description" content="">
+    <meta name="author" content="yansy">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://ysywh.github.io/theme/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="http://ysywh.github.io/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/local.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/pygments.css" rel="stylesheet">
+
+    <!-- So Firefox can bookmark->"abo this site" -->
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate" title="YsY记录点滴" type="application/atom+xml">
+        <link href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate" title="YsY记录点滴" type="application/rss+xml">
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://ysywh.github.io">YsY记录点滴</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="http://github.com">SDN</a></li>
+            
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>HBase & HBase shell</h1>
+2015-06-01
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+        </div>
+	
+        <div><p></br></p>
+<h3><strong>前言</strong></h3>
+<p>HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。</p>
+<ul>
+<li>
+<p>面向列：解决稀疏问题，即众多的列，但并非每列都有数据，且经常只访问很少的列</p>
+</li>
+<li>
+<p>基于HDFS：解决海量问题，即低成本可扩展地处理以十亿为单位的数据表</p>
+</li>
+<li>
+<p>高性能：解决高速问题，即高吞吐量和高并发</p>
+</li>
+</ul>
+<hr />
+<h3><strong>一 Hbase 与 RRBMS对比</strong></h3>
+<p>RDBMS是基于关系型数据库，而HBase基于列模式的映射数据库，是Nosql模式。Hbase表示为简单的键-值对，简化了关系型数据库。用处不同。</p>
+<ul>
+<li>
+<p>数据类型：Hbase只有简单的字符串类型，即只保存字符串。关系型数据库数据类型很丰富。</p>
+</li>
+<li>
+<p>数据操作：插入、查询、删除和清空等操作，不像关系型数据库表与表之间有关系，所以无表与表之间的关联操作，因为其实也不需要。</p>
+</li>
+<li>
+<p>存储模式：Hbase基于列存储,则有些列字段值可以无，且不同列族存储的文件是分离的。</p>
+</li>
+</ul>
+<p>除此之外，Hbase更新数据时候会保留一定数量的版本。</p>
+<p></br></p>
+<h3><strong>二 系统框架</strong></h3>
+<p>构成：Client,Zookeeper，HMaster,HRegion,HRegionServer。</p>
+<p>系统架构图：</p>
+<p><center><img alt="Hbase系统构架" src="http://7xnkv8.com1.z0.glb.clouddn.com/Hbase系统构架.png" /></center></p>
+<ul>
+<li>
+<p>Zookeeper用于协同管理，存储-ROOT-表和HMater的地址。HRegionServer也会注册到Zookeeper，方便HMaster感知其健康状态。</p>
+</li>
+<li>
+<p>HMaster负责table和region的管理工作。可以启动多个进行保障。</p>
+</li>
+<li>
+<p>每个HRegionServer管理多个Hregion,一张表会划分后保存到不同Hregion上，Region由多个HStore组成，每个Hstore对应table中的一个列族。而Hstore由MemStore（用户写入数据）和Hfile组成。</p>
+</li>
+</ul>
+<p>即存储为：table  →  Region  →  Store  →  HFile  → Block  →  HDFS File</p>
+<p></br></p>
+<h3><strong>三 Hbase shell简单操作</strong></h3>
+<p>在终端中输入 <code>hbase shell</code>进入hbase的CLI模式：</p>
+<p>1 创建表，表名后面必须写列族名称等：</p>
+<p><code>create 'ysy','colfamily_1','colfamily_2'</code></p>
+<p>2 查看表：</p>
+<p><code>describe 'ysy'</code></p>
+<p>3 删除表，先disable表后drop删除：</p>
+<p><code>disable 'ysy'</code></p>
+<p><code>drop 'ysy'</code></p>
+<p></br></p>
+<h3><strong>四 将hadoop文件系统的文件导入到Hbase表中</strong></h3>
+<p>分两步做1）先生成hfile 2）修改生成的hfile文件所在目录的权限 3）然后将hfile导入到hbase中</p>
+<p>在终端中输入（并非habse的CLI中）：</p>
+<p>1 生成hfile文件：</p>
+<p><code>hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.columns=HBASE_ROW_KEY,colfamily:userID,colfamily:serverIP,colfamily:hostName,colfamily:spName,colfamily:uploadTraffic,colfamily:downloadTraffic -Dimporttsv.bulk.output=/hbase/hfile/access_yansiyu access_yansiyu /yansiyu/hbase/access.log</code></p>
+<p>其中，hfileout_yansiyu是将生成的hfile文件目录，access.log是输入文件，这两个文件地址是hdfs文件系统上，access_yansiyu是table名字。colfamily是列族名字，这里只有这一个列族，且冒号后是列名。</p>
+<p>2 修改权限</p>
+<p>由于生成的hfile文件目录权限，否则有时候下一步会执行中进入休止等待状态。</p>
+<p><code>hadoop fs -chmod -R u+x /hbase/hfile/access_yansiyu</code></p>
+<p>其中，目录<code>/hbase/hfile</code>的权限也也要事先修改好。</p>
+<p>3 hfile导入hbase中：</p>
+<p><code>hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles /hbase/hfile/hfileout_yansiyu access_yansiyu</code></p>
+<p>这时候，则已经导入到table中，进入hbase的CLI模式，在table中查看：</p>
+<p><code>scan 'access_yansiyu'</code></p>
+<p><center><img alt="mapreduce" src="http://7xnkv8.com1.z0.glb.clouddn.com/mapreduce.png" /></center></p>
+<p>底层转化为Mapreduce执行，可以看到执行成功</p>
+<p><center><img alt="scan_table" src="http://7xnkv8.com1.z0.glb.clouddn.com/scan_table.png" /></center></p>
+<p>在表中查看，可以看到内容成功导入。</p>
+<p><center><img alt="hue" src="http://7xnkv8.com1.z0.glb.clouddn.com/hue.png" /></center></p>
+<p>还可以在网页的hue中查看。实验成功。</p>
+<p></br></p>
+<h3><strong>后记</strong></h3>
+<p>这里记录两个需要特别注意的地方：</p>
+<p>1 导入数据的命令要在linux终端中输入，而不是hbase的CLI模式中</p>
+<p>2 生成的hfile文件所在的整体目录权限要进行修改，否则下一步导入会因为权限问题而休止等待。</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'HBase & HBase shell';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://ysywh.github.io/archives.html">Archives</a>
+                <li><a href="http://ysywh.github.io/tags.html">Tags</a>
+
+
+
+                <li><a href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate">RSS feed</a></li>
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a></li>
+                <li><a href="http://ysywh.github.io/category/program.html">program</a></li>
+                <li><a href="http://ysywh.github.io/category/sdn.html">SDN</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://www.sdnlab.com/">sdnlab</a></li>
+                <li><a href="http://www.sdnap.com/">sdnap</a></li>
+                <li><a href="http://www.muzixing.com/">muzixing</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/ysywh/">my github</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="http://ysywh.github.io">YsY记录点滴</a> &copy; yansy 2015</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ysywh.github.io/theme/bootstrap-collapse.js"></script>
+<script>var _gaq=[['_setAccount','UA-62970575-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+ 
+</body>
+</html>

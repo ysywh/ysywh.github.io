@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>YsY记录点滴</title>
+    <meta name="description" content="">
+    <meta name="author" content="yansy">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://ysywh.github.io/theme/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="http://ysywh.github.io/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/local.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/pygments.css" rel="stylesheet">
+
+    <!-- So Firefox can bookmark->"abo this site" -->
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate" title="YsY记录点滴" type="application/atom+xml">
+        <link href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate" title="YsY记录点滴" type="application/rss+xml">
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://ysywh.github.io">YsY记录点滴</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="http://github.com">SDN</a></li>
+            
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>Docker搭建Hadoop集群环境和Wordcount实验</h1>
+2015-03-11
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+        </div>
+	
+        <div><p><br></p>
+<p>利用docker搭建Hadoop环境，并且完成Mapreduce中Word count实验  </p>
+<hr />
+<h4>一：实验目标</h4>
+<ul>
+<li>
+<p>学习docker基本命令</p>
+</li>
+<li>
+<p>搭建只有一个master和两个slave的Hadoop集群环境</p>
+</li>
+<li>
+<p>进行wordcount实验,理解mapreduce和hdfs等工作机制</p>
+</li>
+</ul>
+<h4>二：docker基本命令</h4>
+<p>docket是目前较为流行的虚拟化技术，可以方便轻松的在Linux中建立容器，达到虚拟化需求。</p>
+<p>基本操作命令如下，更多参考<a href="!http://dockerpool.com/static/books/docker_practice/index.html">这里</a>。</p>
+<ul>
+<li>
+<p>启动容器：<code>docker run 镜像名</code></p>
+</li>
+<li>
+<p>暂停容器：<code>docker stop 容器名</code></p>
+</li>
+<li>
+<p>重启开启容器：<code>docker start 容器名</code></p>
+</li>
+<li>
+<p>进入容器：<code>docker attach 容器名</code></p>
+</li>
+</ul>
+<h4>三：Hadoop集群环境搭建</h4>
+<p>1 Hadoop集群分为一个master和两个slave，因此依次用docker开启相应容器,其中需要做端口映射：</p>
+<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/955c4756f3/1.png" /></p>
+<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/7ce0511f3b/2.png" /></p>
+<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/3ef073ba31/3.png" /></p>
+<p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd start '</p>
+<p><img alt="4" src="http://gitlab.local/uploads/course/course_hadoop/d29157c596/4.png" /></p>
+<p>3 分别登陆master和slave，利用命令chkconfig命令查看服务</p>
+<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/83312aa0f6/5.png" /></p>
+<p>4 master上开启相应服务：</p>
+<p>开启Hadoop服务：service hadoop-hdfs-namenode start</p>
+<p>开启mapreduce服务：service hadoop-yarn-resourcemanager start</p>
+<p>开启任务记录的服务：service hadoop-mapreduce-historyserver start</p>
+<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/6e2e318e55/6.png" /></p>
+<p>5 在两个slave上分别开启Hadoop服务和mapreduce服务：</p>
+<p>service hadoop-hdfs-datanode start</p>
+<p>service hadoop-yarn-nodemanager start</p>
+<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/3a2cf8df6a/70.png" /></p>
+<p>6 三项服务分别可以在web端验证服务是否正确打开。至此，hadoop集群环境搭建完毕</p>
+<p>192.168.59.103:50070</p>
+<p>192.168.59.103:8088</p>
+<p>192.168.59.103:19888</p>
+<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/2ff2b313c1/8.png" /></p>
+<h4>三：Word count实验</h4>
+<p>word count 实验就是利用Mapreduce框架，对文本中的单词进行数量统计。</p>
+<p>1 建立一个text文件，写入内容，并put入hdfs文件系统后命名为wordcount.input文件，并查看其内容：</p>
+<p><img alt="9" src="http://gitlab.local/uploads/course/course_hadoop/47c3b12887/7.png" /></p>
+<p>2 利用Wordcount脚本进行单词计数的简单实验,经过map和reduce等操作把经过输出到Wordcount.output中:</p>
+<p><img alt="10" src="http://gitlab.local/uploads/course/course_hadoop/f93f01d942/9.png" /></p>
+<p>3 登陆web可以观察任务状态，在输出文件中查看Wordcount结果，和预想结果相同，试验成功：</p>
+<p><img alt="11" src="http://gitlab.local/uploads/course/course_hadoop/7bd9c88362/8.png" /></p>
+<p><img alt="12" src="http://gitlab.local/uploads/course/course_hadoop/bccbdf2a9e/10.png" /></p>
+<p><img alt="13" src="http://gitlab.local/uploads/course/course_hadoop/9b7e274748/11.png" /></p>
+<h4>四：心得</h4>
+<p>1 对hdfs文件系统有了基本了解，利用简单的Wordcount实验对map和reduce有了直观认识，深觉此技术的有用性</p>
+<p>2 虽然完成本次试验，但是简单的实验还不能对Hadoop有更深刻的学习，希望今后学习其架构及其源码，多做实验达到学习的目的</p>
+<p>3 最后简单记录一下遇到的问题：</p>
+<ul>
+<li>
+<p>每次开启容器后，ip可能会发生变化，要记得修改hosts文件，否则会出现 <code>Hadoop fs shell</code> 无法操作的问题</p>
+</li>
+<li>
+<p>其次，需要关闭安全模式，这样才可以向hdfs文件系统中put内容等操作 </p>
+</li>
+</ul></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Docker搭建Hadoop集群环境和Wordcount实验';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://ysywh.github.io/archives.html">Archives</a>
+                <li><a href="http://ysywh.github.io/tags.html">Tags</a>
+
+
+
+                <li><a href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate">RSS feed</a></li>
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a></li>
+                <li><a href="http://ysywh.github.io/category/program.html">program</a></li>
+                <li><a href="http://ysywh.github.io/category/sdn.html">SDN</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://www.sdnlab.com/">sdnlab</a></li>
+                <li><a href="http://www.sdnap.com/">sdnap</a></li>
+                <li><a href="http://www.muzixing.com/">muzixing</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/ysywh/">my github</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="http://ysywh.github.io">YsY记录点滴</a> &copy; yansy 2015</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ysywh.github.io/theme/bootstrap-collapse.js"></script>
+<script>var _gaq=[['_setAccount','UA-62970575-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+ 
+</body>
+</html>
