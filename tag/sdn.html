@@ -133,114 +133,13 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <p>通过上面我们知道，乘客协议需要封装在传输协议中进行传输，但也不能直接封装吧，往往传输协议（如IP）是不支持直接封装另一个协议（如PPP），因此需要封装协议作为中间过渡桥梁。封装协议是隧道技术的核心，有L2TP、IPsec、MPLS、SSL等多种协议技术。这里，我们根据乘客协议不同，将其分为二层隧道协议 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/10/30/Tunnel技术.html">read more</a></div>
     </div>	
 				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html"><h2>Ryu代码分析----openflow消息属性分析</h2></a>
-        <div class= "well small"> 2015-07-22
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><h3>前言</h3>
-<p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
-<ul>
-<li>
-<p>msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等</p>
-</li>
-<li>
-<p>每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 </p>
-</li>
-</ul>
-<p>当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。</p>
-<p>packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。</p>
-<p>Packet-in消息属性：</p>
-<div class="highlight"><pre>buffer_id     ID assigned by datapath
-total_len     Full length of frame
-reason        Reason packet is being sent.
-
-              | OFPR_NO_MATCH
-              | OFPR_ACTION ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html"><h2>Ryu源码分析</h2></a>
-        <div class= "well small"> 2015-07-10
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
-<h4>1 Event类</h4>
-<p>位置：ryu\lib\alert.py中Event类</p>
-<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
-<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
-<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
-<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
-<h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html"><h2>Mapreduce API 操作HBase</h2></a>
-        <div class= "well small"> 2015-06-03
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><h3><strong>前言</strong></h3>
-<p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
-<ul>
-<li>
-<p>用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</p>
-</li>
-<li>
-<p>用MapReduce完成hdfs数据向habse表的导入</p>
-</li>
-</ul>
-<p>通过写java代码，打成jar包，然后直接运行即可。</p>
-<h3><strong>一 用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</strong></h3>
-<p>这里只对简单的几个操作函数（建表，添加数据）进行分析，其他类似：</p>
-<p>其中用到了几个和Hbase相关的类（HBaseAdmin、HBaseConfiguration、HTable、HTableDescriptor、Put、Get、Scanner等）与其成员函数，具体含义可以看这个<a href="http://blog.csdn.net/lifuxiangcaohui/article/details/39997205">链接</a>，讲解很明白。</p>
-<p>1 建立管理habse的接口对象</p>
-<div class="highlight"><pre>public class hbase{
-static Configuration conf = HBaseConfiguration.create();
-static HBaseAdmin admin;
-public static void ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">read more</a></div>
-    </div>	
-				
 <div class="pagination">
 <ul>
     <li class="prev disabled"><a href="#">&larr; Previous</a></li>
 
-    <li class="active"><a href="http://ysywh.github.io/author/ysy.html">1</a></li>
-    <li class=""><a href="http://ysywh.github.io/author/ysy2.html">2</a></li>
-    <li class=""><a href="http://ysywh.github.io/author/ysy3.html">3</a></li>
+    <li class="active"><a href="http://ysywh.github.io/tag/sdn.html">1</a></li>
 
-    <li class="next"><a href="http://ysywh.github.io/author/ysy2.html">Next &rarr;</a></li>
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
 
 </ul>
 </div>

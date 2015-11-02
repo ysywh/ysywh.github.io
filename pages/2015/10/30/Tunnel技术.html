@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>YsY记录点滴</title>
+    <meta name="description" content="">
+    <meta name="author" content="yansy">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://ysywh.github.io/theme/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="http://ysywh.github.io/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/local.css" rel="stylesheet">
+    <link href="http://ysywh.github.io/theme/pygments.css" rel="stylesheet">
+
+    <!-- So Firefox can bookmark->"abo this site" -->
+        <link href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate" title="YsY记录点滴" type="application/atom+xml">
+        <link href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate" title="YsY记录点滴" type="application/rss+xml">
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://ysywh.github.io">YsY记录点滴</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="http://www.yansy.xyz/category/sdn.html">SDN</a></li>
+            
+            <li><a href="http://ysywh.github.io/pages/About me.html">About Me</a></li>
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>Tunnel技术</h1>
+2015-10-30
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+        </div>
+	
+        <div><p>随着一些虚拟化技术的发展，计算资源、存储资源和网络资源虚拟化也越来越成熟。单说网络虚拟化，就有很多成熟的技术。这里面，不得不说的一个就是隧道技术（Tunnel），虚拟专用网（VPN）的构建就用到Tunnel技术。</p>
+<h3>Tunnel 技术</h3>
+<p>网络隧道技术指一种协议数据包可以承载封装在另一种数据包中传输的技术。被封装承载的协议可称作乘客协议（transport protocol），载体协议可以被称为传输协议（transfer protocol）。为什么要在本来的乘客协议里外面再封装一层传输协议呢？说的简单点，就是用传输协议来穿越（路由寻址）这个适合它穿越的的这个网络，来建立两端的连通。比如两个企业的内网需要通过公共IP网络连通，组成一个虚拟私有网，这其实也VPN的内涵了。</p>
+<p>当然，利用隧道协议进行数据传输，保障数据的安全性和完整性很重要，不同隧道协议里都会有相应的验证、加密机制。</p>
+<p>通过上面我们知道，乘客协议需要封装在传输协议中进行传输，但也不能直接封装吧，往往传输协议（如IP）是不支持直接封装另一个协议（如PPP），因此需要封装协议作为中间过渡桥梁。封装协议是隧道技术的核心，有L2TP、IPsec、MPLS、SSL等多种协议技术。这里，我们根据乘客协议不同，将其分为二层隧道协议（PPTP、L2TP）、三层隧道协议（GRE、IPsec VPN）或高层隧道协议(ssl VPN)等进行讨论。文章宗旨是从协议与其技术的整体认识进行把握，协议的实现细节、报文格式每个字段解释都是一个比较繁琐复杂的部分，具体现查现用即可。</p>
+<p>我们从二层协议说起。但是在二层隧道协议里，如PPTP或是L2TP协议，他们有一个共同特点，就是载荷协议都是PPP帧。因此，这篇博文有必要先对PPP协议有基本了解，顺带说说基于它的PPPoE协议。</p>
+<h3>PPP协议（point-to-point protocol）</h3>
+<p>隧道技术要完成的一个重要内容就是点到点连通，无论是从外部远程连接一个网络构成虚拟专用网（如在外办公者远程连接企业网），还是跨异构网络连接多个特有网络（如企业网和外地分公司网络），都基本实现了一个点到点的连接。</p>
+<p>其中，PPP就是一个点到点的二层协议（和mac是一层），但PPP既然是点到点，那么就必须在点到点的环境下运行，比如两端网线直连，或是逻辑直连（比如通过PPTP、L2TP甚至PPPoE提供点到点的逻辑连接）。</p>
+<p>PPP这种点到点的协议，有一个很大特点就是可以完成<strong>身份认证</strong>和<strong>载荷加密</strong>的功能，因此无论是PPPoE还是二层隧道技术（PPTP和L2TP）都基本是利用了这一点。</p>
+<p><strong>PPP报文</strong>：</p>
+<p>PPP报文比较特殊，虽然有很多字段，但是基本无用：</p>
+<p>由于是点对点，没必本端和对端地址。相对来说，只有“协议”字段和“数据”字段有用，用来指示下一层协议。下一层协议可以是IP，IPX等三层协议；数据就是PPP帧的载荷，比如IP报文。</p>
+<p>很多协议根据工作阶段都可以分为控制管理阶段和数据传输阶段。两个阶段协议报文格式有可能不同、甚至用到其他协议，他们一起可以称为协议簇了。</p>
+<p>PPP协议也不例外，也是一个协议簇。在开始传输数据前，需要进行PPP链路建立、认证、IP报文控制等一系列操作，这些管理操作要用到PPP协议的一些管理协议，他们都是封装在PPP包头之后（就像arp在mac包头之后一样）。</p>
+<p>PPP连接管理阶段用到协议分三种：</p>
+<ul>
+<li>链路控制协议（LCP：Link Control Protocol），主要用来建立、拆除和监控数据链路。</li>
+<li>网络层控制协议簇（NCP：Network Control Protocol）：NCP不是具体的协议，它包括IPCP、IPCPv6、IPXCP协议，主要用来协商在该数据链路上所传输的网络层数据包（如IP包）的格式与类型。</li>
+<li>扩展协议族：这是一组协议，主要用来保障安全性。例如用于网络安全方面的验证的PAP和CHAP。</li>
+</ul>
+<p><strong>交互过程</strong></p>
+<ol>
+<li>PPP链路协商建立：LCP用于PPP链路连接和断开时候的控制协议，比如链路建立、拆除，MRU（最大接收单元）协商、安全验证协议的选择（选PAP还是CHAP）、整个PPP通信过程还有echo消息的定时保活、甚至PPP断开等，所以PPP的LCP报文贯穿于整个PPP网络通信开始到结束。</li>
+<li>认证：如果协商具有认证阶段（可以没有），则用安全验证报文（PAP、CHAP）验证客户端的用户名密码等内容。</li>
+<li>网络层协议控制：认证或是LCP链路建立后，PPP的NCP协议报文（如IPCP）会定义网络层数据包的格式、压缩方式、分配客户端源IP地址分配、加密方式等，比如后期PPP报文加密用到的协议（则PPP建立后PPP载荷内容会用协商的加密协议传输）。</li>
+</ol>
+<p>完成以上三个PPP管理控制阶段之后，则可以在PPP载荷中传输报文，如IP报文。当然，通信中定时会有LCP的echo消息保活，最后通信结束会用LCP报文断开连接。</p>
+<p><strong>总结</strong>：PPP点对点传输，必须在点到点的连接或是逻辑连接环境下运行。主要用于需要身份认证的场景。</p>
+<h3>PPPoE (point-to-point protocol over ethernet)</h3>
+<p>以太网本一旦搭建后，互相可以连通的（至少通过mac），为什么还需要PPPoE能？有这样一个场景，若ISP为了给接入互联网的用户增加计费功能，就必须那些用户接入ISP服务器后来上网的用户进行身份验证，然后计费。这样，就需要PPP的身份认证功能，PPPoE就派上用场。ISP的ADSL就用到PPPoE接入技术。</p>
+<p>PPPoE是二层协议，报文格式简单表示为：mac报文头+PPPoE报文头+PPP报文头+三层报文，显然PPPoE是用到PPP帧的。我们知道，PPP必须是端到端环境下（比如直连，或是逻辑直连），但在以太网中客户端要上网，就需要PPPoE来建立客户端到服务端的端到端逻辑链路（这个在地址发现阶段完成，如下），这时候PPP才能派上用场。</p>
+<p><strong> 交互过程 </strong>：
+1 Discovery阶段（地址发现阶段）：通过主动广播、交互，从以太网中很多“访问集中器”（相当于上网的出口）中选出一个，即得到选定“访问集中器”的mac，还要分配一个session-id，，标记一次PPP会话，在PPP会话阶段中使用，不能改变。地址发现阶段结束后，就有了以太网端到端的所有信息，然后就可以开始端到端的连接会话。
+2 PPP会话阶段（和PPP一样）：PPP的建立端到端连接、认证、三层协议控制（如分Ip协议协商控制）等。之后就可以在PPP载荷中加数据传输了。</p>
+<p>PPPoE实质就是拨号（接入服务本质就是PPP的认证过程）。目前，ADSL场景会用，用modem拨号接入ISP上网、WLAN网也会用、PPPoE还可以解决IP不足问题。</p>
+<p>总结：PPPoE利用PPP的认证功能，完成以太网的网络接入认证。</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Tunnel技术';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://ysywh.github.io/archives.html">Archives</a>
+                <li><a href="http://ysywh.github.io/tags.html">Tags</a>
+
+
+
+                <li><a href="http://ysywh.github.io/feeds/all.atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://ysywh.github.io/feeds/all.rss.xml" rel="alternate">RSS feed</a></li>
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://ysywh.github.io/category/hadoop.html">Hadoop</a></li>
+                <li><a href="http://ysywh.github.io/category/program.html">program</a></li>
+                <li><a href="http://ysywh.github.io/category/sdn.html">SDN</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://www.sdnlab.com/">sdnlab</a></li>
+                <li><a href="http://www.sdnap.com/">sdnap</a></li>
+                <li><a href="http://www.muzixing.com/">muzixing</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/ysywh/">my github</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="http://ysywh.github.io">YsY记录点滴</a> &copy; yansy 2015</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ysywh.github.io/theme/bootstrap-collapse.js"></script>
+<script>var _gaq=[['_setAccount','UA-62970575-1'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+<a href="https://github.com/ysywh"><img style="position: absolute; top: 40px; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" /></a>
+ 
+</body>
+</html>

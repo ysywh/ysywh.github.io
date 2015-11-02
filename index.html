@@ -62,8 +62,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html"><h1>Ryu代码分析----openflow消息属性分析</h1></a>
-2015-07-22
+            <a href="http://ysywh.github.io/pages/2015/11/01/Tunnel技术 之 二层隧道协议.html"><h1>Tunnel技术 之 二层隧道协议</h1></a>
+2015-11-01
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
@@ -72,7 +72,83 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
         </div>
         
-        <div><h3>前言</h3>
+        <div><p>之前从隧道协议引入，说到了而层隧道协议用到的一个基本协议——点到点协议（PPP）。说它是建立在点到点的直连或是逻辑直连的环境下适用的，并且自身具有身份认证、对ppp载荷数据加密等功能。有了这个基础，本文可以切入二层隧道协议主题了，说说两个最常用的二层隧道协议：PPTP和L2TP。</p>
+<h3>PPTP：(Point to Point Tunneling Protocol)</h3>
+<p>PPTP称为点到点的隧道协议。PPTP的载荷协议是PPP，传输协议是IP。换句话说，就是把二层的PPP帧封装在IP包中进行传输，以此完成站点到站点的VPN连接。</p>
+<p>PPTP协议要根据工作阶段分为两种：连接控制和数据传输。PPTP这两个阶段的报文格式也不同。</p>
+<p><strong>1 连接管理报文（RFC2637）</strong></p>
+<p>报文格式： IP+TCP+PPTP</p>
+<p>把PPTP归类在二层隧道协议里，这是从载客协议角度看的。但从上面报文格式可以看出，PPTP这种协议本身可以算是一种应用层协议。</p>
+<p>在连接管理阶段，主要完成PPTP隧道建立、echo定时保活和最终隧道断开。服务端PPTP的TCP保留报端是1723，隧道建立时候会给客户端和服务端分别分配一个call id（可以类比传输层的端口，不严格），用来标识会话，在封装和解封隧道包时候使用。</p>
+<p><strong>2 数据传输阶段(GRE， RFC2784)</strong></p>
+<p>报文格式：</p>
+<p>可以看到乘客协议（passenger protocol）是PPP报文，传输协议（transport protocol）是IP报文。当PPTP完成链路连接协商后，就可以利用乘客协议PPP传输数据了，当然要特别注意，在真正数据传输前，是少不了PPP协议建立协商的过程的，这个如PPP那篇博文描述的。</p>
+<p>还需要注意一点，IP报文是不能直接封装一个PPP的二层数据帧的，IP里没有这个功能，因此需要用到GRE协议。GRE是一个通用路由协议，可以封装任意层的协议（其实GRE本身就是一种隧道协议）。GRE协议属于网络层协议，和IP同属于一层，可以封装在IP里。因此，PPP帧需要加通用路由协议（GRE）去封装，然后再通过IP报文进行传输。</p>
+<h3>L2TP（Layer 2 Tunneling Protocol）</h3>
+<p>L2TP被称为第二层隧道协议，它是在L2F协议（cisco提出）上发展而来，和PPTP一样，也是一个二层的隧道协议，也和PPTP一样，L2TP本身也是一个应用层协议。L2TP和PPTP一个很大不同点，就是传输协议(承载协议)不只是IP，所以应用范围更广。</p>
+<p>L2TP根据阶段不同也分为控制包和数据包，但包结构相同，且控制包没有PPP报文这样的载荷。</p>
+<ol>
+<li>
+<p>控制包：完成端到端隧道的建立、协商、维护、断开等。其中建立协商阶段也会得到隧- 道id和会话id。L2TP的控制包有重传机制，保障可靠性。</p>
+</li>
+<li>
+<p>数据包：就是在L2TP上承载PPP载荷。当然也会包括PPP一系列身份验证、加密等过程。L2TP的数据包无重传机制，但可以通过选择TCP保障可靠性。</p>
+</li>
+</ol>
+<p>以下是传输协议为IP+UDP时候的PPTP数据包报文格式：</p>
+<p>当然，L2TP可以进行IPsec加密，达到端到端的加密和身份验证的目的（PPTP也可以在GRE外进行IPsec封装，即GRE over IPsec）：</p>
+<p>个人理解，这比PPP自身的加密和验证更完备，因为把数据部分，即PPP帧这样的二层也进行了验证、加密。</p>
+<p>这里需要提一下，IPsec有两种工作模式，“运输方式“和"隧道模式"（即VPN模式）。这里IPsec加密验证仅仅采用IPsec的“运输方式”的工作模式，即不对外层的IP进行加密。其实，当IPsec工作在隧道模式下，它自身也算是一种三层的隧道协议，会对数据的IP以及IP载荷进行加密，然后重新封装IP头。IPsec会另外开篇讲到。</p>
+<h3>PPTP与L2TP异同点</h3>
+<p>相同点就是载荷都是PPP报文。</p>
+<p>不同点：</p>
+<ol>
+<li>PPTP要求穿越的互联网为IP网络；L2TP只要求隧道媒介可以提供点到点的连接即可。比如L2TP的传输协议可以是IP+UDP(TCP)、帧中继永久虚电路（PVCs）、X2.5虚电路和ATM网络。</li>
+<li>PPTP只能在两端点建立单一隧道；L2TP可以在两端点建立多条隧道，用户可以根据不同质量服务创建不同隧道。</li>
+<li>PPTP不支持隧道验证；L2TP支持隧道验证。但当PPTP或是L2TP与IPsec共同使用，则提供隧道验证。</li>
+</ol>
+<p>2、3理解不到位，但也基本不是他们的区别重点。可以多多指教。</p></div>
+        <hr />
+    </div>
+		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="http://ysywh.github.io/pages/2015/10/30/Tunnel技术.html"><h2>Tunnel技术</h2></a>
+        <div class= "well small"> 2015-10-30
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>随着一些虚拟化技术的发展，计算资源、存储资源和网络资源虚拟化也越来越成熟。单说网络虚拟化，就有很多成熟的技术。这里面，不得不说的一个就是隧道技术（Tunnel），虚拟专用网（VPN）的构建就用到Tunnel技术。</p>
+<h3>Tunnel 技术</h3>
+<p>网络隧道技术指一种协议数据包可以承载封装在另一种数据包中传输的技术。被封装承载的协议可称作乘客协议（transport protocol），载体协议可以被称为传输协议（transfer protocol）。为什么要在本来的乘客协议里外面再封装一层传输协议呢？说的简单点，就是用传输协议来穿越（路由寻址）这个适合它穿越的的这个网络，来建立两端的连通。比如两个企业的内网需要通过公共IP网络连通，组成一个虚拟私有网，这其实也VPN的内涵了。</p>
+<p>当然，利用隧道协议进行数据传输，保障数据的安全性和完整性很重要，不同隧道协议里都会有相应的验证、加密机制。</p>
+<p>通过上面我们知道，乘客协议需要封装在传输协议中进行传输，但也不能直接封装吧，往往传输协议（如IP）是不支持直接封装另一个协议（如PPP），因此需要封装协议作为中间过渡桥梁。封装协议是隧道技术的核心，有L2TP、IPsec、MPLS、SSL等多种协议技术。这里，我们根据乘客协议不同，将其分为二层隧道协议 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/10/30/Tunnel技术.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html"><h2>Ryu代码分析----openflow消息属性分析</h2></a>
+        <div class= "well small"> 2015-07-22
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ </div>
+        <div class="summary"><h3>前言</h3>
 <p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
 <ul>
 <li>
@@ -90,156 +166,9 @@ total_len     Full length of frame
 reason        Reason packet is being sent.
 
               | OFPR_NO_MATCH
-              | OFPR_ACTION
-              | OFPR_INVALID_TTL
-table_id      ID of the table that was looked up
-cookie        Cookie of the flow entry that was looked up
-match         Instance of ``OFPMatch``
-data          Ethernet frame
-</pre></div>
-
-
-<hr />
-<h4><strong>1 一般属性的解析</strong></h4>
-<p>如msg属性buffer_id，datapath可直接访问，如msg.datapath**</p>
-<h4><strong>2 对于match这个属性解析和反解析（生成）：</strong></h4>
-<p>match属性解析主要用在packet-in消息中的属性match的解析，而match生成用于flowmod消息的match构造上。</p>
-<p>用到主要类：OFPMatch(StringifyMixin)类，形成match实体。</p>
-<p>OFPMatch类生成对象实例match，对象match中一个40元组的字典型属性（暂且这么理解，则也可把match对象看做字典型，和字典一样操作）,字典的键如in_port，ipv4_src等。</p>
-<ul>
-<li>
-<p>解析match：match[键名]获得键值，如msg.match[in_port]得到流表项匹配域的入端口（即数据包入端口）（因为OFPMatch()中定义__getitem__函数，提供下标访问方式，相当于[]重载）</p>
-</li>
-<li>
-<p>生成match：直接用键值形式作为参数调用OFPMatch() 类：如：</p>
-<div class="highlight"><pre>match = parser.OFPMatch(
-in_port=1,
-eth_type=0x86dd,
-ipv6_src=(&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;,&#39;ffff:ffff:ffff:ffff::&#39;),
-ipv6_dst=&#39;2001:db8:bd05:1d2:288a:1fc0:1:10ee&#39;)
-if &#39;ipv6_src&#39; in match:
-print match[&#39;ipv6_src&#39;]
-</pre></div>
-
-
-</li>
-</ul>
-<p>注明：parser是相应版本的解析包名，最好用parser=datapath.ofproto_parser，得到解析包名，如ofproto_v1_3_parser。</p>
-<p>当然，还有OFPMatchField匹配域，掩码问题...先不分析。</p>
-<h4><strong>3 actions 、 instruction</strong></h4>
-<p>作用：当进入交换机封包满足match匹配则执行指令instruction，有些指令中含有动作action(每条流表项可以有多个action，组成action list，因此是数组型)。instruction是flowmod消息下发时候包含的，当然，有的instruction中含有action。而packet-out消息直接含有action属性。</p>
-<p>对于flowmod，action是包含于instruction中的；而对于packet-out,则只有actions。因此，我们这里先对action进行分析，后再分析instruction。</p>
-<p><strong>actions</strong></p>
-<p>用法：调用action类实例化action。</p>
-<p>举例：以OFPActionOutput为例，调用OFPActionOutput类可生成action对象。 </p>
-<p>OFPActionOutput(OFPAction):用来生成“指定从交换机出口发包”action对象的类（出口动作）。主要用于packout和flowmod的action。</p>
-<p>定义：</p>
-<div class="highlight"><pre>def __init__(self, port, max_len=ofproto.OFPCML_MAX,type_=None, len_=None):
-    super(OFPActionOutput, self).__init__()
-    self.port = port
-    self.max_len = max_len。
-</pre></div>
-
-
-<p>参数：</p>
-<ul>
-<li>
-<p>max_len参数针对发给控制器的packin包，当为0时，则不含传统数据包负载；为OFPCML_NO_BUFFER时，则所有封包加入packin中上传给控制器。缺省值为OFPCML_MAX，表示发给控制器最大包长。</p>
-</li>
-<li>
-<p>Port是包出端口。可以是指定端口号（如1,2等），还可以是：</p>
-<p>OFPP_IN_PORT，OFPP_TABLE ，OFPP_NORMAL，OFPP_FLOOD， OFPP_ALL，OFPP_CONTROLLER(发给控制器),OFPP_LOCAL，OFPP_ANY具体含义见定义（如ofproto_v1_3.py中）。</p>
-</li>
-</ul>
-<p>其他类：除了OFPActionOutput，还有OFPActionGroup(OFPAction) OFPActionSetQueue(OFPAction)等类，他们都继承了OFPAction类。用法同OFPActionOutput类生成action对象一样。</p>
-<p>注意，actions可以有很多，因此actions是一个数组型，包含多个action实体。</p>
-<p><strong>instruction(指令)</strong></p>
-<p>说明：当匹配一条流表项后，则执行流表项的指令集（数组型，可包含多个指令），有的指令中又可以包含多个action，ryu实现了1.3中7种的6种类型，由四个类实现（其中OFPInstructionActions实现了三种类型）。</p>
-<p>用法：需要调用instruction相关类生成。主要有四种：</p>
-<ul>
-<li>OFPInstructionGotoTable</li>
-<li>OFPInstructionWriteMetadata</li>
-<li>OFPInstructionActions</li>
-<li>OFPInstructionMeter</li>
-</ul>
-<p>他们都继承OFPInstruction类，例如OFPInstructionActions：定义如下：</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="n">OFPInstructionActions</span>(<span class="n">OFPInstruction</span>):
-    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>, <span class="n">type_</span>, <span class="n">actions</span>=<span class="n">None</span>, <span class="n">len_</span>=<span class="n">None</span>):
-    ...
-</pre></div>
-
-
-<p>参数：type_表示匹配后在执行action前的执行动作（不同于action，比如OFPActionOutput表示包出口动作。type_可以是三种：</p>
-<ul>
-<li>OFPIT_APPLY_ACTIONS(立即执行action list中所有action)；</li>
-<li>OFPIT_WRITE_ACTIONS(把action list中多个action放入 action set中，等所有流表处理完一 次性处理action set中所有action，只支持单流表无意义)；</li>
-<li>OFPIT_CLEAR_ACTIONS（清除前面流表所产生action set中所有action，单流表无意义）</li>
-</ul>
-<p>actions即为上面的action对象。</p>
-<p>因此，OFPInstructionGotoTable（table转移，在只是支持单流表的交换机无意义），OFPInstructionWriteMetadata， OFPInstructionMeter用法同理。</p>
-<h3>4 data属性</h3>
-<p>data是msg中一个很重要的属性，当数据层面的交换机接收到传统包，data就是这个传统包的所有内容或是报头内容。</p>
-<p>对data的解析出现在packet-in中，当packetout时候，有时候会用到data的封装。</p>
-<p>主要类：class Packet(object):</p>
-<p><code>def __init__(self, data=None, protocols=None, parse_cls=ethernet.ethernet)</code></p>
-<p>Packet()类用来对传统包编解码（填入包头和解析包头，如ip包头等）</p>
-<p>位置：\ryu\lib\packet\packet.py</p>
-<p>类方法：</p>
-<ul>
-<li>
-<p>add_protocol(self, proto)：如给控制器下发包中传统数据包头添加协议字段（如ip）。</p>
-</li>
-<li>
-<p>get_protocols(self, protocol)：解析传统数据包包头协议字段，返回协议对象的列表</p>
-</li>
-<li>
-<p>get_protocol(self, protocol)：同上，不同是返回与protocol匹配的第一个协议对象
-用法：</p>
-</li>
-<li>
-<p>封包解析</p>
-<p>对于packIn的msg，msg属性data是传统以太帧内容（即进入交换机的封包），但它是bit字符串，需要以data为参数，通过调用类Packet(object)生成对象pkt来使用。</p>
-<p>pkt利用类Packet方法get_protocols()或get_protocol()得到协议字段值（如Ip包头，mac头等）    </p>
-<p>例如：</p>
-<div class="highlight"><pre>pkt = packet.Packet(msg.data)    #形成packet对象
-pkt_eth = pkt.get_protocols(ethernet.ethernet)[0]    #得到与参数协议匹配的协议字段对象
-if not pkt_ethernet:
-return   # non Ethernet    
-eth_dst=pkt_eth.dst
-eth_src=pkt_eth.src
-</pre></div>
-
-
-<p>解释：get_protocols(protocol)中参数是要解析的协议（如ethernet.py中ethernet类匹配出帧头，位于\ryu\lib\packet\中），返回与协议匹配的协议字段对象的列表，因此需要用[0]得到第一个列表中第一个对象。get_protocol(protocol)可以直接返回匹配的第一个对象。</p>
-<p>解析字段pkt_eth属性值选取(如目的地址pkt_eth.dst)参考协议定义（ethernet类的属性）</p>
-</li>
-<li>
-<p>封包生成</p>
-<p>生成空Packet对象-&gt;生成协议对象（ethernet,ipv4等）-&gt; add_protocol()把协议对象依次加入Packet空对象中-&gt;Packet对象调用serialize()方法把协议对象序列化成Packet对象的属性data。data封包生成，可以用于packout类的data参数。</p>
-<p>例如：</p>
-<div class="highlight"><pre>pkt = packet.Packet()   #生成空的Packet ()对象
-pkt.add_protocol(ethernet.ethernet(ethertype =...,dst=...,src =...))
-pkt.add_protocol(ipv4.ipv4(dst=...,src=...,proto =...))
-pkt.add_protocol(icmp.icmp(type_ =...,code =...,csum =...,data =...))
-pkt.serialize ()   #将添加协议对象序列化为Packet ()对象的data属性
-bin_packet = pkt.data  #提取封包好data属性
-</pre></div>
-
-
-<p>另一种写法（用API）：</p>
-<div class="highlight"><pre>e = ethernet.ethernet (...)
-i = ipv4.ipv4 (...)
-u = udp.udp (...)
-pkt = e/i/u
-</pre></div>
-
-
-</li>
-</ul>
-<p>通过以上分析，基本可以完成了openflow包的属性解析与封装，这对写控制器app时候，可以促进我们理解如何处理openflow消息。</p></div>
-        <hr />
-    </div>
-		
+              | OFPR_ACTION ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -301,93 +230,6 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 static Configuration conf = HBaseConfiguration.create();
 static HBaseAdmin admin;
 public static void ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html"><h2>HBase & HBase shell</h2></a>
-        <div class= "well small"> 2015-06-01
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p></br></p>
-<h3><strong>前言</strong></h3>
-<p>HBase源于Google的BigData，是面向列的、基于HDFS、高性能的分布式数据库系统。面向海量存储和互联网应用。</p>
-<ul>
-<li>
-<p>面向列：解决稀疏问题，即众多的列，但并非每列都有数据，且经常只访问很少的列</p>
-</li>
-<li>
-<p>基于HDFS：解决海量问题，即低成本可扩展地处理以十亿为单位的数据表</p>
-</li>
-<li>
-<p>高性能：解决高速问题，即高吞吐量和高并发</p>
-</li>
-</ul>
-<hr />
-<h3><strong>一 Hbase 与 RRBMS对比</strong></h3>
-<p>RDBMS是基于关系型数据库，而HBase基于列模式的映射数据库，是Nosql模式。Hbase表示为简单的键-值对，简化了关系型数据库。用处不同。</p>
-<ul>
-<li>
-<p>数据类型：Hbase只有简单的字符串类型，即只保存字符串。关系型数据库数据类型很丰富。</p>
-</li>
-<li>
-<p>数据操作：插入、查询、删除和清空等操作，不像关系型数据库表与表之间有关系，所以无表与表之间的关联操作，因为其实也不需要。</p>
-</li>
-<li>
-<p>存储模式：Hbase基于列存储,则有些列字段值可以无，且不同列族存储的文件是分离的。</p>
-</li>
-</ul>
-<p>除此之外，Hbase更新数据时候会保留一定数量的版本。</p>
-<p></br></p>
-<h3><strong>二 系统框架</strong></h3>
-<p>构成：Client,Zookeeper，HMaster ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/06/01/数据结构.html"><h2>数据结构</h2></a>
-        <div class= "well small"> 2015-06-01
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>程序=数据结构+算法，而数据结构是什么，都有哪些数据结构，如何把它应用于代码实践中，自己其实也是模糊不清的。虽然说从大学学写代码到现在，也接触过很多种数据结构，但也没有系统的总结和思考过，甚至复写一遍都困难。因此决定下来这段时间，好好地学习回顾一下一些基本的数据结构，包括一些最近本的算法，当做记录和加强基本功吧。</p>
-<hr />
-<p><strong>数据结构</strong>：一组有特定数据关系的数据元素集合。根据数据关系，因此衍生出以下四种基本类型的数据结构：</p>
-<ul>
-<li>
-<p>集合结构 </p>
-</li>
-<li>
-<p>线性结构    </p>
-</li>
-<li>
-<p>树形结构</p>
-</li>
-<li>
-<p>图结构</p>
-</li>
-</ul>
-<p>集合结构就像数学中的集合，很好理解；线性结构就是数据中一对一关系；树形结构就是数据是一对多关系；图结构就是多对多关系。虽然这样描述不准确，但好理解就OK。</p>
-<p>说到数据结构，让我想起 <strong>数据类型</strong>，简单的认为，数据类型是带有操作的值的总称，是操作的对象。数据类型有基本数据类型和非基本数据类型，如在C语言中，基本数据类型如int类型，其操作可以有加减乘除等操作，非基本数据类型，可以是数据结构和定义的操作，如顺序表（线性结构）和一些插入删除的操作，其实在C++中，类也算是一种高级的数据类型，因为含有数据成员和成员函数。</p>
-<p>说完数据类型 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/01/数据结构.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

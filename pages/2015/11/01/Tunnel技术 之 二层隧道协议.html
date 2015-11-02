@@ -55,23 +55,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="http://ysywh.github.io/pages/2015/11/01/Tunnel技术 之 二层隧道协议.html"><h1>Tunnel技术 之 二层隧道协议</h1></a>
+            <h1>Tunnel技术 之 二层隧道协议</h1>
 2015-11-01
 
 by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
  
 
 
- 
         </div>
-        
+	
         <div><p>之前从隧道协议引入，说到了而层隧道协议用到的一个基本协议——点到点协议（PPP）。说它是建立在点到点的直连或是逻辑直连的环境下适用的，并且自身具有身份认证、对ppp载荷数据加密等功能。有了这个基础，本文可以切入二层隧道协议主题了，说说两个最常用的二层隧道协议：PPTP和L2TP。</p>
 <h3>PPTP：(Point to Point Tunneling Protocol)</h3>
 <p>PPTP称为点到点的隧道协议。PPTP的载荷协议是PPP，传输协议是IP。换句话说，就是把二层的PPP帧封装在IP包中进行传输，以此完成站点到站点的VPN连接。</p>
@@ -108,144 +102,23 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <li>PPTP不支持隧道验证；L2TP支持隧道验证。但当PPTP或是L2TP与IPsec共同使用，则提供隧道验证。</li>
 </ol>
 <p>2、3理解不到位，但也基本不是他们的区别重点。可以多多指教。</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'ysywhgithubio'; 
+    var disqus_title = 'Tunnel技术 之 二层隧道协议';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/10/30/Tunnel技术.html"><h2>Tunnel技术</h2></a>
-        <div class= "well small"> 2015-10-30
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p>随着一些虚拟化技术的发展，计算资源、存储资源和网络资源虚拟化也越来越成熟。单说网络虚拟化，就有很多成熟的技术。这里面，不得不说的一个就是隧道技术（Tunnel），虚拟专用网（VPN）的构建就用到Tunnel技术。</p>
-<h3>Tunnel 技术</h3>
-<p>网络隧道技术指一种协议数据包可以承载封装在另一种数据包中传输的技术。被封装承载的协议可称作乘客协议（transport protocol），载体协议可以被称为传输协议（transfer protocol）。为什么要在本来的乘客协议里外面再封装一层传输协议呢？说的简单点，就是用传输协议来穿越（路由寻址）这个适合它穿越的的这个网络，来建立两端的连通。比如两个企业的内网需要通过公共IP网络连通，组成一个虚拟私有网，这其实也VPN的内涵了。</p>
-<p>当然，利用隧道协议进行数据传输，保障数据的安全性和完整性很重要，不同隧道协议里都会有相应的验证、加密机制。</p>
-<p>通过上面我们知道，乘客协议需要封装在传输协议中进行传输，但也不能直接封装吧，往往传输协议（如IP）是不支持直接封装另一个协议（如PPP），因此需要封装协议作为中间过渡桥梁。封装协议是隧道技术的核心，有L2TP、IPsec、MPLS、SSL等多种协议技术。这里，我们根据乘客协议不同，将其分为二层隧道协议 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/10/30/Tunnel技术.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html"><h2>Ryu代码分析----openflow消息属性分析</h2></a>
-        <div class= "well small"> 2015-07-22
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><h3>前言</h3>
-<p>当从交换机接收到openflow消息，我们暂且称为msg， 这个msg实体中有很多属性，分两种：</p>
-<ul>
-<li>
-<p>msg继承自基类MsgBase的基本属性：datapath，version，msg_type，msg_len，xid，buf 等</p>
-</li>
-<li>
-<p>每种openflow消息自己的属性。比如packetin消息，具有match,data（数据层面的传统数据包的全部内容或是只是报头内容）等属性。 </p>
-</li>
-</ul>
-<p>当我们 openflow消息，需要对消息msg进行解析，甚至是构造openflow消息发送出去。这些消息都是由属性成员构成，因此对其属性进行分析极其重要。</p>
-<p>packetin消息是一个极其重要的openflow消息，它具有如下属性。flowmod属性中也有match属性，还有instruction属性，packet-out中还有actions属性。本位对这些重要属性进行解析。</p>
-<p>Packet-in消息属性：</p>
-<div class="highlight"><pre>buffer_id     ID assigned by datapath
-total_len     Full length of frame
-reason        Reason packet is being sent.
-
-              | OFPR_NO_MATCH
-              | OFPR_ACTION ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/22/Ryu代码分析----openflow消息属性分析.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html"><h2>Ryu源码分析</h2></a>
-        <div class= "well small"> 2015-07-10
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p>Ryu是一个Python写的轻量级控制器，具有易于学习实现的优点。使用ryu进行app开发，有必要对以下几个概念做基本了解：</p>
-<h4>1 Event类</h4>
-<p>位置：ryu\lib\alert.py中Event类</p>
-<p>有一些属性，比如datapath，msg等。其中，datapath是接收到openflow消息的交换机实体，msg就是openflow消息实体。</p>
-<h3>2 讯息实体msg的类：MsgBase()类（讯息实体的基本类）</h3>
-<p>位置：ryu\ofproto\ofproto_parser中 MsgBase()类，</p>
-<p>属性：datapath，version，msg_type，msg_len，xid，buf 等，属于所有讯息实体msg的基本属性。此类会被其他产生讯息的类继承。</p>
-<p>比如packetin消息，会继承这些基本属性外，还具体自己的属性，如match,data等。</p>
-<h3>3 datapath</h3>
-<p>类位置：ryu\controller\controller.py中 ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/07/10/Ryu源码分析.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html"><h2>Mapreduce API 操作HBase</h2></a>
-        <div class= "well small"> 2015-06-03
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><h3><strong>前言</strong></h3>
-<p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
-<ul>
-<li>
-<p>用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</p>
-</li>
-<li>
-<p>用MapReduce完成hdfs数据向habse表的导入</p>
-</li>
-</ul>
-<p>通过写java代码，打成jar包，然后直接运行即可。</p>
-<h3><strong>一 用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</strong></h3>
-<p>这里只对简单的几个操作函数（建表，添加数据）进行分析，其他类似：</p>
-<p>其中用到了几个和Hbase相关的类（HBaseAdmin、HBaseConfiguration、HTable、HTableDescriptor、Put、Get、Scanner等）与其成员函数，具体含义可以看这个<a href="http://blog.csdn.net/lifuxiangcaohui/article/details/39997205">链接</a>，讲解很明白。</p>
-<p>1 建立管理habse的接口对象</p>
-<div class="highlight"><pre>public class hbase{
-static Configuration conf = HBaseConfiguration.create();
-static HBaseAdmin admin;
-public static void ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="http://ysywh.github.io/author/ysy.html">1</a></li>
-    <li class=""><a href="http://ysywh.github.io/author/ysy2.html">2</a></li>
-    <li class=""><a href="http://ysywh.github.io/author/ysy3.html">3</a></li>
-
-    <li class="next"><a href="http://ysywh.github.io/author/ysy2.html">Next &rarr;</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
