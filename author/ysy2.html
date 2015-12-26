@@ -62,6 +62,42 @@
  
 
     <div class='article'>
+        <a href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html"><h2>Mapreduce API 操作HBase</h2></a>
+        <div class= "well small"> 2015-06-03
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ </div>
+        <div class="summary"><h3><strong>前言</strong></h3>
+<p>之前博文采用shell直接操作Hbase，这次通过一些API函数对habse进行操作。主要完成：</p>
+<ul>
+<li>
+<p>用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</p>
+</li>
+<li>
+<p>用MapReduce完成hdfs数据向habse表的导入</p>
+</li>
+</ul>
+<p>通过写java代码，打成jar包，然后直接运行即可。</p>
+<h3><strong>一 用JAVA API完成对hbase表的建立、删除、数据添加与查看等基本操作</strong></h3>
+<p>这里只对简单的几个操作函数（建表，添加数据）进行分析，其他类似：</p>
+<p>其中用到了几个和Hbase相关的类（HBaseAdmin、HBaseConfiguration、HTable、HTableDescriptor、Put、Get、Scanner等）与其成员函数，具体含义可以看这个<a href="http://blog.csdn.net/lifuxiangcaohui/article/details/39997205">链接</a>，讲解很明白。</p>
+<p>1 建立管理habse的接口对象</p>
+<div class="highlight"><pre>public class hbase{
+static Configuration conf = HBaseConfiguration.create();
+static HBaseAdmin admin;
+public static void ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/06/03/Mapreduce API 操作HBase.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
         <a href="http://ysywh.github.io/pages/2015/06/01/HBase & HBase shell.html"><h2>HBase & HBase shell</h2></a>
         <div class= "well small"> 2015-06-01
 
@@ -196,38 +232,6 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
     .hdrsize ...</pre></div> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/05/22/OVS源码分析——datapath消息处理.html">read more</a></div>
     </div>	
 				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析——用户层处理Upcall消息(2).html"><h2>OVS源码分析——用户层处理Upcall消息(2)</h2></a>
-        <div class= "well small"> 2015-05-15
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p></br></p>
-<h3>前言</h3>
-<p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
-key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
-<p>上一篇博客分析了用户层从用户层获取upcall消息，对MISS_UPCALL类型消息进行处理并且存入miss（结构体miss_flow）。这篇文章，继续分析对upcall消息的处理、给内核层下发流表项。</p>
-<hr />
-<p></br>
-接下来要具体对miss进行处理（构造facet和对miss执行action）。</p>
-<h4>4）<strong><code>static void handle_flow_miss(struct ofproto_dpif *ofproto, struct flow_miss *miss,struct flow_miss_op *ops, size_t *n_ops)</code></strong></h4>
-<p><strong>关系</strong>：在handle_miss_upcalls中被调用</p>
-<p><strong>功能</strong>：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&gt;rule和flow_miss-&gt;flow创建facet。存在facet后进而对flow_miss进行处理。</p>
-<p>数据结构</p>
-<ul>
-<li>
-<p>facet（ofproto ...</p></li></ul> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析——用户层处理Upcall消息(2).html">read more</a></div>
-    </div>	
-				
 <div class="pagination">
 <ul>
     <li class="prev"><a href="http://ysywh.github.io/author/ysy.html">&larr; Previous</a></li>
@@ -235,6 +239,7 @@ key构造成Upcall消息，通过netlink通道发往用户层，用户态接收u
     <li class=""><a href="http://ysywh.github.io/author/ysy.html">1</a></li>
     <li class="active"><a href="http://ysywh.github.io/author/ysy2.html">2</a></li>
     <li class=""><a href="http://ysywh.github.io/author/ysy3.html">3</a></li>
+    <li class=""><a href="http://ysywh.github.io/author/ysy4.html">4</a></li>
 
     <li class="next"><a href="http://ysywh.github.io/author/ysy3.html">Next &rarr;</a></li>
 

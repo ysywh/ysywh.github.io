@@ -62,6 +62,38 @@
  
 
     <div class='article'>
+        <a href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析——用户层处理Upcall消息(2).html"><h2>OVS源码分析——用户层处理Upcall消息(2)</h2></a>
+        <div class= "well small"> 2015-05-15
+
+by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
+ 
+
+
+ </div>
+        <div class="summary"><p></br></p>
+<h3>前言</h3>
+<p>当OVS内核接从端口到packet，会进行包解析提取出查询key，然后用key进行datapath中的流表匹配处理，对于以下两种情况1）没有匹配到流表项 2）匹配到的流表项动作为发往用户层，都会将packet和
+key构造成Upcall消息，通过netlink通道发往用户层，用户态接收upcall消息后会进行处理，比如用户层流表匹配处理等。当然在用户层匹配到流表，会将流表项安装到内核层，达到相同流在内核层快速处理的目的：</p>
+<p>上一篇博客分析了用户层从用户层获取upcall消息，对MISS_UPCALL类型消息进行处理并且存入miss（结构体miss_flow）。这篇文章，继续分析对upcall消息的处理、给内核层下发流表项。</p>
+<hr />
+<p></br>
+接下来要具体对miss进行处理（构造facet和对miss执行action）。</p>
+<h4>4）<strong><code>static void handle_flow_miss(struct ofproto_dpif *ofproto, struct flow_miss *miss,struct flow_miss_op *ops, size_t *n_ops)</code></strong></h4>
+<p><strong>关系</strong>：在handle_miss_upcalls中被调用</p>
+<p><strong>功能</strong>：判断是存在和flow相同的facet，不存在则根据实体的结构体ofproto_dpif-&gt;rule和flow_miss-&gt;flow创建facet。存在facet后进而对flow_miss进行处理。</p>
+<p>数据结构</p>
+<ul>
+<li>
+<p>facet（ofproto ...</p></li></ul> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/05/15/OVS源码分析——用户层处理Upcall消息(2).html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
         <a href="http://ysywh.github.io/pages/2015/05/10/OVS源码分析——用户层处理Upcall消息(1).html"><h2>OVS源码分析——用户层处理Upcall消息(1)</h2></a>
         <div class= "well small"> 2015-05-10
 
@@ -238,39 +270,6 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
 <p>2 利用命令编辑： <code>vi /etc/hosts</code>,加入master和两个slave的容器号和ip。之后需要 <strong>开启sshd服务</strong> ，使其生效：' service  sshd ...</p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/03/11/Docker搭建Hadoop集群环境和Wordcount实验.html">read more</a></div>
     </div>	
 				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html"><h2>MapReduce之letter count</h2></a>
-        <div class= "well small"> 2015-03-02
-
-by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
- 
-
-
- </div>
-        <div class="summary"><p><br></p>
-<p>本节在安装好的Eclipse环境中，尝试使用 MapReduce编程环境，运行letter count代码进行学习验证。letter count 实验就是对一段英文中出现的每个字母进行数量统计，比较基础的练习。</p>
-<hr />
-<p>1 创建新的工程lettercount,并且加载需要的Hadoop库：</p>
-<p><img alt="1" src="http://gitlab.local/uploads/course/course_hadoop/bf8af6a841/1.png" /></p>
-<p><img alt="2" src="http://gitlab.local/uploads/course/course_hadoop/3e50a19c6b/2.png" /></p>
-<p><img alt="3" src="http://gitlab.local/uploads/course/course_hadoop/b465f66e7d/3.png" /></p>
-<p>2 在网上寻找一个mapreduce的Wordcount代码文件，在map类中添加计算letter的代码，并且注释掉计算word的代码，加上对每个字母进行统计的代码，map输出键值对为（字母，one)，在reduce中进行合计，于统计word思路相同：</p>
-<p><img alt="5" src="http://gitlab.local/uploads/course/course_hadoop/acaaa07b4e/5.png" /></p>
-<p>3 运行前添加输入和输入文件，输入文件内容是一段英文，经过mapreduce运行计算后会把letter计算结果输出到输出文件中：</p>
-<p><img alt="4" src="http://gitlab.localuploads/course/course_hadoop/84a81d19fc/4.png" /></p>
-<p><img alt="6" src="http://gitlab.local/uploads/course/course_hadoop/9754fce9ef/6.png" /></p>
-<p>4 通过export输出jar包，然后导入带有Hadoop的Linux系统中，进行实际运行计算：</p>
-<p><img alt="7" src="http://gitlab.local/uploads/course/course_hadoop/a1c5c158d1/7.png" /></p>
-<p>5 可以通过对比输入文件内容，比较计算的输出的结果，输出文件为两个：</p>
-<p><img alt="8" src="http://gitlab.local/uploads/course/course_hadoop/f70bf9a61c/8.png" /></p> <a class="btn btn-info xsmall" href="http://ysywh.github.io/pages/2015/03/02/MapReduce之letter count.html">read more</a></div>
-    </div>	
-				
 <div class="pagination">
 <ul>
     <li class="prev"><a href="http://ysywh.github.io/index2.html">&larr; Previous</a></li>
@@ -278,8 +277,9 @@ by <a class="url fn" href="http://ysywh.github.io/author/ysy.html">ysy</a>
     <li class=""><a href="http://ysywh.github.io/index.html">1</a></li>
     <li class=""><a href="http://ysywh.github.io/index2.html">2</a></li>
     <li class="active"><a href="http://ysywh.github.io/index3.html">3</a></li>
+    <li class=""><a href="http://ysywh.github.io/index4.html">4</a></li>
 
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+    <li class="next"><a href="http://ysywh.github.io/index4.html">Next &rarr;</a></li>
 
 </ul>
 </div>

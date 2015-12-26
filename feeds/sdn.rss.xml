@@ -1,5 +1,308 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 01 Nov 2015 17:30:00 +0800</lastBuildDate><item><title>Tunnel技术 之 二层隧道协议</title><link>http://ysywh.github.io/pages/2015/11/01/Tunnel%E6%8A%80%E6%9C%AF%20%E4%B9%8B%20%E4%BA%8C%E5%B1%82%E9%9A%A7%E9%81%93%E5%8D%8F%E8%AE%AE.html</link><description>&lt;p&gt;之前从隧道协议引入，说到了而层隧道协议用到的一个基本协议——点到点协议（PPP）。说它是建立在点到点的直连或是逻辑直连的环境下适用的，并且自身具有身份认证、对ppp载荷数据加密等功能。有了这个基础，本文可以切入二层隧道协议主题了，说说两个最常用的二层隧道协议：PPTP和L2TP。&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>YsY记录点滴</title><link>http://ysywh.github.io/</link><description></description><atom:link href="http://ysywh.github.io/feeds/sdn.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 01 Dec 2015 19:10:00 +0800</lastBuildDate><item><title>OVS中Action分析&amp;自定义Action</title><link>http://ysywh.github.io/pages/2015/11/20/OVS%E4%B8%ADAction%E5%88%86%E6%9E%90&amp;%E8%87%AA%E5%AE%9A%E4%B9%89Action.html</link><description>&lt;hr /&gt;
+&lt;h3&gt;前言&lt;/h3&gt;
+&lt;p&gt;目前OpenFlow中定义的action很有限，有时候却并不能完全满足需求，如何自定义Action（action extension）就显得尤为重要，本文将对OVS的Action机理进行详细分析，并介绍如何自定义action。&lt;/p&gt;
+&lt;p&gt;我们知道，无论是控制器还是交换机，OVS对于OpenFlow内容的解析和支持是基于OpenFlow标准的。也就是说每一个消息体、流表中的匹配域或是action等，都是按照OpenFlow协议定义进行实现。那么对于自定义action，也应该遵循这一规则，即需要在OVS中，完成新action的定义、解析、执行等一系列源码修改。&lt;/p&gt;
+&lt;p&gt;说明：OpenFlow 1.3是科研和生产环境中最常用的版本，因此就以OpenFlow1.3为例，在Open vSwitch v1.3.1上分析OVS如何运行一个action，并同时说明如何自定义Action。&lt;/p&gt;
+&lt;h3&gt;一 新action的定义&lt;/h3&gt;
+&lt;p&gt;1 include/OpenFlow文件夹定义了OpenFlow各个版本的协议内容（nicira-ext.h中定义nicira的action等内容，我们对他们也统称为openflow action），包括所支持的消息体，匹配域，openflow action等。首先，我们需要在这里定义新的action枚举类型和其结构体。&lt;/p&gt;
+&lt;p&gt;action的枚举类型。在OpenFlow-1.3.h中，&lt;code&gt;ofp13_action_type&lt;/code&gt;中定义OF v1.3所支持的action名字，以枚举方式表示：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;enum&lt;/span&gt; &lt;span class="n"&gt;ofp13_action_type&lt;/span&gt; {
+    &lt;span class="n"&gt;OFPAT13_OUTPUT&lt;/span&gt;       = &lt;span class="mi"&gt;0&lt;/span&gt;,&lt;span class="sr"&gt;   /* Output to switch port. */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_COPY_TTL_OUT&lt;/span&gt; = &lt;span class="mi"&gt;11&lt;/span&gt;,&lt;span class="sr"&gt;  /* Copy TTL &amp;quot;outwards&amp;quot; -- from next-to-outermost&lt;/span&gt;
+&lt;span class="sr"&gt;                               to outermost */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_COPY_TTL_IN&lt;/span&gt;  = &lt;span class="mi"&gt;12&lt;/span&gt;,&lt;span class="sr"&gt;  /* Copy TTL &amp;quot;inwards&amp;quot; -- from outermost to&lt;/span&gt;
+&lt;span class="sr"&gt;                               next-to-outermost */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_SET_MPLS_TTL&lt;/span&gt; = &lt;span class="mi"&gt;15&lt;/span&gt;,&lt;span class="sr"&gt;  /* MPLS TTL */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_DEC_MPLS_TTL&lt;/span&gt; = &lt;span class="mi"&gt;16&lt;/span&gt;,&lt;span class="sr"&gt;  /* Decrement MPLS TTL */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_PUSH_VLAN&lt;/span&gt;    = &lt;span class="mi"&gt;17&lt;/span&gt;,&lt;span class="sr"&gt;  /* Push a new VLAN tag */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_POP_VLAN&lt;/span&gt;     = &lt;span class="mi"&gt;18&lt;/span&gt;,&lt;span class="sr"&gt;  /* Pop the outer VLAN tag */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_PUSH_MPLS&lt;/span&gt;    = &lt;span class="mi"&gt;19&lt;/span&gt;,&lt;span class="sr"&gt;  /* Push a new MPLS Label Stack Entry */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_POP_MPLS&lt;/span&gt;     = &lt;span class="mi"&gt;20&lt;/span&gt;,&lt;span class="sr"&gt;  /* Pop the outer MPLS Label Stack Entry */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_SET_QUEUE&lt;/span&gt;    = &lt;span class="mi"&gt;21&lt;/span&gt;,&lt;span class="sr"&gt;  /* Set queue id when outputting to a port */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_GROUP&lt;/span&gt;        = &lt;span class="mi"&gt;22&lt;/span&gt;,&lt;span class="sr"&gt;  /* Apply group. */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_SET_NW_TTL&lt;/span&gt;   = &lt;span class="mi"&gt;23&lt;/span&gt;,&lt;span class="sr"&gt;  /* IP TTL. */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_DEC_NW_TTL&lt;/span&gt;   = &lt;span class="mi"&gt;24&lt;/span&gt;,&lt;span class="sr"&gt;  /* Decrement IP TTL. */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_SET_FIELD&lt;/span&gt;    = &lt;span class="mi"&gt;25&lt;/span&gt;,&lt;span class="sr"&gt;  /* Set a header field using OXM TLV format. */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_PUSH_PBB&lt;/span&gt;     = &lt;span class="mi"&gt;26&lt;/span&gt;,&lt;span class="sr"&gt;  /* Push a new PBB service tag (I-TAG) */&lt;/span&gt;
+    &lt;span class="n"&gt;OFPAT13_POP_PBB&lt;/span&gt;      = &lt;span class="mi"&gt;27&lt;/span&gt;,&lt;span class="sr"&gt;   /* Pop the outer PBB service tag (I-TAG) */&lt;/span&gt;
+};
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;类型号1-10在前面版本文件中定义。在&lt;code&gt;ofp13_action_typ&lt;/code&gt;最后直接新添加新action即可。注意顺序号很重要，后面依赖顺序号进行action解析。&lt;/p&gt;
+&lt;p&gt;2 定义完新action的枚举类型，则需要定义新action对应的结构体，说明action所包含的字段属性。of 1.3中定义的action结构体在前面版本定义好了，如v1.2版本中增加了set_field，则对应结构体如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cm"&gt;/* Action structure for OFPAT12_SET_FIELD. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+struct&lt;span class="w"&gt; &lt;/span&gt;ofp12_action_set_field&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;ovs_be16&lt;span class="w"&gt; &lt;/span&gt;type&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;                  &lt;/span&gt;&lt;span class="cm"&gt;/* OFPAT12_SET_FIELD. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;ovs_be16&lt;span class="w"&gt; &lt;/span&gt;len&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;                   &lt;/span&gt;&lt;span class="cm"&gt;/* Length is padded to 64 bits. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;ovs_be32&lt;span class="w"&gt; &lt;/span&gt;dst&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;                   &lt;/span&gt;&lt;span class="cm"&gt;/* OXM TLV header */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="cm"&gt;/* Followed by:&lt;/span&gt;
+&lt;span class="cm"&gt;    * - Exactly ((oxm_len + 4) + 7)/8*8 - (oxm_len + 4) (between 0 and 7)&lt;/span&gt;
+&lt;span class="cm"&gt;    *   bytes of all-zero bytes&lt;/span&gt;
+&lt;span class="cm"&gt;    */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="err"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+OFP_ASSERT&lt;span class="o"&gt;(&lt;/span&gt;sizeof&lt;span class="o"&gt;(&lt;/span&gt;struct&lt;span class="w"&gt; &lt;/span&gt;ofp12_action_set_field&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;8&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;type和len是必须的成员属性，如果action结构体中无其他字段信息，则只需要type和len即可（这个例子中还含有设置目的地址的值dst这个字段），如归不足64bit的整数倍，用Pad补全。&lt;/p&gt;
+&lt;p&gt;3 宏定义，在lib/ofp.def中定义，如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;OFPAT11_ACTION(OFPAT12_SET_FIELD,    ofp12_action_set_field, 1, &amp;quot;set_field&amp;quot;)
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其格式为OFPAT11_ACTION(ENUM, STRUCT, EXTENSIBLE, NAME)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一个参数ENUM即openflow action的名字,对应1中定义action enum（隐含编号值）。ENUM在后面用于构成openflow action的编号code（类型ofputil_action_code），互相一一对应的，格式为OFPUTIL_##ENUM。&lt;/li&gt;
+&lt;li&gt;第二个参数STRUCT即 openflow action的结构体名字，在2中定义。&lt;/li&gt;
+&lt;li&gt;第四个参数NAME，即action字符串名字。其用于ofctl手动添加流表项时，把字符串action放在这里查找，找到对应ENUM，然后通过ENUM转化为相应action code。比如flowmod中action为“set_field”，则找到ENUM为OFPAT12_SET_FIELD，最终得到OOFPUTI_OFPAT12_SET_FIELD。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4 此外，需要在在ofp-action.c中联合体类型ofp_action中添加openflow action（如1.3和nicira）中的openflow action结构体名：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;union ofp_action {
+ovs_be16 type;
+struct ofp_action_header header;
+struct ofp_action_vendor_header vendor;
+struct ofp10_action_output output10;
+struct ofp_action_vlan_vid vlan_vid;
+struct ofp_action_vlan_pcp vlan_pcp;
+struct ofp_action_nw_addr nw_addr;
+struct ofp_action_nw_tos nw_tos;
+...
+struct nx_action_header nxa_header;
+struct nx_action_resubmit resubmit;
+struct nx_action_set_tunnel set_tunnel;
+struct nx_action_set_tunnel64 set_tunnel64;
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;union的设计其实很巧妙，对于接收到的flowmod中action字段，直接赋给enum ofp_action即可，会根据type（即对应openflow action的enum值）来确定是哪一个action。因此无需赋值时直接赋值给具体action的结构体。&lt;/p&gt;
+&lt;p&gt;5 以上完成了在OVS中OpenFlow action的定义，但是ovs对action的处理都是基于抽象action（后面如果遇到ofpact则理解为ovs抽象action），因此OVS需要对这些openflow action进行进一步抽象转化，称其为抽象action（一般带有OFPACT_字样）。&lt;/p&gt;
+&lt;p&gt;若定义OVS中定义抽象action，首先需要在lib/ofp-actions.h中进行宏定义，如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;#define OFPACTS                                                     
+/* Output. */                                                   \
+DEFINE_OFPACT(OUTPUT,          ofpact_output,        ofpact)    \
+DEFINE_OFPACT(GROUP,           ofpact_group,         ofpact)    \
+DEFINE_OFPACT(CONTROLLER,      ofpact_controller,    ofpact)    \
+DEFINE_OFPACT(ENQUEUE,         ofpact_enqueue,       ofpact)    \
+DEFINE_OFPACT(OUTPUT_REG,      ofpact_output_reg,    ofpact)    \
+DEFINE_OFPACT(BUNDLE,          ofpact_bundle,        slaves)    \
+                                                                \
+/* Header changes. */                                           \
+DEFINE_OFPACT(SET_FIELD,       ofpact_set_field,     ofpact)    \
+DEFINE_OFPACT(SET_VLAN_VID,    ofpact_vlan_vid,      ofpact)    \
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;宏定义格式为DEFINE_OFPACT(ENUM, STRUCT, MEMBER）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一个变量enum为抽象action（ofpact）名字，ENUM在后面会用于构造抽象action类型type，即OFPACT_##ENUM。&lt;/li&gt;
+&lt;li&gt;第二个变量为ofpact的结构体名。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个宏定义了OVS所有抽象action（ofpact），其与openflow action有一对一或一对多映射关系（如多个版本openflow action映射为一个ofpact），这利于ovs做统一处理。&lt;/p&gt;
+&lt;p&gt;6 既然定义了抽象action（ofpact），则需要有相应的结构体，lib/ofp-actions.h中定义如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cm"&gt;/* OFPACT_SET_FIELD.&lt;/span&gt;
+&lt;span class="cm"&gt; *&lt;/span&gt;
+&lt;span class="cm"&gt; * Used for OFPAT12_SET_FIELD. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+struct&lt;span class="w"&gt; &lt;/span&gt;ofpact_set_field&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;struct&lt;span class="w"&gt; &lt;/span&gt;ofpact&lt;span class="w"&gt; &lt;/span&gt;ofpact&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;const&lt;span class="w"&gt; &lt;/span&gt;struct&lt;span class="w"&gt; &lt;/span&gt;mf_field&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;field&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;bool&lt;span class="w"&gt; &lt;/span&gt;flow_has_vlan&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="cm"&gt;/* VLAN present at action validation time. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;union&lt;span class="w"&gt; &lt;/span&gt;mf_value&lt;span class="w"&gt; &lt;/span&gt;value&lt;span class="err"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="err"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;第一个属性结构体ofpact是必须的，是作为ofpact的header的，指定了此抽象action类型相关内容，后面是action的data。因此，有必要看一下ofpact结构体定义：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;struct ofpact {
+    enum ofpact_type type;      /* OFPACT_*.  其实就是OFPACT_##ENUM*/
+    enum ofputil_action_code compat; /* Original type when added, if any. */
+    uint16_t len;               /* Length of the action, in bytes, including
+                             * struct ofpact,   excluding padding. */
+};
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;type：即抽象action（ofpact）的类型（上面提到，格式为OFPACT_##ENUM），如OFPACT_SET_FIELD；&lt;/li&gt;
+&lt;li&gt;ofputil_action_code： 可以理解为openflow action编号（包含openflow自身和nicira的action）。因为之前提到，可能一个ofpact结构体对应多个openflow action（一对多），如NXAST_SET_TUNNEL 或者NXAST_SET_TUNNEL64 action（在openflow/nicira-ext.h中定义，我们也称为openflow action）都映射为OFPACT_SET_TUNNEL。这种一对多映射，因此就需要ofputil_action_code来具体记录指定是曾经是哪种openflow action，则可以看出ofputil_action_code就是对应基本（原始）的openflow action类型。ofputil_action_code命名规则其实在前面lib/ofp.def添加代码中提到，格式为OFPUTIL_##ENUM，如OFPUTIL_SET_FIELD.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当添加新action时，则按照以上提到的关键部分，“照猫画虎”式的添加即可，比较简单，不再赘述。&lt;/p&gt;
+&lt;h3&gt;二 action的解析&lt;/h3&gt;
+&lt;p&gt;通过以上操作，完成了自定义action的定义，那么当OVS接收到一个flow-mod消息，如何对消息体中action进行解析、flowmod添加，这需要接下来的工作。&lt;/p&gt;
+&lt;p&gt;这里有一个诀窍，我们只需要跟踪flowmod消息的解析过程，即可以发现在哪里需要添加相应的action解析代码。从ofproto.c中入口：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;handle_openflow() -&amp;gt; handle_openflow_() -&amp;gt; handle_flow_mod()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;在handle_flow_mod()函数关系到flowmod消息如何解析出匹配域和action的ofpacts，共同组成流表结构fm,然后并对action的ofpacts进行检验与流表项的添加。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1 解析action&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;进入handle_flow_mod()函数。在ofputil_decode_flow_mod（）中，首先用b指向flowmod数据开始部分，数据长度为flowmod内容长度，然后通过b解析匹配域和action。重点看action，因此进入函数ofpacts_pull_openflow_instructions（）后，会解析得到不同instruction，对于我们常用的OVSINST_OFPIT11_APPLY_ACTIONS所含的action，需要用函数
+get_actions_from_instruction解析出openflow action，将内容赋给联合体类型ofp_action（一中我们已经定义）的actions指针，然后通过ofpacts_from_openflow函数从actions指针把action内容赋给内存空间ofbuf的ofpacts。&lt;/p&gt;
+&lt;p&gt;在函数ofpacts_from_openflow中，用函数指针变量ofpact_from_openflow指向相应版本的action解析函数，这里依然以of1.3为例，ofpact_from_openflow(a, version, out)即为ofpact_from_openflow11（a, version, out）。&lt;/p&gt;
+&lt;p&gt;以上过程函数关系表示如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;handle_openflow() -&amp;gt; handle_openflow_() -&amp;gt; handle_flow_mod()-&amp;gt;ofputil_decode_flow_mod()-&amp;gt;ofpacts_pull_openflow_instructions()-&amp;gt;ofpacts_from_openflow()-&amp;gt;ofpact_from_openflow11()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;说了这么多，终于到真正添加关于新action代码的地方了。&lt;/p&gt;
+&lt;p&gt;通过decode_openflow11_action函数解析出openflow action的code，code即OFPUTIL_##ENUM （openflow action的类型编号，之前提到，并且在一中已铺垫好相应代码，这里无需改动）。下来，需要在switch添加新的case OFPUTIL_##ENUM，然后调用ofpact_put##ENUM函数来生成抽象action（ofpact）。如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    case OFPUTIL_OFPAT11_DEC_MPLS_TTL:
+        ofpact_put_DEC_MPLS_TTL(out);
+        break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;OFPUTIL_##ENUM是openflow action的code，ofpact_put##ENUM则生成抽象action。ofpact_put##ENUM的ENUM是抽象action（ofpact）名字，在一中的ofp-actions.h中定义。对于简单action（即不像output等action有参数）的添加，只需要向例子中一样即可，带参数则可以同时对ofpact参数做初始化赋值，可以参考其他case的写法。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2 检测&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;完成action的解析，现在返回到ofpacts_pull_openflow_instructions（）函数中。函数结束处 调用函数ofpacts_verify（）-&amp;gt;ovs_instruction_type_from_ofpact_type() (ofp-actions.c中),这对ovs 抽象action类型进行检验。对于新添加的action，则在switch添加一个新action的case即可，格式为OFPACT_##ENUM,如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;...
+case OFPACT_SET_MPLS_TC:
+case OFPACT_SET_MPLS_TTL:
+case OFPACT_DEC_MPLS_TTL:
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;通过以上步骤，已经完成从flowmod消息中解析出action内容，并完成抽象action的转化，存储在buffer类型的ofpacts中。&lt;/p&gt;
+&lt;p&gt;完成添加后返回到ofputil_decode_flow_mod函数，函数最后用fm-&amp;gt;ofpacts = ofpbuf_data(ofpacts)，完成流表项fm的属性--结构体ofpacts指向这个buffer ofpacts.&lt;/p&gt;
+&lt;p&gt;紧接着最后，需要用ofpacts_check_consistency进行进一步的ofpact的一致性检测，因此需要进入函数ofpacts_check（）-&amp;gt; ofpact_check__（）（ofp-actions.c）完成添加。如检测output动作的出端口的合理性，如端口号大于最大限制，则返回错误号。又如OFPACT_DEC_TTL，会检测是否网络层协议为ip，若不是则无法执行这个action，返回协议不一致的错误号。对于添加一个简单的新action，无需检测，直接添加case OFPACT_##ENUM: return即可,如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;case OFPACT_SET_TUNNEL:
+    return；
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;完成以上操作，返回到最外层函数handle_flow_mod。以上都是在ofputil_decode_flow_mod函数中进行，下来继续是ofpact检测，主要是ofpact长度检测， 里面牵扯到的新action的检测代码，在上面已经完成，这里不需要添加。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3 流表项操作（包含action）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;以上得到流表项结构fm，需要对fm进行操作，比如添加、删除流表项等，这里还是对新action有关内容着重描述。进入函数handle_flow_mod__（）（ofproto.c中），以添加流表项为例，则进入add_flow（）函数，先由fm构造rule，并且构造rule-&amp;gt;actions，幸运的是，这里面不需要对新的action进行代码修改或是添加。&lt;/p&gt;
+&lt;p&gt;到这里为止，通过以上OVS代码的添加和修改，OVS则可以正确解析控制器下发的新的action（比如含有新action的flow-mod消息），OVS已经可以正确对action进行解析，并且可以正确插入到流表中。但是action的执行和打印查看需要在完成后面工作。&lt;/p&gt;
+&lt;h3&gt;三 action的执行&lt;/h3&gt;
+&lt;p&gt;当数据包匹配到这条流表项，如何让action正确执行呢？&lt;/p&gt;
+&lt;p&gt;这里action的执行分两种情况，一种是内核层action的执行和用户层action的执行。但不是所有action会最终下放到内核层执行，只有像output等几个少数的action可以走快速通道直接处理数据包，其他action的执行则要上交用户层来执行。对于可以在内核层执行的action，需要netlink通道action数据传输，并在内核层添加相应action的执行函数。这里只简单说明如何在用户层执行新添加的action。&lt;/p&gt;
+&lt;p&gt;当数据包在用户层执行action时，最终会调用函数do_xlate_actions（）（ofproto-dpif-xlate.c）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static void do_xlate_actions(const struct ofpact *ofpacts, size_t ofpacts_len,struct xlate_ctx *ctx)
+{
+    struct flow_wildcards *wc = &amp;amp;ctx-&amp;gt;xout-&amp;gt;wc;
+    struct flow *flow = &amp;amp;ctx-&amp;gt;xin-&amp;gt;flow;
+    const struct ofpact *a;
+
+    OFPACT_FOR_EACH (a, ofpacts, ofpacts_len) {
+        struct ofpact_controller *controller;
+        const struct ofpact_metadata *metadata;
+        const struct ofpact_set_field *set_field;
+        const struct mf_field *mf;
+
+        if (ctx-&amp;gt;exit) {
+           break;
+        }
+
+        switch (a-&amp;gt;type) {
+        case OFPACT_OUTPUT:
+            xlate_output_action(ctx, ofpact_get_OUTPUT(a)-&amp;gt;port,
+                                ofpact_get_OUTPUT(a)-&amp;gt;max_len, true);
+        break;
+        ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如何新的action需要对数据包操作，则有必要分析清楚代码执行过程。函数开始通过struct flow *flow = &amp;amp;ctx-&amp;gt;xin-&amp;gt;flow提取出要执行action的flow。ctx(xlate_ctx)是一个重要的结构体，其属性xin是结构体xlate_in，xin含有要执行action的数据包，数据包所有包头字段组成为flow,action的一些包头修改操作都将在flow上进行。提取flow之后，通过一个循环提取出每一个ofpact（ovs的抽象action，之前有提到），然后进行switch判断进行相应动作的操作执行。如对ipv4头部修改的action：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    case OFPACT_SET_IPV4_SRC:
+        if (flow-&amp;gt;dl_type == htons(ETH_TYPE_IP)) {
+            memset(&amp;amp;wc-&amp;gt;masks.nw_src, 0xff, sizeof wc-&amp;gt;masks.nw_src);
+            flow-&amp;gt;nw_src = ofpact_get_SET_IPV4_SRC(a)-&amp;gt;ipv4;
+        }
+        break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;注意对于新增加action，case必须是OFPACT_##ENUM格式，然后进行相应操作即可，比如检测包头字段，判断是arp请求，则进行arp包的回复等，这里需要根据自己action的需求进行操作即可。&lt;/p&gt;
+&lt;p&gt;action的执行只需要在这里添加代码，当数据包在用户层匹配到后会正确执行，并向内核层添加流表项，对于以上新的数据包匹配到这个action仍然会上交用户层处理。&lt;/p&gt;
+&lt;h3&gt;四 查询、封装&lt;/h3&gt;
+&lt;p&gt;到这里，一个新的action就可以完完整整的正确执行了。但是有一点，我们并不能ovs-ofctl dump-flows等命令正确查看一个流表项，新的action会显示乱码，也不能通过控制器访问交换机流表，原因在于对于存在流表项的action，需要有ovs解析一个新action的逆过程，把其从ovs的抽象action（ofpact）转化为openflow action，打印还需要action字符串名字的解析过程。因此，有这么几个地方需要源码添加修改，主要集中在lib/ofp-action.c和lib\ofp-parse.c两个文件：&lt;/p&gt;
+&lt;p&gt;1 lib/ofp-action.c中&lt;/p&gt;
+&lt;p&gt;函数 ofpact_to_openflow11 和上面提到的函数ofpact_from_openflow11（把openflow action解析为ofpact）是互逆的过程。对于新添加action，代码添加比较简单，仿照下面即可：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;case OFPACT_DEC_MPLS_TTL:
+    ofputil_put_OFPAT11_DEC_MPLS_TTL(out);
+    break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;2  lib/ofp-action.c中&lt;/p&gt;
+&lt;p&gt;当ofctl打印流表项时，则需要将action解析为相应字符串。这在函数ofpact_format（）中进行添加。对于新的action，添加如下，替换case类型、替换“pop_queue”为相应action名字字符串即可：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    case OFPACT_POP_QUEUE:
+        ds_put_cstr(s, &amp;quot;pop_queue&amp;quot;);
+        break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;3 在 lib/ofp-parse.c中&lt;/p&gt;
+&lt;p&gt;当用ofctl添加带有新action的流表项时候，则需要把action字符串名字解析为相应action类型编号（code），并同时解析action带有的参数。这些在函数str_to_ofpact__中完成：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;static char * WARN_UNUSED_RESULT str_to_ofpact__(char *pos, char *act, char *arg, struct ofpbuf *ofpacts, int n_actions, enum ofputil_protocol *usable_protocols)
+{
+    int code = ofputil_action_code_from_name(act);
+    if (code &amp;gt;= 0) {
+        return parse_named_action(code, arg, ofpacts, usable_protocols);
+    } else if (!strcasecmp(act, &amp;quot;drop&amp;quot;)) {
+    ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;举例，如“output=2”，act则为action字符串“output”，；则通过ofputil_action_code_from_name解析“output”为OFPUTIL_OFPAT10_OUTPUT，这里面用到了ofp-util.def中宏定义，用最后一个参数进行映射解析到action code，一中已经对新action进行了添加，这里不需要修改。arg则是2，则需要联合刚才的code一起转化为ovs的抽象action（ofpact），则需要在在parse_named_action函数中需要添加相应代码，如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    case OFPUTIL_OFPAT11_SET_NW_DST:
+        error = str_to_ip(arg, &amp;amp;ofpact_put_SET_IPV4_DST(ofpacts)-&amp;gt;ipv4);
+        break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上面代码是output，set_nw_dst这种有参数类型，如果action无参数，则只需要将error置为NULL，然后生成相应ofpact即可，如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    case OFPUTIL_OFPAT13_SELF_LEARNING:
+        error = NULL;
+        ofpact_put_##ENUM(ofpacts);
+        break;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;4 此外，当instruction为OFPIT_WRITE_ACTIONS类型时候，则会把action写入set集合中，最后按照一定顺序逐一执行。如果想让新的action可以用在这种write类型的instruction中（一般我们都封装在apply的instruction中），则还需要在ofp-action.c中修改如下代码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cm"&gt;/* True if an action is allowed in the action set.&lt;/span&gt;
+&lt;span class="cm"&gt;    * False otherwise. */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+static&lt;span class="w"&gt; &lt;/span&gt;bool&lt;span class="w"&gt;&lt;/span&gt;
+ofpact_is_allowed_in_actions_set&lt;span class="o"&gt;(&lt;/span&gt;const&lt;span class="w"&gt; &lt;/span&gt;struct&lt;span class="w"&gt; &lt;/span&gt;ofpact&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;a&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;switch&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;a&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;type&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;case&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;OFPACT_DEC_MPLS_TTL&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;case&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;OFPACT_DEC_TTL&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;true&lt;span class="err"&gt;；&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;为了新action允许写入set集合中，则可仿照上面，在return ture前添加新action的case即可。为了控制新action在set中的执行顺序，需要修改下面代码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;void ofpacts_execute_action_set(struct ofpbuf *action_list,
+                       const struct ofpbuf *action_set)
+{
+    /* The OpenFlow spec &amp;quot;Action Set&amp;quot; section specifies this order. */
+    ofpacts_copy_last(action_list, action_set, OFPACT_STRIP_VLAN);
+    ofpacts_copy_last(action_list, action_set, OFPACT_POP_MPLS);
+    ofpacts_copy_last(action_list, action_set, OFPACT_PUSH_MPLS);
+    ofpacts_copy_last(action_list, action_set, OFPACT_PUSH_VLAN);
+    ofpacts_copy_last(action_list, action_set, OFPACT_DEC_TTL);
+    ofpacts_copy_last(action_list, action_set, OFPACT_DEC_MPLS_TTL);
+    ofpacts_copy_all(action_list, action_set, ofpact_is_set_action);
+    ofpacts_copy_last(action_list, action_set, OFPACT_SET_QUEUE);
+    ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如上代码，把action set中所有action按照右上向下的顺序放入action_list中，待逐一执行action_list中的action。因此，新添加的action，也需要采用如下的格式插入相应位置，即可控制action在set中执行的顺序。：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ofpacts_copy_last(action_list, action_set, OFPACT_##ENUM);
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;结语&lt;/h3&gt;
+&lt;p&gt;以上分析了一个action如何在OVS生效的过程，并同时说明如何在这一过程中添加自定义的action，这对我们拓展和验证OpenFlow协议极为重要。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ysy</dc:creator><pubDate>Tue, 01 Dec 2015 19:10:00 +0800</pubDate><guid>tag:ysywh.github.io,2015-11-20:pages/2015/11/20/OVS中Action分析&amp;自定义Action.html</guid><category>OVS souce code</category></item><item><title>Tunnel技术 之 二层隧道协议</title><link>http://ysywh.github.io/pages/2015/11/01/Tunnel%E6%8A%80%E6%9C%AF%20%E4%B9%8B%20%E4%BA%8C%E5%B1%82%E9%9A%A7%E9%81%93%E5%8D%8F%E8%AE%AE.html</link><description>&lt;p&gt;之前从隧道协议引入，说到了而层隧道协议用到的一个基本协议——点到点协议（PPP）。说它是建立在点到点的直连或是逻辑直连的环境下适用的，并且自身具有身份认证、对ppp载荷数据加密等功能。有了这个基础，本文可以切入二层隧道协议主题了，说说两个最常用的二层隧道协议：PPTP和L2TP。&lt;/p&gt;
 &lt;h3&gt;PPTP：(Point to Point Tunneling Protocol)&lt;/h3&gt;
 &lt;p&gt;PPTP称为点到点的隧道协议。PPTP的载荷协议是PPP，传输协议是IP。换句话说，就是把二层的PPP帧封装在IP包中进行传输，以此完成站点到站点的VPN连接。&lt;/p&gt;
 &lt;p&gt;PPTP协议要根据工作阶段分为两种：连接控制和数据传输。PPTP这两个阶段的报文格式也不同。&lt;/p&gt;
